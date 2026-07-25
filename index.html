@@ -461,7 +461,36 @@
         </div>
 
         <button type="button" class="btn btn-add" id="addSchoolBtn" onclick="addSchoolField()">+ Add Another Previous School</button>
-        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All Documents (Cover + Form P + Proposals + Experience Certificate)</button>
+
+        <h2>4. Single NOC — Permission for the Above Teacher to Appear in an Exam (Optional — leave Exam Reference blank to skip)</h2>
+        <div class="grid-3">
+            <div class="form-group">
+                <label>Exam / SLST Reference:</label>
+                <input type="text" id="selfNocExamRef" value="" placeholder="e.g., 2nd SLST-2025 (Secondary & Higher Secondary)">
+            </div>
+            <div class="form-group">
+                <label>HOI Report No.:</label>
+                <input type="text" id="selfNocReportNo" value="" placeholder="e.g., HM/2026/12">
+            </div>
+            <div class="form-group">
+                <label>Administrator / Committee Order / Resolution No.:</label>
+                <input type="text" id="selfNocOrderNo" value="" placeholder="e.g., Admin/NOC/2026/07">
+            </div>
+            <div class="form-group">
+                <label>Permission Granted For:</label>
+                <select id="selfNocPostCategory">
+                    <option value="BOTH" selected>Both — Secondary (IX–X) & Higher Secondary (XI–XII)</option>
+                    <option value="SEC">Secondary (IX–X) only</option>
+                    <option value="HS">Higher Secondary (XI–XII) only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Application Date of the Teacher (Optional):</label>
+                <input type="text" id="selfNocAppDate" value="" placeholder="DD.MM.YYYY">
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All Documents (Cover + Form P + Proposals + Experience Certificate + Single NOC)</button>
     </div>
 </div>
 
@@ -475,6 +504,8 @@
         <button class="tab-btn" onclick="showTab('doc5')" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma</button>
         <button class="tab-btn" onclick="showTab('doc6')" style="background:#2b6cb0; color:white;">6. File Cover (Half A4)</button>
         <button class="tab-btn" onclick="showTab('doc7')" style="background:#2f855a; color:white;">7. Experience Certificate</button>
+        <button class="tab-btn" onclick="showTab('doc8')" style="background:#805ad5; color:white;">8. NOC — HOI Report</button>
+        <button class="tab-btn" onclick="showTab('doc9')" style="background:#805ad5; color:white;">9. NOC — Order/Resolution</button>
         <button class="tab-btn" onclick="showTab('all')" style="background:#2f855a; color:white;">View All for Printing</button>
     </div>
     <div style="text-align: right; margin-bottom: 15px;">
@@ -829,6 +860,28 @@
                 [Official Seal]
             </div>
         </div>
+    </div>
+
+    <!-- DOCUMENT 8: SINGLE NOC - REPORT OF THE HEADMASTER (FOR THE MAIN APPLICANT, TO APPEAR IN EXAM) -->
+    <div class="paper doc-page" id="doc8">
+        <p style="text-align:center; font-weight:bold; text-decoration:underline; font-size:13pt; margin-bottom:15px;">REPORT OF THE HEADMASTER</p>
+        <div class="meta-line">
+            <div><strong>Headmaster Report No.:</strong> <span class="lbl-selfNocReportNo">____________</span></div>
+            <div><strong>Date:</strong> ____/____/2026</div>
+        </div>
+        <p id="lbl-selfNocHoiReportBody"><!-- Dynamic Body --></p>
+        <p>The matter is placed before you for kind consideration and necessary order.</p>
+        <br><br>
+        <div style="text-align:right;">
+            ___________________________________<br>
+            <strong><span class="lbl-hoiTitle">[HOI Title]</span></strong><br>
+            <span class="lbl-presentSchool">[Present School Name]</span>
+        </div>
+    </div>
+
+    <!-- DOCUMENT 9: SINGLE NOC - ORDER / RESOLUTION (ADMINISTRATOR OR MC/AD-HOC BILINGUAL) -->
+    <div class="paper doc-page" id="doc9">
+        <div id="selfNocOrderContainer"><!-- Dynamic Content --></div>
     </div>
 
 </div>
@@ -1389,6 +1442,80 @@
                     (Appointed by Govt. of West Bengal)
                 </div>
             `;
+        }
+
+        // ============ DOCUMENT 8 & 9: SINGLE NOC (AUTO, FOR THE MAIN APPLICANT ABOVE) — PERMISSION TO APPEAR IN EXAM ============
+        const selfNocExamRef = document.getElementById('selfNocExamRef').value.trim();
+        const selfNocReportNo = document.getElementById('selfNocReportNo').value.trim() || '____________';
+        const selfNocOrderNo = document.getElementById('selfNocOrderNo').value.trim() || '____________';
+        const selfNocPostCategory = document.getElementById('selfNocPostCategory').value;
+        const selfNocAppDate = document.getElementById('selfNocAppDate').value.trim();
+
+        document.querySelectorAll('.lbl-selfNocReportNo').forEach(e => e.innerText = selfNocReportNo);
+
+        if (selfNocExamRef) {
+            document.getElementById('lbl-selfNocHoiReportBody').innerHTML =
+                `${teacherName}, ${teacherDesg}${subjectQual ? ' (' + subjectQual + ')' : ''} of ${presentSchool}, P.O. – ${poName}, Dist. – ${district}, approved vide Memo No. ${presentAppr} and appointed with effect from ${presentJoinDate}, has submitted ${pn.poss.toLowerCase()} application${selfNocAppDate ? ' dated ' + selfNocAppDate : ''} seeking a No Objection Certificate (NOC) to appear in the ${selfNocExamRef}. ${pn.Poss} service in this institution has been continuous and satisfactory, and no departmental proceeding is pending against ${pn.obj}. The application is forwarded for kind consideration.`;
+
+            let selfPermissionBullets = '';
+            if (selfNocPostCategory === 'BOTH' || selfNocPostCategory === 'SEC') {
+                selfPermissionBullets += `<li>${selfNocExamRef} for the post of Assistant Teacher (Classes IX–X / Secondary)</li>`;
+            }
+            if (selfNocPostCategory === 'BOTH' || selfNocPostCategory === 'HS') {
+                selfPermissionBullets += `<li>${selfNocExamRef} for the post of Assistant Teacher (Classes XI–XII / Higher Secondary)</li>`;
+            }
+
+            const selfNocOrderContainer = document.getElementById('selfNocOrderContainer');
+            if (adminType === 'ADMIN') {
+                selfNocOrderContainer.innerHTML = `
+                    <p style="text-align:center; font-weight:bold; text-decoration:underline; font-size:13pt; margin-bottom:15px;">ADMINISTRATOR ORDER</p>
+                    <div class="meta-line">
+                        <div><strong>Administrator Order No.:</strong> ${selfNocOrderNo}</div>
+                        <div><strong>Date:</strong> ____/____/2026</div>
+                    </div>
+                    <p>In pursuance of the report submitted by the Head of the Institution (Report No. ${selfNocReportNo}), the matter relating to the prayer for issuance of NOC in favour of <strong>${teacherName}</strong>, ${teacherDesg} of ${presentSchool}, P.O. – ${poName}, Dist. – ${district}, has been duly placed, along with ${pn.poss.toLowerCase()} application and other relevant documents, for kind consideration.</p>
+                    <p>After careful consideration of the above, permission is hereby accorded to the said teacher to appear in:</p>
+                    <ul>${selfPermissionBullets}</ul>
+                    <p>The ${hoiTitle} is hereby requested to issue the necessary No Objection Certificate (NOC) accordingly.</p>
+                    <p>This order is issued on the condition that the normal academic and administrative duties of the institution shall not be hampered in any manner.</p>
+                    <br><br>
+                    <div style="text-align:right;">
+                        ___________________________________<br>
+                        <strong>ADMINISTRATOR</strong><br>
+                        ${presentSchool}
+                    </div>
+                `;
+            } else {
+                selfNocOrderContainer.innerHTML = `
+                    <div class="header-letter">
+                        <h2 class="lbl-presentSchoolUpper">${presentSchool.toUpperCase()}</h2>
+                        <div style="font-size:10pt; font-weight:bold;">DISTRICT: ${district.toUpperCase()} | WEST BENGAL</div>
+                    </div>
+                    <p style="text-align:center; font-weight:bold; margin-bottom:15px; text-decoration:underline;">
+                        EXTRACT FROM THE PROCEEDINGS OF THE MEETING OF THE ${adminAuthText.toUpperCase()}
+                    </p>
+                    <p><strong>Meeting Date:</strong> ____________ | <strong>Resolution No.:</strong> ${selfNocOrderNo}</p>
+                    <div class="lang-block">
+                        <p><strong>ENGLISH VERSION:</strong><br>
+                        Considered the report of the ${hoiTitle} (Report No. ${selfNocReportNo}) along with the application of <strong>${teacherName}</strong>, ${teacherDesg} of ${presentSchool} seeking a No Objection Certificate (NOC) to appear in the ${selfNocExamRef}. After careful consideration, it is resolved unanimously that permission be accorded to the said teacher to appear in:</p>
+                        <ul>${selfPermissionBullets}</ul>
+                        <p>The ${hoiTitle}${secySignTitle} is authorized to issue the necessary No Objection Certificate (NOC) accordingly, subject to the condition that normal academic and administrative duties of the institution are not hampered in any manner.</p>
+                    </div>
+                    <div class="lang-block bengali-text">
+                        <p><strong>বাংলা সংস্করণ (BENGALI VERSION):</strong><br>
+                        ${hoiTitle} মহাশয়ের রিপোর্ট (Report No. ${selfNocReportNo}) এবং ${presentSchool}-এর শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর ${selfNocExamRef}-এ অংশগ্রহণের জন্য এন.ও.সি. (NOC) প্রার্থনা সংক্রান্ত আবেদনপত্র বিশদভাবে বিবেচনা করা হইল। বিস্তারিত পর্যালোচনার পর সর্বসম্মতিক্রমে সিদ্ধান্ত গৃহীত হইল যে, উক্ত শিক্ষক/শিক্ষিকাকে পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান করা হইল। ${hoiTitle}${secySignTitle} মহাশয়/মহাশয়াকে প্রয়োজনীয় এন.ও.সি. ইস্যু করিবার নির্দেশ দেওয়া হইল, শর্ত থাকে যে, বিদ্যালয়ের স্বাভাবিক শিক্ষাগত ও প্রশাসনিক কার্যক্রম যেন কোনোভাবে ব্যাহত না হয়।</p>
+                    </div>
+                    <br><br>
+                    <div style="display:flex; justify-content:space-between;">
+                        <div style="text-align:center;">_______________________<br><strong>${presTitle}</strong><br>${adminAuthText}</div>
+                        <div style="text-align:center;">_______________________<br><strong>${hoiTitle}${secySignTitle}</strong><br>${presentSchool}</div>
+                    </div>
+                `;
+            }
+        } else {
+            // No Exam Reference entered - leave both single-NOC documents blank/placeholder
+            document.getElementById('lbl-selfNocHoiReportBody').innerHTML = '<span style="color:#888;">Exam / SLST Reference not entered — Single NOC documents left blank.</span>';
+            document.getElementById('selfNocOrderContainer').innerHTML = '<p style="text-align:center; color:#888;">Exam / SLST Reference not entered, so no Single NOC order has been generated.</p>';
         }
 
         // Display Navigation & Output
