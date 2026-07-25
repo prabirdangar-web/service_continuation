@@ -201,6 +201,11 @@
             border-radius: 4px;
         }
 
+        /* Letterhead print mode: leaves blank space at top for pre-printed school letterhead paper */
+        .paper.letterhead-print {
+            padding-top: 7.1cm !important;
+        }
+
         @media print {
             .no-print { display: none !important; }
             body { background: white; padding: 0; }
@@ -218,6 +223,9 @@
                 min-height: 135mm !important;
                 page-break-after: always;
             }
+            .paper.letterhead-print {
+                padding-top: 7.1cm !important;
+            }
             .tab-nav { display: none !important; }
             @page { size: A4 portrait; margin: 10mm; }
         }
@@ -233,6 +241,14 @@
         <h2>1. Teacher & Governance Setup</h2>
         <div class="grid-3">
             <div class="form-group">
+                <label>Gender / Salutation:</label>
+                <select id="genderTitle">
+                    <option value="Sri" selected>Sri (Male)</option>
+                    <option value="Smt">Smt (Female, Married)</option>
+                    <option value="Kumari">Kumari (Female, Unmarried)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Teacher Full Name:</label>
                 <input type="text" id="teacherName" value="Sri Chinmoy Mandal">
             </div>
@@ -243,6 +259,10 @@
             <div class="form-group">
                 <label>Designation & Subject:</label>
                 <input type="text" id="teacherDesg" value="Assistant Teacher">
+            </div>
+            <div class="form-group">
+                <label>Subject & Qualification (for Experience Certificate):</label>
+                <input type="text" id="subjectQual" value="" placeholder="e.g., English (GRAD) with B.Ed.">
             </div>
             <div class="form-group">
                 <label>HOI Designation / Title:</label>
@@ -360,6 +380,43 @@
                 <label>Audit Memo / Vetting Ref (Enter 'NA' if None):</label>
                 <input type="text" id="auditMemo" value="NA" placeholder="e.g., NA or Memo No. 12/Audit">
             </div>
+            <div class="form-group">
+                <label>Vacancy Type (Optional, for Experience Certificate):</label>
+                <select id="vacancyType" onchange="toggleVacancyFields(this.value)">
+                    <option value="NONE" selected>None / Not Mentioned</option>
+                    <option value="RETIREMENT">Permanent vacancy — Retirement</option>
+                    <option value="RESIGNATION">Permanent vacancy — Resignation</option>
+                    <option value="NEWPOST">Newly Sanctioned Post</option>
+                    <option value="CUSTOM">Other / Manual Entry</option>
+                </select>
+            </div>
+            <div class="form-group" id="vacancyPersonGroup" style="display:none;">
+                <label>Outgoing Teacher's Name & Designation:</label>
+                <input type="text" id="vacancyPersonName" value="" placeholder="e.g., Sri Nepal Chandra De, A.T.">
+            </div>
+            <div class="form-group" id="vacancySanctionGroup" style="display:none;">
+                <label>New Post Sanctioned By (Authority/Order):</label>
+                <input type="text" id="vacancySanctionAuth" value="" placeholder="e.g., West Bengal Board of Secondary Education vide Memo No. ___">
+            </div>
+            <div class="form-group" id="vacancyCustomGroup" style="display:none;">
+                <label>Custom Vacancy Reason Text:</label>
+                <input type="text" id="vacancyCustomVal" value="" placeholder="e.g., transfer of Sri X to another institution">
+            </div>
+            <div class="form-group">
+                <label>CSSC Recommendation Letter No. & Date (Optional):</label>
+                <input type="text" id="csscLetter" value="" placeholder="e.g., 97/6916/AT(GRAD)/... dated 13.09.2018">
+            </div>
+            <div class="form-group">
+                <label>WBBSE / WBBPE Appointment Letter No. & Date (Optional):</label>
+                <input type="text" id="apptLetter" value="" placeholder="e.g., WBBSE/App/BNK/... dated 08.01.2019">
+            </div>
+            <div class="form-group">
+                <label>Experience Certificate Print Mode:</label>
+                <select id="letterheadMode">
+                    <option value="NORMAL" selected>Normal (standard 18mm top margin)</option>
+                    <option value="LETTERHEAD">Print on Pre-printed School Letterhead (blank 7.1cm top margin)</option>
+                </select>
+            </div>
         </div>
 
         <h3 style="margin-top:15px; font-size:1.05rem; color:#1a5693;">School Codes & Phone / Email Particulars (For File Cover)</h3>
@@ -398,13 +455,13 @@
             </div>
         </div>
 
-        <h2>3. Previous School Details (Exhaustive Annexure 'P' Entry)</h2>
+        <h2>3. Previous School Details (Exhaustive Annexure 'P' Entry — leave empty / remove all cards if there is NO previous service)</h2>
         <div id="schoolsContainer">
             <!-- Dynamic Cards Inserted Here -->
         </div>
 
         <button type="button" class="btn btn-add" id="addSchoolBtn" onclick="addSchoolField()">+ Add Another Previous School</button>
-        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All 6 Documents (Cover + Form P + Proposals)</button>
+        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All Documents (Cover + Form P + Proposals + Experience Certificate)</button>
     </div>
 </div>
 
@@ -417,6 +474,7 @@
         <button class="tab-btn" onclick="showTab('doc4')">4. Draft Order (Bikash Bhawan)</button>
         <button class="tab-btn" onclick="showTab('doc5')" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma</button>
         <button class="tab-btn" onclick="showTab('doc6')" style="background:#2b6cb0; color:white;">6. File Cover (Half A4)</button>
+        <button class="tab-btn" onclick="showTab('doc7')" style="background:#2f855a; color:white;">7. Experience Certificate</button>
         <button class="tab-btn" onclick="showTab('all')" style="background:#2f855a; color:white;">View All for Printing</button>
     </div>
     <div style="text-align: right; margin-bottom: 15px;">
@@ -562,7 +620,7 @@
             <li>The service rendered by the teacher in previous approved institution(s) was continuous, sanctioned, and duly approved by the respective District Inspector of Schools (SE).</li>
             <li>The interregnum / transition period between release from previous post and joining the present post is regularized in terms of existing leave/service rules without granting any financial double benefit.</li>
             <li>The pay of the incumbent shall be fixed by the DI/S (SE), <span class="lbl-district">[District]</span> in the present post protecting the last basic pay drawn in the previous post as per LPC.</li>
-            <li>This order does not confer any seniority claim over teachers already confirmed in the present cadre prior to his/her joining date (<span class="lbl-presentJoin">[Joining Date]</span>).</li>
+            <li>This order does not confer any seniority claim over teachers already confirmed in the present cadre prior to <span class="lbl-possLower">his/her</span> joining date (<span class="lbl-presentJoin">[Joining Date]</span>).</li>
         </ol>
 
         <p>This issues with the approval of the competent authority.</p>
@@ -749,6 +807,30 @@
         </div>
     </div>
 
+    <!-- DOCUMENT 7: TEACHING EXPERIENCE CERTIFICATE -->
+    <div class="paper doc-page" id="doc7">
+        <p style="text-align:center; font-weight:bold; text-decoration:underline; font-size:13pt; margin-bottom:25px;">TEACHING EXPERIENCE CERTIFICATE</p>
+        <p style="text-align:center; font-weight:bold; margin-top:-15px; margin-bottom:20px;">(For <span class="lbl-teacherName">[Teacher Name]</span>, <span class="lbl-teacherDesg">[Designation]</span><span class="lbl-subjectQualParen"></span>)</p>
+
+        <p style="text-align:center; font-weight:bold; text-decoration:underline;">TO WHOM IT MAY CONCERN</p>
+
+        <p id="lbl-expCertBody"><!-- Dynamic Certificate Body --></p>
+
+        <br><br>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+                Date: ____/____/2026<br>
+                Place: <span class="lbl-poName">[P.O.]</span>
+            </div>
+            <div style="text-align:center;">
+                ___________________________________<br>
+                <strong><span class="lbl-hoiTitle">[HOI Title]</span><span class="lbl-secySignBlock"></span></strong><br>
+                <span class="lbl-presentSchool">[Present School Name]</span><br>
+                [Official Seal]
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -758,6 +840,20 @@
     function toggleCustom(selectId, groupid) {
         const val = document.getElementById(selectId).value;
         document.getElementById(groupid).style.display = (val === 'CUSTOM') ? 'flex' : 'none';
+    }
+
+    function toggleVacancyFields(type) {
+        document.getElementById('vacancyPersonGroup').style.display = (type === 'RETIREMENT' || type === 'RESIGNATION') ? 'flex' : 'none';
+        document.getElementById('vacancySanctionGroup').style.display = (type === 'NEWPOST') ? 'flex' : 'none';
+        document.getElementById('vacancyCustomGroup').style.display = (type === 'CUSTOM') ? 'flex' : 'none';
+    }
+
+    // Returns exact gender pronouns based on the Gender/Salutation dropdown (Sri = male, Smt/Kumari = female)
+    function getPronouns(genderTitle) {
+        if (genderTitle === 'Sri') {
+            return { Subj: 'He', subj: 'he', Poss: 'His', poss: 'his', Obj: 'Him', obj: 'him' };
+        }
+        return { Subj: 'She', subj: 'she', Poss: 'Her', poss: 'her', Obj: 'Her', obj: 'her' };
     }
 
     function updateAdminDropdowns(type) {
@@ -870,10 +966,39 @@
         event.target.classList.add('active');
     }
 
+    // Parses DD.MM.YYYY (optionally with trailing text) into a Date object
+    function parseDMY(str) {
+        if (!str) return null;
+        const m = str.match(/(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/);
+        if (!m) return null;
+        return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]));
+    }
+
+    // Returns "X years, Y months, Z days" between two dates
+    function durationBetween(startStr, endDate) {
+        const start = parseDMY(startStr);
+        if (!start || isNaN(start)) return null;
+        let years = endDate.getFullYear() - start.getFullYear();
+        let months = endDate.getMonth() - start.getMonth();
+        let days = endDate.getDate() - start.getDate();
+        if (days < 0) {
+            months--;
+            const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+            days += prevMonth.getDate();
+        }
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+        return `${years} years, ${months} months, ${days} days`;
+    }
+
     function generateAllDocuments() {
+        const genderTitle = document.getElementById('genderTitle').value;
         const teacherName = document.getElementById('teacherName').value || '[Teacher Name]';
         const dob = document.getElementById('dob').value || '[DOB]';
         const teacherDesg = document.getElementById('teacherDesg').value || '[Designation]';
+        const subjectQual = document.getElementById('subjectQual').value.trim();
         
         let hoiTitle = document.getElementById('hoiStatus').value;
         if (hoiTitle === 'CUSTOM') hoiTitle = document.getElementById('customHoiVal').value.trim() || 'Head of Institution';
@@ -920,6 +1045,17 @@
         const rawAuditMemo = document.getElementById('auditMemo').value.trim();
         const upperMemo = rawAuditMemo.toUpperCase();
         const isAuditNA = (!rawAuditMemo || upperMemo === 'NA' || upperMemo === 'N/A' || upperMemo === 'NIL' || upperMemo === 'NONE');
+
+        const pn = getPronouns(genderTitle);
+        document.querySelectorAll('.lbl-possLower').forEach(e => e.innerText = pn.poss.toLowerCase());
+
+        const vacancyType = document.getElementById('vacancyType').value;
+        const vacancyPersonName = document.getElementById('vacancyPersonName').value.trim();
+        const vacancySanctionAuth = document.getElementById('vacancySanctionAuth').value.trim();
+        const vacancyCustomVal = document.getElementById('vacancyCustomVal').value.trim();
+        const letterheadMode = document.getElementById('letterheadMode').value;
+        const csscLetter = document.getElementById('csscLetter').value.trim();
+        const apptLetter = document.getElementById('apptLetter').value.trim();
 
         let addressedToTitle = presTitle;
         let addressedToBody = presentSchool;
@@ -975,6 +1111,10 @@
         document.querySelectorAll('.lbl-gpfStatus').forEach(e => e.innerText = gpfStatus);
         document.querySelectorAll('.lbl-cpNo').forEach(e => e.innerText = cpNo);
 
+        document.querySelectorAll('.lbl-subjectQualParen').forEach(e => {
+            e.innerText = subjectQual ? ` – ${subjectQual}` : '';
+        });
+
         // Handle Audit Memo Reference
         document.querySelectorAll('.lbl-auditMemoRef').forEach(e => {
             if (!isAuditNA) {
@@ -988,6 +1128,7 @@
 
         // Dynamic Previous Schools
         const cards = document.querySelectorAll('.school-card');
+        const hasPrevService = cards.length > 0;
         let tableRowsHTML = '';
         let applicantNarrativeHTML = '';
         let annexurePrevSchoolsHTML = '';
@@ -1000,6 +1141,8 @@
         enclosuresHTML += `<li>Filled-in Proforma Report (Annexure 'P') in terms of Finance Dept G.O. No. 249-F(Pen) dated 27.05.2019.</li>`;
 
         let firstJoiningDate = '';
+        // Collect NOC lines for use across documents, only when previous service exists
+        let nocSummaryLines = [];
 
         cards.forEach((card, index) => {
             const idx = index + 1;
@@ -1011,7 +1154,7 @@
             const lScale = card.querySelector(`[id^="prevLastScale_"]`).value || 'As per LPC';
             const appr = card.querySelector(`[id^="prevAppr_"]`).value || 'Approval N/A';
             const confirm = card.querySelector(`[id^="prevConfirm_"]`).value || 'Confirmation N/A';
-            const noc = card.querySelector(`[id^="prevNOC_"]`).value || 'NOC N/A';
+            const noc = card.querySelector(`[id^="prevNOC_"]`).value.trim();
             const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || 'Release Res. N/A';
             const release = card.querySelector(`[id^="prevRelease_"]`).value || 'Release Date N/A';
 
@@ -1021,8 +1164,12 @@
                 firstJoiningDate = period;
             }
 
+            if (noc) {
+                nocSummaryLines.push(`Prior Permission / NOC to join from ${name} was granted vide ${noc}.`);
+            }
+
             applicantNarrativeHTML += `
-                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong> (Confirmed vide <strong>${confirm}</strong>). Prior Permission / NOC was granted vide <strong>${noc}</strong>. Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
+                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong> (Confirmed vide <strong>${confirm}</strong>). ${noc ? `Prior Permission / NOC was granted vide <strong>${noc}</strong>. ` : ''}Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
             `;
 
             tableRowsHTML += `
@@ -1055,8 +1202,8 @@
                     <tr><td>xi</td><td>Whether allowed lien in the post of this service</td><td>No / Not Applicable</td><td>${cpNo}</td></tr>
                     <tr><td>xii</td><td>If incumbent did not revert, order of termination of lien</td><td>Not Applicable</td><td>${cpNo}</td></tr>
                     <tr><td>xiii</td><td>If reverted to parent office, whether within lien period</td><td>Not Applicable</td><td>${cpNo}</td></tr>
-                    <tr><td>xiv</td><td>Whether applied through proper channel for next service</td><td>Yes (Permission vide ${noc})</td><td>${cpNo}</td></tr>
-                    <tr><td>xv</td><td>Whether competent authority accorded permission / NOC</td><td>Yes (Order/Res: ${noc})</td><td>${cpNo}</td></tr>
+                    <tr><td>xiv</td><td>Whether applied through proper channel for next service</td><td>${noc ? `Yes (Permission vide ${noc})` : 'N/A'}</td><td>${cpNo}</td></tr>
+                    <tr><td>xv</td><td>Whether competent authority accorded permission / NOC</td><td>${noc ? `Yes (Order/Res: ${noc})` : 'N/A'}</td><td>${cpNo}</td></tr>
                     <tr><td>xvi</td><td>Whether covered under C.P.F. / G.P.F.</td><td>${gpfStatus}</td><td>${cpNo}</td></tr>
                     <tr><td>xvii</td><td>If covered under G.P.F., whether G.P.F. transferred</td><td>Yes / Transferred to present school</td><td>${cpNo}</td></tr>
                     <tr><td>xviii</td><td>If C.P.F., whether share along with interest transferred</td><td>N/A (Covered under GPF)</td><td>${cpNo}</td></tr>
@@ -1066,7 +1213,7 @@
 
             enclosuresHTML += `
                 <li>Attested copy of Appointment, Joining, Approval Order (${appr}), and Confirmation Order (${confirm}) of <strong>${name}</strong>.</li>
-                <li>Attested copy of Prior Permission / NOC of <strong>${name}</strong> (${noc}).</li>
+                ${noc ? `<li>Attested copy of Prior Permission / NOC of <strong>${name}</strong> (${noc}).</li>` : ''}
                 <li>Attested copy of Release Order / Release Resolution of <strong>${name}</strong> (${relMemo}).</li>
                 <li>Certificate of Continuous & Satisfactory Service from <strong>${name}</strong>.</li>
                 <li>Last Pay Certificate (LPC) / Pay Drawn Certificate issued by <strong>${name}</strong>.</li>
@@ -1092,13 +1239,90 @@
             <li>Reference Copy of G.O. No. 269-SE(S) dated 16.04.1996.</li>
         `;
 
-        const breakPeriod = `${firstJoiningDate || '06.10.1997'} to ${presentJoinDate}`;
+        const breakPeriod = hasPrevService
+            ? `${firstJoiningDate || '06.10.1997'} to ${presentJoinDate}`
+            : `N/A (No previous service on record)`;
         document.querySelectorAll('.lbl-breakPeriod').forEach(e => e.innerText = breakPeriod);
 
         document.querySelectorAll('.lbl-applicantNarrative').forEach(e => e.innerHTML = applicantNarrativeHTML);
         document.querySelectorAll('.lbl-tableRows').forEach(e => e.innerHTML = tableRowsHTML);
         document.getElementById('lbl-enclosuresList').innerHTML = enclosuresHTML;
         document.getElementById('annexurePrevSchoolsContainer').innerHTML = annexurePrevSchoolsHTML;
+
+        // ============ DOCUMENT 7: TEACHING EXPERIENCE CERTIFICATE ============
+        // Overall earliest joining date = first previous school's start (if any), else present joining date
+        const overallStartDate = hasPrevService ? (firstJoiningDate || presentJoinDate) : presentJoinDate;
+        const today = new Date();
+        const totalExp = durationBetween(overallStartDate, today);
+        const todayStr = `${String(today.getDate()).padStart(2,'0')} ${today.toLocaleString('en-US',{month:'long'})} ${today.getFullYear()}`;
+
+        let expCertHTML = `This is to certify that ${teacherName}${subjectQual ? ', ' + subjectQual + ',' : ''} has been serving as ${teacherDesg} at ${presentSchool}, P.O.-${poName}, District – ${district}.<br><br>`;
+
+        expCertHTML += `${pn.Poss} appointment was approved with effect from ${presentJoinDate} in ${presentPayScale}, under the Grant-in-Aid Rules, by the District Inspector of Schools (Secondary Education), ${district}, vide Memo No. ${presentAppr}`;
+        expCertHTML += hasPrevService
+            ? ` i.e. ${pn.Poss} date of joining in the present institution is ${presentJoinDate}.<br><br>`
+            : ` i.e. ${pn.Poss} first date of joining in service is ${presentJoinDate} and total teaching experience as of today i.e. ${todayStr} stands at ${totalExp || '[experience]'}.<br><br>`;
+
+        // Vacancy reason: omitted entirely unless a type is selected
+        if (vacancyType === 'RETIREMENT' && vacancyPersonName) {
+            expCertHTML += `${pn.Subj} was appointed against a permanent vacancy arising due to the retirement of ${vacancyPersonName}`;
+            expCertHTML += (csscLetter || apptLetter) ? `, as per ` : `.<br><br>`;
+        } else if (vacancyType === 'RESIGNATION' && vacancyPersonName) {
+            expCertHTML += `${pn.Subj} was appointed against a permanent vacancy arising due to the resignation of ${vacancyPersonName}`;
+            expCertHTML += (csscLetter || apptLetter) ? `, as per ` : `.<br><br>`;
+        } else if (vacancyType === 'NEWPOST' && vacancySanctionAuth) {
+            expCertHTML += `${pn.Subj} was appointed against a newly sanctioned post, sanctioned by ${vacancySanctionAuth}`;
+            expCertHTML += (csscLetter || apptLetter) ? `, as per ` : `.<br><br>`;
+        } else if (vacancyType === 'CUSTOM' && vacancyCustomVal) {
+            expCertHTML += `${pn.Subj} was appointed against a permanent vacancy arising due to ${vacancyCustomVal}`;
+            expCertHTML += (csscLetter || apptLetter) ? `, as per ` : `.<br><br>`;
+        } else if (csscLetter || apptLetter) {
+            // No vacancy type chosen, but recommendation/appointment letters still given
+            expCertHTML += `${pn.Poss} appointment was made as per `;
+        }
+
+        if (vacancyType !== 'NONE' || csscLetter || apptLetter) {
+            if (csscLetter) expCertHTML += `CSSC Recommendation Letter No. ${csscLetter}${apptLetter ? ', and ' : '.<br><br>'}`;
+            if (apptLetter) expCertHTML += `WBBSE Appointment Letter No. ${apptLetter}.<br><br>`;
+        }
+
+        if (hasPrevService) {
+            // Fetch NOC / previous-service narrative only when prior school data exists
+            let prevNarrative = `Prior to joining ${presentSchool}, ${pn.subj} served in the following institution(s) in a regular sanctioned post:<br>`;
+            cards.forEach((card, index) => {
+                const idx = index + 1;
+                const name = card.querySelector(`[id^="prevName_"]`).value || `Previous School #${idx}`;
+                const post = card.querySelector(`[id^="prevPost_"]`).value || 'Assistant Teacher';
+                const period = card.querySelector(`[id^="prevPeriod_"]`).value || 'Period N/A';
+                const noc = card.querySelector(`[id^="prevNOC_"]`).value.trim();
+                const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || '';
+
+                prevNarrative += `&nbsp;&nbsp;• ${name} — as ${post}, from ${period}`;
+                if (noc) {
+                    prevNarrative += `, released to join the present post vide Prior Permission / NOC No. ${noc}`;
+                    if (relMemo) prevNarrative += ` and Release Order ${relMemo}`;
+                    prevNarrative += `.<br>`;
+                } else {
+                    prevNarrative += `.<br>`;
+                }
+            });
+            const overallExpFromFirst = durationBetween(overallStartDate, today);
+            prevNarrative += `<br>Counting service from ${pn.poss} first date of joining, i.e. ${overallStartDate}, ${pn.poss} total teaching experience as of today i.e. ${todayStr} stands at ${overallExpFromFirst || '[experience]'}.<br><br>`;
+            expCertHTML += prevNarrative;
+        }
+        // If no previous service exists, the NOC / prior-service block above is fully skipped (left blank)
+
+        expCertHTML += `${teacherName} has been working continuously, sincerely, and diligently in this institution from ${presentJoinDate} to till date, and ${pn.poss} conduct during the entire period has been satisfactory.`;
+
+        document.getElementById('lbl-expCertBody').innerHTML = expCertHTML;
+
+        // Apply letterhead print margin to the Experience Certificate paper only
+        const doc7Paper = document.getElementById('doc7');
+        if (letterheadMode === 'LETTERHEAD') {
+            doc7Paper.classList.add('letterhead-print');
+        } else {
+            doc7Paper.classList.remove('letterhead-print');
+        }
 
         // BILINGUAL MCR / ADMINISTRATOR ORDER (DOC 2)
         const mcrContainer = document.getElementById('mcrContainer');
@@ -1119,7 +1343,7 @@
 
                 <div class="lang-block bengali-text">
                     <p><strong>বাংলা সংস্করণ (BENGALI VERSION):</strong><br>
-                    <strong>প্রস্তাব/সিদ্ধান্ত:</strong> অত্র বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর ${hoiTitle}-এর মাধ্যমে পেশকৃত আবেদনপত্র এবং পূর্ববর্তী বিদ্যালয়ের অনুমোদনপত্র, পূর্ব-অনুমতি (Prior Permission / NOC), ছাড়পত্র (Release Order), শেষ বেতন সার্টিফিকেট (LPC) ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') বিশদভাবে বিবেচনা করা হইল। নথি এবং সার্ভিস বুক পর্যালোচনার পর সর্বসম্মতিক্রমে প্রস্তাব গৃহীত হইল যে, উক্ত শিক্ষকের <strong>${breakPeriod}</strong> সময়কালের চাকরি ধারাবাহিক এবং নিষ্কোপ। G.O. No. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের আবেদনটি সর্বসম্মতিক্রমে সুপারিশ করা হইল। ${hoiTitle}${secySignTitle} মহাশয়/মহাশয়াকে জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে কমিশনার অফ স্কুল এডুকেশন, পশ্চিমবঙ্গ-এর নিকট প্রয়োজনীয় প্রশাসনিক অনুমোদনের জন্য নথি প্রেরণের নির্দেশ দেওয়া হইল।</p>
+                    অত্র বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর ${hoiTitle}-এর মাধ্যমে পেশকৃত আবেদনপত্র এবং পূর্ববর্তী বিদ্যালয়ের অনুমোদনপত্র, পূর্ব-অনুমতি (Prior Permission / NOC), ছাড়পত্র (Release Order), শেষ বেতন সার্টিফিকেট (LPC) ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') বিশদভাবে বিবেচনা করা হইল। নথি এবং সার্ভিস বুক পর্যালোচনার পর সর্বসম্মতিক্রমে প্রস্তাব গৃহীত হইল যে, উক্ত শিক্ষকের <strong>${breakPeriod}</strong> সময়কালের চাকরি ধারাবাহিক এবং নিষ্কোপ। G.O. No. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের আবেদনটি সর্বসম্মতিক্রমে সুপারিশ করা হইল। ${hoiTitle}${secySignTitle} মহাশয়/মহাশয়াকে জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে কমিশনার অফ স্কুল এডুকেশন, পশ্চিমবঙ্গ-এর নিকট প্রয়োজনীয় প্রশাসনিক অনুমোদনের জন্য নথি প্রেরণের নির্দেশ দেওয়া হইল।</p>
                 </div>
 
                 <br><br>
@@ -1175,19 +1399,6 @@
     }
 
     window.onload = function() {
-        addSchoolField({
-            name: 'JHILIMILI HIGH SCHOOL',
-            post: 'Assistant Teacher',
-            agency: 'WBRSSC (Western Region)',
-            period: '06.10.1997 to 20.04.2005',
-            joinScale: 'Rs. 4650-10175/- (ROPA-98)',
-            lastScale: 'Rs. 7100-37600/- GP 4100/- (ROPA-09)',
-            appr: '785-S/G dated 15.11.1997',
-            confirm: 'Conf/78 dated 12.10.1999',
-            noc: 'NOC Memo No. 12/G dated 05.01.2005',
-            relMemo: 'Res. No. 04 dated 12.03.2005',
-            relDate: '20.04.2005 (A.N.)'
-        });
         updateAdminDropdowns('ADMIN');
     };
 </script>
