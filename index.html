@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB SE Department Service Continuation & Form P Suite</title>
+    <style>
+        :root {
+            --primary: #0f294a;
+            --secondary: #1a5693;
+            --accent: #2b6cb0;
+            --bg: #f0f4f8;
+            --border: #cbd5e0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', 'Kalpurush', 'SolaimanLipi', Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: #2d3748;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        h1, h2, h3 { color: var(--primary); margin-top: 0; }
+        h2 { font-size: 1.15rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 20px; }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+
+        .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        input, select {
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 0.92rem;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+        }
+
+        .school-card {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 5px solid var(--secondary);
+            padding: 18px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-add { background: #2f855a; color: white; }
+        .btn-add:hover { background: #276749; }
+        .btn-remove { background: #c53030; color: white; padding: 4px 10px; font-size: 0.8rem; position: absolute; top: 15px; right: 15px; }
+        .btn-generate { background: var(--primary); color: white; width: 100%; font-size: 1.1rem; padding: 14px; margin-top: 15px; }
+        .btn-generate:hover { background: #081a31; }
+        .btn-print { background: #2b6cb0; color: white; font-size: 1rem; margin: 15px 5px; }
+
+        /* Navigation Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #cbd5e0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 18px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        /* Strict A4 Portrait Paper */
+        .paper-wrapper { display: none; }
+
+        .paper {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 18mm 20mm;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 0 12px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            font-family: 'Times New Roman', 'Kalpurush', 'SolaimanLipi', serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            color: #000;
+            page-break-after: always;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        .header-letter {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .header-letter h2 {
+            margin: 0;
+            font-size: 14pt;
+            text-transform: uppercase;
+            border: none;
+            color: #000;
+        }
+
+        .meta-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 10pt;
+        }
+
+        table.doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        table.doc-table th, table.doc-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 8.5pt;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        ol.enclosure-list { padding-left: 20px; font-size: 10pt; text-align: justify; }
+
+        .bengali-text {
+            font-family: 'Kalpurush', 'SolaimanLipi', 'Siyam Rupali', sans-serif;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .lang-block {
+            background: #fafafa;
+            border: 1px dashed #718096;
+            padding: 10px 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .paper-wrapper { display: block !important; }
+            .paper { 
+                box-shadow: none; 
+                width: 100% !important; 
+                margin: 0 !important; 
+                padding: 10mm 12mm !important; 
+                display: block !important; 
+                page-break-after: always;
+                text-align: justify;
+            }
+            .tab-nav { display: none !important; }
+            @page { size: A4 portrait; margin: 10mm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container no-print">
+    <div class="card">
+        <h1>WB SE Service Continuation & Form 'P' Generator</h1>
+        <p style="margin-top:-8px; color:#718096;">Full Administrative Proposal & Finance Dept Annexure 'P' Proforma (G.O. No. 249-F(Pen) dated 27.05.2019)</p>
+        
+        <h2>1. Teacher & Governance Setup</h2>
+        <div class="grid-3">
+            <div class="form-group">
+                <label>Teacher Full Name:</label>
+                <input type="text" id="teacherName" value="Sri Chinmoy Mandal">
+            </div>
+            <div class="form-group">
+                <label>Date of Birth:</label>
+                <input type="text" id="dob" value="15.08.1972" placeholder="DD.MM.YYYY">
+            </div>
+            <div class="form-group">
+                <label>Designation & Subject:</label>
+                <input type="text" id="teacherDesg" value="Assistant Teacher">
+            </div>
+            <div class="form-group">
+                <label>HOI Designation / Title:</label>
+                <select id="hoiStatus" onchange="toggleCustom('hoiStatus', 'customHoiGroup')">
+                    <option value="Headmaster" selected>Headmaster</option>
+                    <option value="Headmistress">Headmistress</option>
+                    <option value="Teacher-in-Charge">Teacher-in-Charge</option>
+                    <option value="CUSTOM">Other / Manual Entry</option>
+                </select>
+            </div>
+            <div class="form-group" id="customHoiGroup" style="display:none;">
+                <label>Custom HOI Designation:</label>
+                <input type="text" id="customHoiVal" placeholder="e.g., Assistant Headmaster & TIC">
+            </div>
+            <div class="form-group">
+                <label>Administration Type:</label>
+                <select id="adminType" onchange="updateAdminDropdowns(this.value)">
+                    <option value="MC">Managing Committee (MC)</option>
+                    <option value="ADHOC">Ad-hoc Committee</option>
+                    <option value="ADMIN" selected>Administrator Appointed by Govt.</option>
+                </select>
+            </div>
+            <div class="form-group" id="presidentGroup">
+                <label>President / Authority Title:</label>
+                <select id="presidentStatus" onchange="toggleCustom('presidentStatus', 'customPresGroup')">
+                    <option value="President" selected>President</option>
+                    <option value="Chairman">Chairman</option>
+                    <option value="Administrator">Administrator</option>
+                    <option value="CUSTOM">Other / Manual Entry</option>
+                </select>
+            </div>
+            <div class="form-group" id="customPresGroup" style="display:none;">
+                <label>Custom President Title:</label>
+                <input type="text" id="customPresVal" placeholder="e.g., President, Ad-hoc Committee">
+            </div>
+            <div class="form-group" id="secyGroup">
+                <label>Secretary Title (Optional):</label>
+                <select id="secyStatus" onchange="toggleCustom('secyStatus', 'customSecyGroup')">
+                    <option value="Ex-Officio Secretary">Ex-Officio Secretary</option>
+                    <option value="Secretary">Secretary</option>
+                    <option value="NONE" selected>None / Not Applicable</option>
+                    <option value="CUSTOM">Other / Manual Entry</option>
+                </select>
+            </div>
+            <div class="form-group" id="customSecyGroup" style="display:none;">
+                <label>Custom Secretary Title:</label>
+                <input type="text" id="customSecyVal" placeholder="e.g., H.M. & Ex-Officio Secretary">
+            </div>
+        </div>
+
+        <h2>2. Present School Context (TFHS) & Pension Particulars</h2>
+        <div class="grid-3">
+            <div class="form-group">
+                <label>Present School Name:</label>
+                <input type="text" id="presentSchool" value="Taldangra Fulmati High School (H.S.)">
+            </div>
+            <div class="form-group">
+                <label>Post Office (P.O.):</label>
+                <input type="text" id="poName" value="Taldangra">
+            </div>
+            <div class="form-group">
+                <label>District:</label>
+                <input type="text" id="district" value="Bankura">
+            </div>
+            <div class="form-group">
+                <label>Joining Date in Present Post:</label>
+                <input type="text" id="presentJoinDate" value="21.04.2005">
+            </div>
+            <div class="form-group">
+                <label>Present Joining Pay Scale:</label>
+                <input type="text" id="presentPayScale" value="Rs. 6000-12000/- (ROPA-98) / Level 11">
+            </div>
+            <div class="form-group">
+                <label>Recruitment Agency:</label>
+                <input type="text" id="presentAgency" value="WBRSSC (Western Region)">
+            </div>
+            <div class="form-group">
+                <label>Present Approval Memo & Date:</label>
+                <input type="text" id="presentAppr" value="1204/S/SE dated 18.05.2005">
+            </div>
+            <div class="form-group">
+                <label>Present Confirmation Memo & Date:</label>
+                <input type="text" id="presentConfirm" value="Conf/102 dated 10.05.2007">
+            </div>
+            <div class="form-group">
+                <label>CPF / GPF Scheme Coverage:</label>
+                <select id="gpfStatus" onchange="toggleCustom('gpfStatus', 'customGpfGroup')">
+                    <option value="G.P.F. (Covered under DCRB Scheme 1981)" selected>G.P.F. (DCRB Scheme 1981)</option>
+                    <option value="C.P.F. Scheme">C.P.F. Scheme</option>
+                    <option value="New Pension Scheme (NPS)">New Pension Scheme (NPS)</option>
+                    <option value="CUSTOM">Other / Manual Entry</option>
+                </select>
+            </div>
+            <div class="form-group" id="customGpfGroup" style="display:none;">
+                <label>Custom GPF / CPF Entry:</label>
+                <input type="text" id="customGpfVal" placeholder="e.g., G.P.F. Account No. EDU/BNK/12345">
+            </div>
+            <div class="form-group">
+                <label>Correspondence Page No. (C.P. No. in File):</label>
+                <input type="text" id="cpNo" value="C.P. No. 1 to 15" placeholder="e.g., C.P. No. 1-12">
+            </div>
+            <div class="form-group">
+                <label>Audit Memo / Vetting Ref (Enter 'NA' if None):</label>
+                <input type="text" id="auditMemo" value="NA" placeholder="e.g., NA or Memo No. 12/Audit">
+            </div>
+        </div>
+
+        <h2>3. Previous School Details (Exhaustive Annexure 'P' Entry)</h2>
+        <div id="schoolsContainer">
+            <!-- Dynamic Cards Inserted Here -->
+        </div>
+
+        <button type="button" class="btn btn-add" id="addSchoolBtn" onclick="addSchoolField()">+ Add Another Previous School</button>
+        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All 5 Documents (Form P + Proposals)</button>
+    </div>
+</div>
+
+<!-- Output Navigation -->
+<div class="no-print" id="outputNavigation" style="display:none; max-width: 1100px; margin: 0 auto;">
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="showTab('doc1')">1. Applicant Prayer</button>
+        <button class="tab-btn" onclick="showTab('doc2')">2. MC Res / Admin Order</button>
+        <button class="tab-btn" onclick="showTab('doc3')">3. Master Proposal</button>
+        <button class="tab-btn" onclick="showTab('doc4')">4. Draft Order (Bikash Bhawan)</button>
+        <button class="tab-btn" onclick="showTab('doc5')" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma (Blank Part-II)</button>
+        <button class="tab-btn" onclick="showTab('all')" style="background:#2f855a; color:white;">View All for Printing</button>
+    </div>
+    <div style="text-align: right; margin-bottom: 15px;">
+        <button class="btn btn-print" onclick="window.print()">Print Selected / All Documents</button>
+    </div>
+</div>
+
+<div class="paper-wrapper" id="paperWrapper">
+
+    <!-- DOCUMENT 1: APPLICANT'S PRAYER -->
+    <div class="paper doc-page" id="doc1">
+        <p>To<br>
+        <strong>The <span class="lbl-addressedToTitle">Administrator</span></strong>,<br>
+        <span class="lbl-addressedToBody">Taldangra Fulmati High School (H.S.)</span>,<br>
+        P.O. <span class="lbl-poName">Taldangra</span>, District: <span class="lbl-district">Bankura</span>.</p>
+
+        <p style="margin-top: 12px; margin-bottom: 12px;"><strong>Through</strong><br>
+        <strong>The <span class="lbl-hoiTitle">Headmaster</span></strong><span class="lbl-secyHeaderRouting"></span>,<br>
+        <span class="lbl-presentSchool">Taldangra Fulmati High School (H.S.)</span>,<br>
+        P.O. <span class="lbl-poName">Taldangra</span>, District: <span class="lbl-district">Bankura</span>.</p>
+
+        <p style="margin-top: 15px;"><strong>Sub:</strong> Prayer for submission of proposal for Continuation of Service and Pay Protection for the period from <strong><span class="lbl-breakPeriod">[Break Period]</span></strong> under G.O. No. 269-SE(S) dated 16.04.1996.</p>
+
+        <p>Respected Sir/Madam,</p>
+
+        <p>I have the honour to state that I am currently serving as an approved <strong><span class="lbl-teacherDesg">[Designation]</span></strong> at <strong><span class="lbl-presentSchool">[Present School Name]</span></strong>, having joined this institution on <strong><span class="lbl-presentJoin">[Joining Date]</span></strong> upon recommendation by the <strong><span class="lbl-presentAgency">[Agency]</span></strong> vide Approval Memo No. <strong><span class="lbl-presentAppr">[Approval]</span></strong> issued by the District Inspector of Schools (SE), <span class="lbl-district">[District]</span>.</p>
+
+        <p>Prior to joining my present assignment, I served as an approved teacher in regular sanctioned post(s) as detailed below:</p>
+
+        <div class="lbl-applicantNarrative"></div>
+
+        <p>My service across all institutions has been continuous, satisfactory, and completely unblemished. To complete the pay fixation vetting regarding service continuity and pay protection for the period from <strong><span class="lbl-breakPeriod">[Break Period]</span></strong>, a formal administrative order from the <strong>Commissioner of School Education, West Bengal</strong> under <strong>G.O. No. 269-SE(S) dated 16.04.1996</strong> read with Finance Dept No. 249-F(Pen) dated 27.05.2019 is required.</p>
+
+        <p>I have submitted all necessary original/attested papers including Prior Permission / NOC, Release Order, MC Resolutions, Approval of Appointment, Last Pay Certificate (LPC), and filled-in Annexure 'P' Proforma. I humbly request you to kindly consider my case, approve the recommendation, and forward the complete proposal to the competent state authority through the DI/S (SE), <span class="lbl-district">[District]</span>.</p>
+
+        <br><br>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+                Date: ____/____/2026<br>
+                Place: ____________
+            </div>
+            <div style="text-align:center;">
+                Yours faithfully,<br><br><br>
+                ___________________________________<br>
+                (<strong><span class="lbl-teacherName">[Teacher Name]</span></strong>)<br>
+                <span class="lbl-teacherDesg">[Designation]</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENT 2: RESOLUTION / ORDER (BILINGUAL) -->
+    <div class="paper doc-page" id="doc2">
+        <div class="header-letter">
+            <h2 class="lbl-presentSchoolUpper">[PRESENT SCHOOL NAME]</h2>
+            <div style="font-size:10pt; font-weight:bold;">DISTRICT: <span class="lbl-districtUpper">[DISTRICT]</span> | WEST BENGAL</div>
+        </div>
+
+        <div id="mcrContainer">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+
+    <!-- DOCUMENT 3: MASTER HOI PROPOSAL & FORWARDING LETTER -->
+    <div class="paper doc-page" id="doc3">
+        <div class="header-letter">
+            <h2 class="lbl-presentSchoolUpper">[PRESENT SCHOOL NAME]</h2>
+            <div style="font-size:10pt;">P.O.: <span class="lbl-poNameUpper">TALDANGRA</span> | DIST.: <span class="lbl-districtUpper">[DISTRICT]</span> | WEST BENGAL</div>
+        </div>
+
+        <div class="meta-line">
+            <div><strong>Ref No.:</strong> _____________________</div>
+            <div><strong>Date:</strong> ____/____/2026</div>
+        </div>
+
+        <p>To<br>
+        <strong>The Commissioner of School Education, West Bengal,</strong><br>
+        Bikash Bhawan, 7th Floor, Salt Lake, Kolkata - 700091.<br>
+        <em>(Through: The District Inspector of Schools (SE), <span class="lbl-district">[District]</span>)</em></p>
+
+        <p><strong>Sub:</strong> Submission of proposal for issuance of Order for Continuation of Service and Pay Protection from <strong><span class="lbl-breakPeriod">[Break Period]</span></strong> under G.O. No. 269-SE(S) dated 16.04.1996 in r/o <strong><span class="lbl-teacherName">[Teacher Name]</span></strong>, <span class="lbl-teacherDesg">[Designation]</span>.</p>
+
+        <p class="lbl-auditMemoRef" style="display:none;"></p>
+
+        <p>Sir/Madam,</p>
+
+        <p>I have the honour to submit herewith the complete proposal and service dossier in respect of <strong><span class="lbl-teacherName">[Teacher Name]</span></strong>, <span class="lbl-teacherDesg">[Designation]</span> of this institution, for favour of your administrative approval and issuance of Order for Continuation of Service and Protection of Pay under G.O. No. 269-SE(S) dated 16.04.1996.</p>
+
+        <p><strong>Chronological Service Summary & Progression:</strong></p>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Sl</th>
+                    <th>Institution Name</th>
+                    <th>Designation</th>
+                    <th>Selection Channel</th>
+                    <th>Service Period</th>
+                    <th>DI/S Approval Details</th>
+                </tr>
+            </thead>
+            <tbody class="lbl-tableRows">
+                <!-- Dynamic Rows -->
+            </tbody>
+        </table>
+
+        <p>The incumbent's application was thoroughly examined, verified, and recommended by the <span class="lbl-adminAuthority">[Authority]</span> of this school. All necessary documents including prior permission, release orders, LPC, Annexure 'P' Proforma report (No. 249-F(Pen)), and continuous service certificates from the previous school(s) are attached herewith in triplicate.</p>
+
+        <p>I request you to kindly issue the Order for Continuation of Service and Protection of Pay at an early date to clear the pay fixation vetting query.</p>
+
+        <br>
+        <div style="text-align:right;">
+            ___________________________________<br>
+            <strong><span class="lbl-hoiTitle">[HOI Title]</span><span class="lbl-secySignBlock"></span></strong><br>
+            <span class="lbl-presentSchool">[Present School Name]</span><br>
+            [Official Seal]
+        </div>
+
+        <hr style="margin-top:20px; border:0; border-top:1px dashed #000;">
+        <p><strong>LIST OF ENCLOSURES ATTACHED (IN TRIPLICATE):</strong></p>
+        <ol class="enclosure-list" id="lbl-enclosuresList">
+            <!-- Dynamic Enclosure Checklist -->
+        </ol>
+    </div>
+
+    <!-- DOCUMENT 4: DRAFT ADMINISTRATIVE ORDER (BIKASH BHAWAN) -->
+    <div class="paper doc-page" id="doc4">
+        <div class="header-letter">
+            <h2>GOVERNMENT OF WEST BENGAL</h2>
+            <div style="font-size:11pt; font-weight:bold;">DIRECTORATE OF SCHOOL EDUCATION / OFFICE OF THE COMMISSIONER OF SCHOOL EDUCATION</div>
+            <div style="font-size:10pt;">BIKASH BHAWAN, SALT LAKE, KOLKATA - 700091</div>
+        </div>
+
+        <div class="meta-line">
+            <div><strong>Memo No.:</strong> ______________/G.A.</div>
+            <div><strong>Dated:</strong> ____/____/2026</div>
+        </div>
+
+        <p style="text-align:center; font-weight:bold; text-decoration:underline; font-size:13pt; margin:15px 0;">ORDER</p>
+
+        <p>In terms of West Bengal School Education Department <strong>G.O. No. 269-SE(S) dated 16.04.1996</strong> read with relevant Pay Rules, sanction is hereby accorded for <strong>Continuation of Service and Protection of Pay</strong> in respect of <strong><span class="lbl-teacherName">[Teacher Name]</span></strong>, <span class="lbl-teacherDesg">[Designation]</span>, <span class="lbl-presentSchool">[Present School Name]</span>, District: <span class="lbl-district">[District]</span>, for the period from <strong><span class="lbl-breakPeriod">[Break Period]</span></strong>.</p>
+
+        <p>This continuation of service and pay protection is granted subject to the fulfillment of the following conditions:</p>
+        <ol>
+            <li>The service rendered by the teacher in previous approved institution(s) was continuous, sanctioned, and duly approved by the respective District Inspector of Schools (SE).</li>
+            <li>The interregnum / transition period between release from previous post and joining the present post is regularized in terms of existing leave/service rules without granting any financial double benefit.</li>
+            <li>The pay of the incumbent shall be fixed by the DI/S (SE), <span class="lbl-district">[District]</span> in the present post protecting the last basic pay drawn in the previous post as per LPC.</li>
+            <li>This order does not confer any seniority claim over teachers already confirmed in the present cadre prior to his/her joining date (<span class="lbl-presentJoin">[Joining Date]</span>).</li>
+        </ol>
+
+        <p>This issues with the approval of the competent authority.</p>
+
+        <br><br>
+        <div style="text-align:right;">
+            ___________________________________<br>
+            <strong>Commissioner of School Education</strong><br>
+            West Bengal
+        </div>
+
+        <br><br>
+        <p><strong>Memo No.:</strong> ______________/1(5)/G.A. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Dated:</strong> ____/____/2026</p>
+        <p>Copy forwarded for information & necessary action to:</p>
+        <ol style="font-size:10.5pt;">
+            <li>The District Inspector of Schools (SE), <span class="lbl-district">[District]</span> for necessary pay fixation vetting.</li>
+            <li>The <span class="lbl-hoiTitle">[HOI Title]</span>, <span class="lbl-presentSchool">[Present School Name]</span>.</li>
+            <li>The Audit Officer, Education Directorate, West Bengal.</li>
+            <li><strong><span class="lbl-teacherName">[Teacher Name]</span></strong>, <span class="lbl-teacherDesg">[Designation]</span>.</li>
+            <li>Guard File.</li>
+        </ol>
+
+        <br>
+        <div style="text-align:right;">
+            ___________________________________<br>
+            <strong>For Commissioner of School Education</strong>
+        </div>
+    </div>
+
+    <!-- DOCUMENT 5: ANNEXURE 'P' PROFORMA REPORT (G.O. NO. 249-F(Pen) DATED 27.05.2019) -->
+    <div class="paper doc-page" id="doc5">
+        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:10px;">
+            <div style="font-size:11pt; font-weight:bold;">ANNEXURE-P</div>
+            <div style="font-size:9.5pt; font-weight:bold; text-transform:uppercase;">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
+            <div style="font-size:8pt;">(In terms of Finance Department, Pension Branch Memo No. 249-F(Pen) Dated 27.05.2019)</div>
+        </div>
+
+        <table class="doc-table">
+            <tr>
+                <td style="width:4%;"><strong>i</strong></td>
+                <td style="width:46%;"><strong>Name of the Officer / Teacher</strong></td>
+                <td style="width:35%;"><strong><span class="lbl-teacherName">[Teacher Name]</span></strong></td>
+                <td style="width:15%;"><strong>Doc. Evidence under <span class="lbl-cpNo">[CP No]</span></strong></td>
+            </tr>
+            <tr>
+                <td><strong>ii</strong></td>
+                <td><strong>Date of Birth</strong></td>
+                <td><span class="lbl-dob">[DOB]</span></td>
+                <td><span class="lbl-cpNo">[CP No]</span></td>
+            </tr>
+            <tr>
+                <td><strong>iii</strong></td>
+                <td><strong>Present Post (Designation)</strong></td>
+                <td><span class="lbl-teacherDesg">[Designation]</span>, <span class="lbl-presentSchool">[Present School]</span></td>
+                <td><span class="lbl-cpNo">[CP No]</span></td>
+            </tr>
+        </table>
+
+        <div style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
+            PART-I: DETAILS OF PRESENT SERVICE
+        </div>
+        <table class="doc-table" style="margin-top:0;">
+            <tr><td style="width:4%;">i</td><td style="width:46%;">Recruiting procedure - whether through PSC/SSC/CSC or any other organization</td><td style="width:35%;"><span class="lbl-presentAgency">[Agency]</span></td><td style="width:15%;"><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>ii</td><td>Appointing authority</td><td>Managing Committee / Administrator, <span class="lbl-presentSchool">[School]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>iii</td><td>Joined in the post of (Designation)</td><td><span class="lbl-teacherDesg">[Designation]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>iv</td><td>Date of Joining</td><td><span class="lbl-presentJoin">[Joining Date]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>v</td><td>Pay scale in the post of joining</td><td><span class="lbl-presentPayScale">[Present Scale]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>vi</td><td>Joining Order / Approval Order No. & Date</td><td>Order No.: <span class="lbl-presentAppr">[Approval]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>vii</td><td>Date of Confirmation in the present post</td><td>Order No.: <span class="lbl-presentConfirm">[Confirm]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>viii</td><td>Whether covered under C.P.F./G.P.F.</td><td><span class="lbl-gpfStatus">[GPF Status]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <tr><td>ix</td><td>Pension Rules/Scheme applicable</td><td>West Bengal Recognized Non-Govt. Educational Institution Employees DCRB Scheme 1981</td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+        </table>
+
+        <div id="annexurePrevSchoolsContainer">
+            <!-- Dynamic 1st Service, 2nd Service, 3rd Service Tables (i to xix) -->
+        </div>
+
+        <br>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+                <strong>Signature of the Applicant:</strong> _______________________<br>
+                <strong>Name:</strong> <span class="lbl-teacherName">[Teacher Name]</span><br>
+                <strong>Designation:</strong> <span class="lbl-teacherDesg">[Designation]</span><br>
+                <strong>Place of Posting:</strong> <span class="lbl-presentSchool">[Present School]</span>
+            </div>
+            <div style="text-align:center;">
+                ___________________________________<br>
+                <strong>Signature of the Competent Authority / HOI</strong><br>
+                <span class="lbl-presentSchool">[Present School]</span> [Seal]
+            </div>
+        </div>
+
+        <div style="font-size:7pt; margin-top:8px; border-top:1px solid #000; padding-top:3px;">
+            * Part-I of the proforma is to be filled up by Administrative Department. Authenticated & attested documents/orders with proper mention of C.P. No. are mandatory against each item.<br>
+            ** Deposit of Prorata Pension & Gratuity along with interest under Head "0071-Pension and Other Retirement Benefits".<br>
+            *** Service Book(s) related to all the services are enclosed herewith.<br>
+            **** Strike off column(s) which is not applicable.
+        </div>
+
+        <hr style="margin:10px 0; border:0; border-top:1px dashed #000;">
+
+        <!-- STRICTLY LEFT BLANK FOR FINANCE DEPARTMENT / PENSION BRANCH USE -->
+        <div style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">
+            PART-II (For use of the Finance Department, Pension Branch)
+        </div>
+        <table class="doc-table" style="margin-top:0;">
+            <thead>
+                <tr>
+                    <th style="width:5%;">Sl</th>
+                    <th style="width:45%;">Item / Query</th>
+                    <th style="width:12.5%;">1st Service</th>
+                    <th style="width:12.5%;">2nd Service</th>
+                    <th style="width:12.5%;">3rd Service</th>
+                    <th style="width:12.5%;">4th Service</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="height:35px;">
+                    <td>1</td>
+                    <td>Whether the resignation(s) is/are to be treated as technical resignation or clear resignation</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr style="height:45px;">
+                    <td>2</td>
+                    <td>Observation/decision with reasons</td>
+                    <td colspan="4">&nbsp;</td>
+                </tr>
+                <tr style="height:45px;">
+                    <td>3</td>
+                    <td>Comments/Remarks</td>
+                    <td colspan="4">&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br>
+        <div style="display:flex; justify-content:space-between; margin-top:15px;">
+            <div>
+                Date: ____/____/2026<br>
+                Place: Bikash Bhawan, Kolkata
+            </div>
+            <div style="text-align:center;">
+                ___________________________________<br>
+                <strong>Signature / Sanctioning Authority</strong><br>
+                Finance Department, Pension Branch<br>
+                Government of West Bengal
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let schoolCount = 0;
+    const maxSchools = 3;
+
+    function toggleCustom(selectId, groupid) {
+        const val = document.getElementById(selectId).value;
+        document.getElementById(groupid).style.display = (val === 'CUSTOM') ? 'flex' : 'none';
+    }
+
+    function updateAdminDropdowns(type) {
+        const presSelect = document.getElementById('presidentStatus');
+        const secyGroup = document.getElementById('secyGroup');
+        
+        if (type === 'ADMIN') {
+            presSelect.value = 'Administrator';
+            secyGroup.style.display = 'none';
+        } else if (type === 'ADHOC') {
+            presSelect.value = 'Chairman';
+            secyGroup.style.display = 'flex';
+        } else {
+            presSelect.value = 'President';
+            secyGroup.style.display = 'flex';
+        }
+    }
+
+    function addSchoolField(defaultData = null) {
+        if (schoolCount >= maxSchools) return;
+
+        schoolCount++;
+        const container = document.getElementById('schoolsContainer');
+        const card = document.createElement('div');
+        card.className = 'school-card';
+        card.id = `schoolCard_${schoolCount}`;
+
+        const schoolName = defaultData ? defaultData.name : '';
+        const post = defaultData ? defaultData.post : 'Assistant Teacher';
+        const period = defaultData ? defaultData.period : '';
+        const joinScale = defaultData ? defaultData.joinScale : 'Rs. 4650-10175/- (ROPA-98)';
+        const lastScale = defaultData ? defaultData.lastScale : 'Rs. 7100-37600/- GP 4100/- (ROPA-09)';
+        const appr = defaultData ? defaultData.appr : '';
+        const noc = defaultData ? defaultData.noc : '';
+        const relMemo = defaultData ? defaultData.relMemo : '';
+        const relDate = defaultData ? defaultData.relDate : '';
+
+        card.innerHTML = `
+            <button type="button" class="btn btn-remove" onclick="removeSchoolField(${schoolCount})">Remove</button>
+            <h3>Previous School #${schoolCount}</h3>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>School Name:</label>
+                    <input type="text" id="prevName_${schoolCount}" value="${schoolName}" placeholder="e.g., Jhilimili High School">
+                </div>
+                <div class="form-group">
+                    <label>Designation & Subject:</label>
+                    <input type="text" id="prevPost_${schoolCount}" value="${post}" placeholder="e.g., Assistant Teacher">
+                </div>
+                <div class="form-group">
+                    <label>Service Period (From - To):</label>
+                    <input type="text" id="prevPeriod_${schoolCount}" value="${period}" placeholder="e.g., 06.10.1997 to 20.04.2005">
+                </div>
+                <div class="form-group">
+                    <label>Pay Scale in Post of Joining:</label>
+                    <input type="text" id="prevJoinScale_${schoolCount}" value="${joinScale}" placeholder="e.g., Rs. 4650-10175/-">
+                </div>
+                <div class="form-group">
+                    <label>Pay Scale in Post Held Last (LPC Scale):</label>
+                    <input type="text" id="prevLastScale_${schoolCount}" value="${lastScale}" placeholder="e.g., Rs. 7100-37600/- + GP 4100/-">
+                </div>
+                <div class="form-group">
+                    <label>DI Approval Memo No. & Date:</label>
+                    <input type="text" id="prevAppr_${schoolCount}" value="${appr}" placeholder="e.g., 785-S/G dated 15.11.1997">
+                </div>
+                <div class="form-group">
+                    <label>Prior Permission / NOC Memo/Res. No. & Date:</label>
+                    <input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., NOC Memo No. 12/G dated 05.01.2005">
+                </div>
+                <div class="form-group">
+                    <label>Release Order Res. / Memo No. & Date:</label>
+                    <input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005">
+                </div>
+                <div class="form-group">
+                    <label>Release Date & Time:</label>
+                    <input type="text" id="prevRelease_${schoolCount}" value="${relDate}" placeholder="e.g., 20.04.2005 (A.N.)">
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+
+    function removeSchoolField(id) {
+        document.getElementById(`schoolCard_${id}`).remove();
+        schoolCount--;
+    }
+
+    function showTab(tabId) {
+        const pages = document.querySelectorAll('.doc-page');
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(b => b.classList.remove('active'));
+
+        if (tabId === 'all') {
+            pages.forEach(p => p.style.display = 'block');
+        } else {
+            pages.forEach(p => {
+                p.style.display = (p.id === tabId) ? 'block' : 'none';
+            });
+        }
+        event.target.classList.add('active');
+    }
+
+    function generateAllDocuments() {
+        const teacherName = document.getElementById('teacherName').value || '[Teacher Name]';
+        const dob = document.getElementById('dob').value || '[DOB]';
+        const teacherDesg = document.getElementById('teacherDesg').value || '[Designation]';
+        
+        let hoiTitle = document.getElementById('hoiStatus').value;
+        if (hoiTitle === 'CUSTOM') hoiTitle = document.getElementById('customHoiVal').value.trim() || 'Head of Institution';
+
+        const adminType = document.getElementById('adminType').value;
+        
+        let presTitle = document.getElementById('presidentStatus').value;
+        if (presTitle === 'CUSTOM') presTitle = document.getElementById('customPresVal').value.trim() || 'President';
+
+        let secyTitle = document.getElementById('secyStatus').value;
+        if (secyTitle === 'CUSTOM') {
+            secyTitle = document.getElementById('customSecyVal').value.trim() || 'Ex-Officio Secretary';
+        } else if (secyTitle === 'NONE') {
+            secyTitle = '';
+        }
+
+        const presentSchool = document.getElementById('presentSchool').value || '[Present School Name]';
+        const poName = document.getElementById('poName').value || '[P.O.]';
+        const district = document.getElementById('district').value || '[District]';
+        const presentJoinDate = document.getElementById('presentJoinDate').value || '[Joining Date]';
+        const presentPayScale = document.getElementById('presentPayScale').value || '[Present Scale]';
+        const presentAgency = document.getElementById('presentAgency').value || '[Agency]';
+        const presentAppr = document.getElementById('presentAppr').value || '[Approval]';
+        const presentConfirm = document.getElementById('presentConfirm').value || '[Confirmation]';
+        
+        let gpfStatus = document.getElementById('gpfStatus').value;
+        if (gpfStatus === 'CUSTOM') gpfStatus = document.getElementById('customGpfVal').value.trim() || 'G.P.F. Scheme';
+
+        const cpNo = document.getElementById('cpNo').value || '[CP No]';
+        
+        const rawAuditMemo = document.getElementById('auditMemo').value.trim();
+        const upperMemo = rawAuditMemo.toUpperCase();
+        const isAuditNA = (!rawAuditMemo || upperMemo === 'NA' || upperMemo === 'N/A' || upperMemo === 'NIL' || upperMemo === 'NONE');
+
+        let addressedToTitle = presTitle;
+        let addressedToBody = presentSchool;
+        let adminAuthText = "Administrator";
+
+        if (adminType === 'MC') {
+            addressedToTitle = presTitle;
+            addressedToBody = "Managing Committee, " + presentSchool;
+            adminAuthText = "Managing Committee";
+        } else if (adminType === 'ADHOC') {
+            addressedToTitle = presTitle;
+            addressedToBody = "Ad-hoc Committee, " + presentSchool;
+            adminAuthText = "Ad-hoc Committee";
+        }
+
+        const secyHeaderRouting = secyTitle ? ` &amp; ${secyTitle}` : '';
+        const secySignBlock = secyTitle ? ` &amp; ${secyTitle}` : '';
+
+        // Bind Labels across all pages
+        document.querySelectorAll('.lbl-teacherName').forEach(e => e.innerText = teacherName);
+        document.querySelectorAll('.lbl-dob').forEach(e => e.innerText = dob);
+        document.querySelectorAll('.lbl-teacherDesg').forEach(e => e.innerText = teacherDesg);
+        document.querySelectorAll('.lbl-addressedToTitle').forEach(e => e.innerText = addressedToTitle);
+        document.querySelectorAll('.lbl-addressedToBody').forEach(e => e.innerText = addressedToBody);
+        document.querySelectorAll('.lbl-adminAuthority').forEach(e => e.innerText = adminAuthText);
+        document.querySelectorAll('.lbl-hoiTitle').forEach(e => e.innerText = hoiTitle);
+        document.querySelectorAll('.lbl-secyHeaderRouting').forEach(e => e.innerHTML = secyHeaderRouting);
+        document.querySelectorAll('.lbl-secySignBlock').forEach(e => e.innerHTML = secySignBlock);
+        document.querySelectorAll('.lbl-presentSchool').forEach(e => e.innerText = presentSchool);
+        document.querySelectorAll('.lbl-presentSchoolUpper').forEach(e => e.innerText = presentSchool.toUpperCase());
+        document.querySelectorAll('.lbl-poName').forEach(e => e.innerText = poName);
+        document.querySelectorAll('.lbl-poNameUpper').forEach(e => e.innerText = poName.toUpperCase());
+        document.querySelectorAll('.lbl-district').forEach(e => e.innerText = district);
+        document.querySelectorAll('.lbl-districtUpper').forEach(e => e.innerText = district.toUpperCase());
+        document.querySelectorAll('.lbl-presentJoin').forEach(e => e.innerText = presentJoinDate);
+        document.querySelectorAll('.lbl-presentPayScale').forEach(e => e.innerText = presentPayScale);
+        document.querySelectorAll('.lbl-presentAgency').forEach(e => e.innerText = presentAgency);
+        document.querySelectorAll('.lbl-presentAppr').forEach(e => e.innerText = presentAppr);
+        document.querySelectorAll('.lbl-presentConfirm').forEach(e => e.innerText = presentConfirm);
+        document.querySelectorAll('.lbl-gpfStatus').forEach(e => e.innerText = gpfStatus);
+        document.querySelectorAll('.lbl-cpNo').forEach(e => e.innerText = cpNo);
+
+        // Handle Audit Memo Reference
+        document.querySelectorAll('.lbl-auditMemoRef').forEach(e => {
+            if (!isAuditNA) {
+                e.innerHTML = `<strong>Ref:</strong> Audit Objection / Vetting Query Memo: ${rawAuditMemo}`;
+                e.style.display = 'block';
+            } else {
+                e.innerHTML = '';
+                e.style.display = 'none';
+            }
+        });
+
+        // Dynamic Previous Schools
+        const cards = document.querySelectorAll('.school-card');
+        let tableRowsHTML = '';
+        let applicantNarrativeHTML = '';
+        let annexurePrevSchoolsHTML = '';
+        
+        let enclosuresHTML = `<li>Formal Prayer / Representation of Sri/Smt. <strong>${teacherName}</strong> submitted through ${hoiTitle}.</li>`;
+        if (!isAuditNA) {
+            enclosuresHTML += `<li>Copy of Audit Objection / Vetting Query Memo (${rawAuditMemo}).</li>`;
+        }
+        enclosuresHTML += `<li>Copy of ${adminAuthText} Resolution / Order of ${presentSchool}.</li>`;
+        enclosuresHTML += `<li>Filled-in Proforma Report (Annexure 'P') in terms of Finance Dept G.O. No. 249-F(Pen) dated 27.05.2019.</li>`;
+
+        let firstJoiningDate = '';
+
+        cards.forEach((card, index) => {
+            const idx = index + 1;
+            const name = card.querySelector(`[id^="prevName_"]`).value || `Previous School #${idx}`;
+            const post = card.querySelector(`[id^="prevPost_"]`).value || 'Assistant Teacher';
+            const period = card.querySelector(`[id^="prevPeriod_"]`).value || 'Period N/A';
+            const jScale = card.querySelector(`[id^="prevJoinScale_"]`).value || 'As per Approval';
+            const lScale = card.querySelector(`[id^="prevLastScale_"]`).value || 'As per LPC';
+            const appr = card.querySelector(`[id^="prevAppr_"]`).value || 'Approval N/A';
+            const noc = card.querySelector(`[id^="prevNOC_"]`).value || 'NOC N/A';
+            const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || 'Release Res. N/A';
+            const release = card.querySelector(`[id^="prevRelease_"]`).value || 'Release Date N/A';
+
+            if (idx === 1 && period.includes('to')) {
+                firstJoiningDate = period.split('to')[0].trim();
+            } else if (idx === 1 && !firstJoiningDate) {
+                firstJoiningDate = period;
+            }
+
+            applicantNarrativeHTML += `
+                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong>. Prior Permission / NOC was granted vide <strong>${noc}</strong>. Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
+            `;
+
+            tableRowsHTML += `
+                <tr>
+                    <td>${idx}</td>
+                    <td>${name}</td>
+                    <td>${post}</td>
+                    <td>Direct / Panel Selection</td>
+                    <td>${period}</td>
+                    <td>${appr}</td>
+                </tr>
+            `;
+
+            // EXHAUSTIVE ANNEXURE 'P' FORM QUESTIONNAIRE ITEMS (i to xix)
+            annexurePrevSchoolsHTML += `
+                <div style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
+                    DETAILS OF ${idx === 1 ? '1ST' : idx === 2 ? '2ND' : '3RD'} SERVICE (${name.toUpperCase()})
+                </div>
+                <table class="doc-table" style="margin-top:0;">
+                    <tr><td style="width:4%;">i</td><td style="width:46%;">Recruiting procedure - whether through PSC/SSC/CSC/RRB or other organization</td><td style="width:35%;">Selection Panel / CSC Recommendation</td><td style="width:15%;">${cpNo}</td></tr>
+                    <tr><td>ii</td><td>Appointing authority / Head of Office</td><td>Managing Committee / HOI, ${name}</td><td>${cpNo}</td></tr>
+                    <tr><td>iii</td><td>Joined in the post of (Designation)</td><td>${post}</td><td>${cpNo}</td></tr>
+                    <tr><td>iv</td><td>Date of Joining</td><td>${period.split('to')[0] || period}</td><td>${cpNo}</td></tr>
+                    <tr><td>v</td><td>Pay scale in the post of joining</td><td><strong>${jScale}</strong></td><td>${cpNo}</td></tr>
+                    <tr><td>vi</td><td>Joining order / Approval Order No. & Date</td><td>Order No.: ${appr}</td><td>${cpNo}</td></tr>
+                    <tr><td>vii</td><td>Released from the post of (Designation)</td><td>${post}</td><td>${cpNo}</td></tr>
+                    <tr><td>viii</td><td>Pay scale in the post held last</td><td><strong>${lScale}</strong></td><td>${cpNo}</td></tr>
+                    <tr><td>ix</td><td>Date of Release</td><td>${release}</td><td>${cpNo}</td></tr>
+                    <tr><td>x</td><td>Release order No. & Date</td><td>Order No.: ${relMemo}</td><td>${cpNo}</td></tr>
+                    <tr><td>xi</td><td>Whether allowed lien in the post of this service</td><td>No / Not Applicable</td><td>${cpNo}</td></tr>
+                    <tr><td>xii</td><td>If incumbent did not revert, order of termination of lien</td><td>Not Applicable</td><td>${cpNo}</td></tr>
+                    <tr><td>xiii</td><td>If reverted to parent office, whether within lien period</td><td>Not Applicable</td><td>${cpNo}</td></tr>
+                    <tr><td>xiv</td><td>Whether applied through proper channel for next service</td><td>Yes (Permission vide ${noc})</td><td>${cpNo}</td></tr>
+                    <tr><td>xv</td><td>Whether competent authority accorded permission / NOC</td><td>Yes (Order/Res: ${noc})</td><td>${cpNo}</td></tr>
+                    <tr><td>xvi</td><td>Whether covered under C.P.F. / G.P.F.</td><td>${gpfStatus}</td><td>${cpNo}</td></tr>
+                    <tr><td>xvii</td><td>If covered under G.P.F., whether G.P.F. transferred</td><td>Yes / Transferred to present school</td><td>${cpNo}</td></tr>
+                    <tr><td>xviii</td><td>If C.P.F., whether share along with interest transferred</td><td>N/A (Covered under GPF)</td><td>${cpNo}</td></tr>
+                    <tr><td>xix</td><td>Pension Rules / Scheme applicable</td><td>DCRB Scheme 1981</td><td>${cpNo}</td></tr>
+                </table>
+            `;
+
+            enclosuresHTML += `
+                <li>Attested copy of Appointment, Joining, and DI Approval Order of <strong>${name}</strong>.</li>
+                <li>Attested copy of Prior Permission / NOC of <strong>${name}</strong> (${noc}).</li>
+                <li>Attested copy of Release Order / Release Resolution of <strong>${name}</strong> (${relMemo}).</li>
+                <li>Certificate of Continuous & Satisfactory Service from <strong>${name}</strong>.</li>
+                <li>Last Pay Certificate (LPC) / Pay Drawn Certificate issued by <strong>${name}</strong>.</li>
+            `;
+        });
+
+        // Present School Table Entry
+        tableRowsHTML += `
+            <tr>
+                <td>${cards.length + 1}</td>
+                <td>${presentSchool} (Present)</td>
+                <td>${teacherDesg}</td>
+                <td>${presentAgency}</td>
+                <td>${presentJoinDate} to Present</td>
+                <td>${presentAppr}</td>
+            </tr>
+        `;
+
+        enclosuresHTML += `
+            <li>Attested copy of Appointment Letter & Joining Report in ${presentSchool}.</li>
+            <li>Attested copy of Approval Order issued by DI/S (SE), ${district}.</li>
+            <li>Complete attested Service Book copies (incorporating all service entries).</li>
+            <li>Reference Copy of G.O. No. 269-SE(S) dated 16.04.1996.</li>
+        `;
+
+        const breakPeriod = `${firstJoiningDate || '06.10.1997'} to ${presentJoinDate}`;
+        document.querySelectorAll('.lbl-breakPeriod').forEach(e => e.innerText = breakPeriod);
+
+        document.querySelectorAll('.lbl-applicantNarrative').forEach(e => e.innerHTML = applicantNarrativeHTML);
+        document.querySelectorAll('.lbl-tableRows').forEach(e => e.innerHTML = tableRowsHTML);
+        document.getElementById('lbl-enclosuresList').innerHTML = enclosuresHTML;
+        document.getElementById('annexurePrevSchoolsContainer').innerHTML = annexurePrevSchoolsHTML;
+
+        // BILINGUAL MCR / ADMINISTRATOR ORDER (DOC 2)
+        const mcrContainer = document.getElementById('mcrContainer');
+        const secySignTitle = secyTitle ? ` &amp; ${secyTitle}` : '';
+        
+        if (adminType === 'MC' || adminType === 'ADHOC') {
+            mcrContainer.innerHTML = `
+                <div style="text-align:center; font-weight:bold; margin-bottom:15px; text-decoration:underline;">
+                    EXTRACT FROM THE PROCEEDINGS OF THE MEETING OF THE ${adminAuthText.toUpperCase()}
+                </div>
+                <p><strong>Meeting Date:</strong> ____________ | <strong>Resolution No.:</strong> ____________</p>
+                <p><strong>Agenda:</strong> Consideration of the prayer of <strong>${teacherName}</strong>, ${teacherDesg} regarding submission of proposal for Continuation of Service and Pay Protection for the period from ${breakPeriod} under G.O. No. 269-SE(S) dated 16.04.1996 and Finance Dept Annexure 'P' (249-F(Pen)).</p>
+                
+                <div class="lang-block">
+                    <p><strong>ENGLISH VERSION:</strong><br>
+                    <strong>Resolution:</strong> Considered the application of <strong>${teacherName}</strong>, ${teacherDesg} submitted through the ${hoiTitle} along with previous approval letters, prior permission / NOC, release orders, Last Pay Certificates (LPC), and Annexure 'P' Proforma. After detailed examination of the service book and documents, it is resolved unanimously that the service of the incumbent from ${breakPeriod} was continuous and unblemished. The proposal for continuation of service and pay protection under G.O. No. 269-SE(S) dated 16.04.1996 is hereby strongly recommended and accepted. The ${hoiTitle}${secySignTitle} is authorized to forward the complete dossier to the Commissioner of School Education, West Bengal through the DI/S (SE), ${district}.</p>
+                </div>
+
+                <div class="lang-block bengali-text">
+                    <p><strong>বাংলা সংস্করণ (BENGALI VERSION):</strong><br>
+                    <strong>প্রস্তাব/সিদ্ধান্ত:</strong> অত্র বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর ${hoiTitle}-এর মাধ্যমে পেশকৃত আবেদনপত্র এবং পূর্ববর্তী বিদ্যালয়ের অনুমোদনপত্র, পূর্ব-অনুমতি (Prior Permission / NOC), ছাড়পত্র (Release Order), শেষ বেতন সার্টিফিকেট (LPC) ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') বিশদভাবে বিবেচনা করা হইল। নথি এবং সার্ভিস বুক পর্যালোচনার পর সর্বসম্মতিক্রমে প্রস্তাব গৃহীত হইল যে, উক্ত শিক্ষকের <strong>${breakPeriod}</strong> সময়কালের চাকরি ধারাবাহিক এবং নিষ্কোপ। G.O. No. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের আবেদনটি সর্বসম্মতিক্রমে সুপারিশ করা হইল। ${hoiTitle}${secySignTitle} মহাশয়/মহাশয়াকে জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে কমিশনার অফ স্কুল এডুকেশন, পশ্চিমবঙ্গ-এর নিকট প্রয়োজনীয় প্রশাসনিক অনুমোদনের জন্য নথি প্রেরণের নির্দেশ দেওয়া হইল।</p>
+                </div>
+
+                <br><br>
+                <div style="display:flex; justify-content:space-between;">
+                    <div style="text-align:center;">_______________________<br><strong>${presTitle}</strong><br>${adminAuthText}</div>
+                    <div style="text-align:center;">_______________________<br><strong>${hoiTitle}${secySignTitle}</strong><br>${presentSchool}</div>
+                </div>
+            `;
+        } else {
+            // ADMINISTRATOR WORKFLOW: HOI REPORT + ADMINISTRATOR ORDER
+            mcrContainer.innerHTML = `
+                <div style="text-align:center; font-weight:bold; margin-bottom:10px; text-decoration:underline;">
+                    STEP 1: ANALYTICAL INSPECTION REPORT BY HOI TO ADMINISTRATOR
+                </div>
+                <p><strong>To:</strong> The Administrator, ${presentSchool}.<br>
+                <strong>From:</strong> ${hoiTitle}, ${presentSchool}.</p>
+                <p class="bengali-text"><strong>বিষয়/Subject:</strong> ${teacherName}, ${teacherDesg}-এর চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের (G.O. 269-SE(S)) আবেদন সংক্রান্ত পরিদর্শন রিপোর্ট।</p>
+                <p>I have thoroughly verified the original service records, approval orders, NOC, release orders, LPC, and filled-in Annexure 'P' Proforma of <strong>${teacherName}</strong> for the period <strong>${breakPeriod}</strong>. The candidate joined this school on ${presentJoinDate} through ${presentAgency}. His service record is completely clean and continuous. Recommended for your administrative order.</p>
+                <div style="text-align:right;">_______________________<br><strong>${hoiTitle}</strong></div>
+
+                <hr style="margin:15px 0; border-top:1px dashed #000;">
+
+                <div style="text-align:center; font-weight:bold; margin-bottom:10px; text-decoration:underline;">
+                    STEP 2: FORMAL ORDER OF THE ADMINISTRATOR (BILINGUAL)
+                </div>
+                <p><strong>Order No.:</strong> Admin/Cont/2026/____ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Date:</strong> ____/____/2026</p>
+                
+                <div class="lang-block">
+                    <p><strong>ENGLISH VERSION:</strong><br>
+                    Upon perusal of the analytical inspection report submitted by the ${hoiTitle} and verification of the underlying service records and Annexure 'P' report, I, the undersigned Administrator of <strong>${presentSchool}</strong>, hereby approve and recommend the proposal for Continuation of Service and Pay Protection in respect of <strong>${teacherName}</strong>, ${teacherDesg} for the period from <strong>${breakPeriod}</strong> under G.O. No. 269-SE(S) dated 16.04.1996. The ${hoiTitle} is directed to submit the complete dossier to Bikash Bhawan through the DI/S (SE), ${district}.</p>
+                </div>
+
+                <div class="lang-block bengali-text">
+                    <p><strong>বাংলা সংস্করণ (BENGALI VERSION):</strong><br>
+                    ${hoiTitle} মহাশয়ের পরিদর্শন রিপোর্ট এবং সংলগ্ন সার্ভিস রেকর্ডসমূহ ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') পুঙ্খানুপুঙ্খ পর্যালোচনার পর, আমি, <strong>${presentSchool}</strong>-এর নিযুক্ত প্রশাসক (Administrator), উক্ত বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর <strong>${breakPeriod}</strong> সময়কালের চাকরির ধারাবাহিকতা এবং পে-প্রটেকশনের (G.O. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী) প্রস্তাবটি অনুমোদন ও সুপারিশ করিতেছি। ${hoiTitle} মহাশয়/মহাশয়াকে নির্দেশ দেওয়া হইতেছে যে, সমস্ত নথিপত্র জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে বিকাশ ভবনে কমিশনার অফ স্কুল এডুকেশন-এর নিকট প্রেরণের ব্যবস্থা গ্রহণ করুন।</p>
+                </div>
+
+                <br><br>
+                <div style="text-align:right;">
+                    ___________________________________<br>
+                    <strong>ADMINISTRATOR</strong><br>
+                    ${presentSchool}<br>
+                    (Appointed by Govt. of West Bengal)
+                </div>
+            `;
+        }
+
+        // Display Navigation & Output
+        document.getElementById('outputNavigation').style.display = 'block';
+        document.getElementById('paperWrapper').style.display = 'block';
+        showTab('doc1');
+        document.getElementById('outputNavigation').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.onload = function() {
+        addSchoolField({
+            name: 'JHILIMILI HIGH SCHOOL',
+            post: 'Assistant Teacher',
+            period: '06.10.1997 to 20.04.2005',
+            joinScale: 'Rs. 4650-10175/- (ROPA-98)',
+            lastScale: 'Rs. 7100-37600/- GP 4100/- (ROPA-09)',
+            appr: '785-S/G dated 15.11.1997',
+            noc: 'NOC Memo No. 12/G dated 05.01.2005',
+            relMemo: 'Res. No. 04 dated 12.03.2005',
+            relDate: '20.04.2005 (A.N.)'
+        });
+        updateAdminDropdowns('ADMIN');
+    };
+</script>
+
+</body>
+</html>
