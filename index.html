@@ -37,6 +37,7 @@
         h2 { font-size: 1.15rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 20px; }
 
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 
         .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
 
@@ -128,6 +129,26 @@
             text-justify: inter-word;
         }
 
+        /* Half A4 Paper Style for File Cover */
+        .paper-half {
+            min-height: 145mm !important;
+            padding: 10mm 12mm !important;
+        }
+
+        .cover-outer-border {
+            border: 4px double #000;
+            padding: 6px;
+            box-sizing: border-box;
+            height: 100%;
+        }
+
+        .cover-inner-border {
+            border: 1px solid #000;
+            padding: 15px 12px;
+            box-sizing: border-box;
+            height: 100%;
+        }
+
         .header-letter {
             text-align: center;
             border-bottom: 2px solid #000;
@@ -192,6 +213,10 @@
                 display: block !important; 
                 page-break-after: always;
                 text-align: justify;
+            }
+            .paper-half {
+                min-height: 135mm !important;
+                page-break-after: always;
             }
             .tab-nav { display: none !important; }
             @page { size: A4 portrait; margin: 10mm; }
@@ -268,19 +293,31 @@
             </div>
         </div>
 
-        <h2>2. Present School Context (TFHS) & Pension Particulars</h2>
+        <h2>2. Present School Context & Official Metadata (For Cover & Letterheads)</h2>
         <div class="grid-3">
             <div class="form-group">
                 <label>Present School Name:</label>
-                <input type="text" id="presentSchool" value="Taldangra Fulmati High School (H.S.)">
+                <input type="text" id="presentSchool" value="Taldangra Fulmati High School [H.S.]">
             </div>
             <div class="form-group">
                 <label>Post Office (P.O.):</label>
                 <input type="text" id="poName" value="Taldangra">
             </div>
             <div class="form-group">
+                <label>Block & P.S.:</label>
+                <input type="text" id="blockPs" value="TALDANGRA">
+            </div>
+            <div class="form-group">
+                <label>Sub Division:</label>
+                <input type="text" id="subDiv" value="KHATRA">
+            </div>
+            <div class="form-group">
                 <label>District:</label>
                 <input type="text" id="district" value="Bankura">
+            </div>
+            <div class="form-group">
+                <label>PIN Code:</label>
+                <input type="text" id="pinCode" value="722152">
             </div>
             <div class="form-group">
                 <label>Joining Date in Present Post:</label>
@@ -325,13 +362,49 @@
             </div>
         </div>
 
+        <h3 style="margin-top:15px; font-size:1.05rem; color:#1a5693;">School Codes & Phone / Email Particulars (For File Cover)</h3>
+        <div class="grid-4">
+            <div class="form-group">
+                <label>School Index No.:</label>
+                <input type="text" id="indexNo" value="U1-083">
+            </div>
+            <div class="form-group">
+                <label>H.S. Code:</label>
+                <input type="text" id="hsCode" value="114071">
+            </div>
+            <div class="form-group">
+                <label>VTC Code:</label>
+                <input type="text" id="vtcCode" value="5006">
+            </div>
+            <div class="form-group">
+                <label>Office Phone No.:</label>
+                <input type="text" id="phoneNo" value="03243-265114">
+            </div>
+            <div class="form-group">
+                <label>H.M. Mobile No(s):</label>
+                <input type="text" id="mobileNo" value="9933035811/9434654678">
+            </div>
+            <div class="form-group">
+                <label>School Email ID:</label>
+                <input type="text" id="emailId" value="highschooltaldangrafulmati@gmail.com">
+            </div>
+            <div class="form-group">
+                <label>DISE Code:</label>
+                <input type="text" id="diseCode" value="19132104401">
+            </div>
+            <div class="form-group">
+                <label>IOSMS Code:</label>
+                <input type="text" id="iosmsCode" value="2007277">
+            </div>
+        </div>
+
         <h2>3. Previous School Details (Exhaustive Annexure 'P' Entry)</h2>
         <div id="schoolsContainer">
             <!-- Dynamic Cards Inserted Here -->
         </div>
 
         <button type="button" class="btn btn-add" id="addSchoolBtn" onclick="addSchoolField()">+ Add Another Previous School</button>
-        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All 5 Documents (Form P + Proposals)</button>
+        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All 6 Documents (Cover + Form P + Proposals)</button>
     </div>
 </div>
 
@@ -342,7 +415,8 @@
         <button class="tab-btn" onclick="showTab('doc2')">2. MC Res / Admin Order</button>
         <button class="tab-btn" onclick="showTab('doc3')">3. Master Proposal</button>
         <button class="tab-btn" onclick="showTab('doc4')">4. Draft Order (Bikash Bhawan)</button>
-        <button class="tab-btn" onclick="showTab('doc5')" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma (Blank Part-II)</button>
+        <button class="tab-btn" onclick="showTab('doc5')" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma</button>
+        <button class="tab-btn" onclick="showTab('doc6')" style="background:#2b6cb0; color:white;">6. File Cover (Half A4)</button>
         <button class="tab-btn" onclick="showTab('all')" style="background:#2f855a; color:white;">View All for Printing</button>
     </div>
     <div style="text-align: right; margin-bottom: 15px;">
@@ -356,12 +430,12 @@
     <div class="paper doc-page" id="doc1">
         <p>To<br>
         <strong>The <span class="lbl-addressedToTitle">Administrator</span></strong>,<br>
-        <span class="lbl-addressedToBody">Taldangra Fulmati High School (H.S.)</span>,<br>
+        <span class="lbl-addressedToBody">Taldangra Fulmati High School [H.S.]</span>,<br>
         P.O. <span class="lbl-poName">Taldangra</span>, District: <span class="lbl-district">Bankura</span>.</p>
 
         <p style="margin-top: 12px; margin-bottom: 12px;"><strong>Through</strong><br>
         <strong>The <span class="lbl-hoiTitle">Headmaster</span></strong><span class="lbl-secyHeaderRouting"></span>,<br>
-        <span class="lbl-presentSchool">Taldangra Fulmati High School (H.S.)</span>,<br>
+        <span class="lbl-presentSchool">Taldangra Fulmati High School [H.S.]</span>,<br>
         P.O. <span class="lbl-poName">Taldangra</span>, District: <span class="lbl-district">Bankura</span>.</p>
 
         <p style="margin-top: 15px;"><strong>Sub:</strong> Prayer for submission of proposal for Continuation of Service and Pay Protection for the period from <strong><span class="lbl-breakPeriod">[Break Period]</span></strong> under G.O. No. 269-SE(S) dated 16.04.1996.</p>
@@ -437,7 +511,7 @@
                     <th>Sl</th>
                     <th>Institution Name</th>
                     <th>Designation</th>
-                    <th>Selection Channel</th>
+                    <th>Selection / Agency Channel</th>
                     <th>Service Period</th>
                     <th>DI/S Approval Details</th>
                 </tr>
@@ -642,6 +716,39 @@
         </div>
     </div>
 
+    <!-- DOCUMENT 6: HALF A4 FILE COVER (DYNAMICALLY AUTO-FILLED) -->
+    <div class="paper paper-half doc-page" id="doc6">
+        <div class="cover-outer-border">
+            <div class="cover-inner-border">
+                <div style="text-align:center; font-weight:bold; font-size:10.5pt; line-height:1.4;">
+                    🏫 INDEX NO. <span class="lbl-indexNo">U1-083</span> :: H.S. CODE : <span class="lbl-hsCode">114071</span> :: VTC CODE : <span class="lbl-vtcCode">5006</span> 🏫
+                </div>
+                <div style="text-align:center; font-weight:bold; font-size:10pt; margin-top:3px;">
+                    ☎️ <span class="lbl-phoneNo">03243-265114</span> (O) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 📞 <span class="lbl-mobileNo">9933035811/9434654678</span>(H.M.)
+                </div>
+                <div style="text-align:center; font-size:9.5pt; font-weight:bold; margin-top:2px;">
+                    e-mail ID: <span class="lbl-emailId">highschooltaldangrafulmati@gmail.com</span>
+                </div>
+
+                <div style="text-align:center; margin-top:10px;">
+                    <h1 class="lbl-presentSchoolUpper" style="font-size:17pt; font-weight:900; margin:0; text-transform:uppercase; color:#0f294a; letter-spacing:0.5px;">[PRESENT SCHOOL NAME]</h1>
+                    <div style="font-size:12.5pt; font-weight:bold; margin-top:3px; letter-spacing:0.5px;">P.O., BLOCK & P.S.-<span class="lbl-blockPsUpper">TALDANGRA</span></div>
+                    <div style="font-size:14pt; font-weight:bold; color:#a83232; margin-top:3px; letter-spacing:1px;">SUB DIV_ <span class="lbl-subDivUpper">KHATRA</span></div>
+                    <div style="font-size:12.5pt; font-weight:bold; margin-top:3px;">DIST. <span class="lbl-districtUpper">BANKURA</span> PIN-<span class="lbl-pinCode">722152</span></div>
+                    <div style="font-size:11.5pt; font-weight:bold; margin-top:5px;">DISE CODE.: <span class="lbl-diseCode">19132104401</span> * IOSMS CODE: <span class="lbl-iosmsCode">2007277</span></div>
+                </div>
+
+                <hr style="border:0; border-top:2px solid #000; margin:15px 0 18px 0;">
+
+                <div style="border:2px solid #000; padding:18px 12px; text-align:center; background:#fafafa; box-shadow: 2px 2px 0px #000;">
+                    <div style="font-size:13.5pt; font-weight:bold; line-height:1.5; text-transform:uppercase; color:#000;">
+                        SUBJECT: SUBMISSION OF PROPOSAL FOR CONTINUATION OF SERVICE AND PAY PROTECTION IN RESPECT OF <span class="lbl-teacherName">[TEACHER NAME]</span>, <span class="lbl-teacherDesg">[DESIGNATION]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -680,10 +787,12 @@
 
         const schoolName = defaultData ? defaultData.name : '';
         const post = defaultData ? defaultData.post : 'Assistant Teacher';
+        const agency = defaultData ? defaultData.agency : 'WBRSSC / Managing Committee';
         const period = defaultData ? defaultData.period : '';
         const joinScale = defaultData ? defaultData.joinScale : 'Rs. 4650-10175/- (ROPA-98)';
         const lastScale = defaultData ? defaultData.lastScale : 'Rs. 7100-37600/- GP 4100/- (ROPA-09)';
         const appr = defaultData ? defaultData.appr : '';
+        const confirm = defaultData ? defaultData.confirm : '';
         const noc = defaultData ? defaultData.noc : '';
         const relMemo = defaultData ? defaultData.relMemo : '';
         const relDate = defaultData ? defaultData.relDate : '';
@@ -701,6 +810,10 @@
                     <input type="text" id="prevPost_${schoolCount}" value="${post}" placeholder="e.g., Assistant Teacher">
                 </div>
                 <div class="form-group">
+                    <label>Recruitment Agency:</label>
+                    <input type="text" id="prevAgency_${schoolCount}" value="${agency}" placeholder="e.g., WBRSSC (Western Region)">
+                </div>
+                <div class="form-group">
                     <label>Service Period (From - To):</label>
                     <input type="text" id="prevPeriod_${schoolCount}" value="${period}" placeholder="e.g., 06.10.1997 to 20.04.2005">
                 </div>
@@ -713,8 +826,12 @@
                     <input type="text" id="prevLastScale_${schoolCount}" value="${lastScale}" placeholder="e.g., Rs. 7100-37600/- + GP 4100/-">
                 </div>
                 <div class="form-group">
-                    <label>DI Approval Memo No. & Date:</label>
+                    <label>Approval Memo & Date:</label>
                     <input type="text" id="prevAppr_${schoolCount}" value="${appr}" placeholder="e.g., 785-S/G dated 15.11.1997">
+                </div>
+                <div class="form-group">
+                    <label>Confirmation Memo & Date:</label>
+                    <input type="text" id="prevConfirm_${schoolCount}" value="${confirm}" placeholder="e.g., Conf/12/G dated 10.10.1999">
                 </div>
                 <div class="form-group">
                     <label>Prior Permission / NOC Memo/Res. No. & Date:</label>
@@ -775,7 +892,20 @@
 
         const presentSchool = document.getElementById('presentSchool').value || '[Present School Name]';
         const poName = document.getElementById('poName').value || '[P.O.]';
+        const blockPs = document.getElementById('blockPs').value || '[Block & PS]';
+        const subDiv = document.getElementById('subDiv').value || '[Sub Div]';
         const district = document.getElementById('district').value || '[District]';
+        const pinCode = document.getElementById('pinCode').value || '[PIN]';
+
+        const indexNo = document.getElementById('indexNo').value || '';
+        const hsCode = document.getElementById('hsCode').value || '';
+        const vtcCode = document.getElementById('vtcCode').value || '';
+        const phoneNo = document.getElementById('phoneNo').value || '';
+        const mobileNo = document.getElementById('mobileNo').value || '';
+        const emailId = document.getElementById('emailId').value || '';
+        const diseCode = document.getElementById('diseCode').value || '';
+        const iosmsCode = document.getElementById('iosmsCode').value || '';
+
         const presentJoinDate = document.getElementById('presentJoinDate').value || '[Joining Date]';
         const presentPayScale = document.getElementById('presentPayScale').value || '[Present Scale]';
         const presentAgency = document.getElementById('presentAgency').value || '[Agency]';
@@ -808,7 +938,7 @@
         const secyHeaderRouting = secyTitle ? ` &amp; ${secyTitle}` : '';
         const secySignBlock = secyTitle ? ` &amp; ${secyTitle}` : '';
 
-        // Bind Labels across all pages
+        // Bind Labels across all pages & cover
         document.querySelectorAll('.lbl-teacherName').forEach(e => e.innerText = teacherName);
         document.querySelectorAll('.lbl-dob').forEach(e => e.innerText = dob);
         document.querySelectorAll('.lbl-teacherDesg').forEach(e => e.innerText = teacherDesg);
@@ -822,8 +952,21 @@
         document.querySelectorAll('.lbl-presentSchoolUpper').forEach(e => e.innerText = presentSchool.toUpperCase());
         document.querySelectorAll('.lbl-poName').forEach(e => e.innerText = poName);
         document.querySelectorAll('.lbl-poNameUpper').forEach(e => e.innerText = poName.toUpperCase());
+        document.querySelectorAll('.lbl-blockPsUpper').forEach(e => e.innerText = blockPs.toUpperCase());
+        document.querySelectorAll('.lbl-subDivUpper').forEach(e => e.innerText = subDiv.toUpperCase());
         document.querySelectorAll('.lbl-district').forEach(e => e.innerText = district);
         document.querySelectorAll('.lbl-districtUpper').forEach(e => e.innerText = district.toUpperCase());
+        document.querySelectorAll('.lbl-pinCode').forEach(e => e.innerText = pinCode);
+
+        document.querySelectorAll('.lbl-indexNo').forEach(e => e.innerText = indexNo);
+        document.querySelectorAll('.lbl-hsCode').forEach(e => e.innerText = hsCode);
+        document.querySelectorAll('.lbl-vtcCode').forEach(e => e.innerText = vtcCode);
+        document.querySelectorAll('.lbl-phoneNo').forEach(e => e.innerText = phoneNo);
+        document.querySelectorAll('.lbl-mobileNo').forEach(e => e.innerText = mobileNo);
+        document.querySelectorAll('.lbl-emailId').forEach(e => e.innerText = emailId);
+        document.querySelectorAll('.lbl-diseCode').forEach(e => e.innerText = diseCode);
+        document.querySelectorAll('.lbl-iosmsCode').forEach(e => e.innerText = iosmsCode);
+
         document.querySelectorAll('.lbl-presentJoin').forEach(e => e.innerText = presentJoinDate);
         document.querySelectorAll('.lbl-presentPayScale').forEach(e => e.innerText = presentPayScale);
         document.querySelectorAll('.lbl-presentAgency').forEach(e => e.innerText = presentAgency);
@@ -862,10 +1005,12 @@
             const idx = index + 1;
             const name = card.querySelector(`[id^="prevName_"]`).value || `Previous School #${idx}`;
             const post = card.querySelector(`[id^="prevPost_"]`).value || 'Assistant Teacher';
+            const agency = card.querySelector(`[id^="prevAgency_"]`).value || 'Selection Panel / CSC';
             const period = card.querySelector(`[id^="prevPeriod_"]`).value || 'Period N/A';
             const jScale = card.querySelector(`[id^="prevJoinScale_"]`).value || 'As per Approval';
             const lScale = card.querySelector(`[id^="prevLastScale_"]`).value || 'As per LPC';
             const appr = card.querySelector(`[id^="prevAppr_"]`).value || 'Approval N/A';
+            const confirm = card.querySelector(`[id^="prevConfirm_"]`).value || 'Confirmation N/A';
             const noc = card.querySelector(`[id^="prevNOC_"]`).value || 'NOC N/A';
             const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || 'Release Res. N/A';
             const release = card.querySelector(`[id^="prevRelease_"]`).value || 'Release Date N/A';
@@ -877,7 +1022,7 @@
             }
 
             applicantNarrativeHTML += `
-                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong>. Prior Permission / NOC was granted vide <strong>${noc}</strong>. Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
+                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong> (Confirmed vide <strong>${confirm}</strong>). Prior Permission / NOC was granted vide <strong>${noc}</strong>. Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
             `;
 
             tableRowsHTML += `
@@ -885,7 +1030,7 @@
                     <td>${idx}</td>
                     <td>${name}</td>
                     <td>${post}</td>
-                    <td>Direct / Panel Selection</td>
+                    <td>${agency}</td>
                     <td>${period}</td>
                     <td>${appr}</td>
                 </tr>
@@ -897,7 +1042,7 @@
                     DETAILS OF ${idx === 1 ? '1ST' : idx === 2 ? '2ND' : '3RD'} SERVICE (${name.toUpperCase()})
                 </div>
                 <table class="doc-table" style="margin-top:0;">
-                    <tr><td style="width:4%;">i</td><td style="width:46%;">Recruiting procedure - whether through PSC/SSC/CSC/RRB or other organization</td><td style="width:35%;">Selection Panel / CSC Recommendation</td><td style="width:15%;">${cpNo}</td></tr>
+                    <tr><td style="width:4%;">i</td><td style="width:46%;">Recruiting procedure - whether through PSC/SSC/CSC/RRB or other organization</td><td style="width:35%;">${agency}</td><td style="width:15%;">${cpNo}</td></tr>
                     <tr><td>ii</td><td>Appointing authority / Head of Office</td><td>Managing Committee / HOI, ${name}</td><td>${cpNo}</td></tr>
                     <tr><td>iii</td><td>Joined in the post of (Designation)</td><td>${post}</td><td>${cpNo}</td></tr>
                     <tr><td>iv</td><td>Date of Joining</td><td>${period.split('to')[0] || period}</td><td>${cpNo}</td></tr>
@@ -920,7 +1065,7 @@
             `;
 
             enclosuresHTML += `
-                <li>Attested copy of Appointment, Joining, and DI Approval Order of <strong>${name}</strong>.</li>
+                <li>Attested copy of Appointment, Joining, Approval Order (${appr}), and Confirmation Order (${confirm}) of <strong>${name}</strong>.</li>
                 <li>Attested copy of Prior Permission / NOC of <strong>${name}</strong> (${noc}).</li>
                 <li>Attested copy of Release Order / Release Resolution of <strong>${name}</strong> (${relMemo}).</li>
                 <li>Certificate of Continuous & Satisfactory Service from <strong>${name}</strong>.</li>
@@ -1033,10 +1178,12 @@
         addSchoolField({
             name: 'JHILIMILI HIGH SCHOOL',
             post: 'Assistant Teacher',
+            agency: 'WBRSSC (Western Region)',
             period: '06.10.1997 to 20.04.2005',
             joinScale: 'Rs. 4650-10175/- (ROPA-98)',
             lastScale: 'Rs. 7100-37600/- GP 4100/- (ROPA-09)',
             appr: '785-S/G dated 15.11.1997',
+            confirm: 'Conf/78 dated 12.10.1999',
             noc: 'NOC Memo No. 12/G dated 05.01.2005',
             relMemo: 'Res. No. 04 dated 12.03.2005',
             relDate: '20.04.2005 (A.N.)'
