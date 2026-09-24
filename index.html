@@ -107,16 +107,22 @@
             color: #4a5568;
         }
 
-        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-btn.active { background: var(--primary) !important; color: white !important; box-shadow: inset 0 -3px 0 #f6ad55; }
 
-        /* Strict A4 Portrait Paper */
+        /* =====================================================================
+           A4 PORTRAIT PAGE SYSTEM
+           Sheet = 210 x 297 mm.  Content box = 182 x 273 mm
+           (12 mm top/bottom, 14 mm left/right).
+           The on-screen preview and the printed page use the SAME content box,
+           so what is previewed is exactly what is printed at 100% scale.
+           ===================================================================== */
         .paper-wrapper { display: none; }
 
         .paper {
             background: white;
             width: 210mm;
             min-height: 297mm;
-            padding: 18mm 20mm;
+            padding: 12mm 14mm;
             margin: 0 auto 30px auto;
             box-shadow: 0 0 12px rgba(0,0,0,0.15);
             box-sizing: border-box;
@@ -124,29 +130,37 @@
             font-size: 10.5pt;
             line-height: 1.5;
             color: #000;
-            page-break-after: always;
             text-align: justify;
             text-justify: inter-word;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
-        /* Half A4 Paper Style for File Cover */
-        .paper-half {
-            min-height: 145mm !important;
-            padding: 10mm 12mm !important;
-        }
+        /* Wrappers added by script:
+           .page-fit  - outer box; when a one-page document is taller than one A4 page the script gives it the exact
+                        scaled height and overflow:hidden, so it can never spill onto a second (blank) page.
+           .page-body - the real content; scaled down with transform (0.8 .. 1) only when needed.            */
+        .page-fit { display: block; }
+        .page-body { display: flow-root; transform-origin: 0 0; }
+
+        /* Half A4 Paper Style for File Cover (top half of an A4 portrait sheet) */
+        .paper-half { min-height: 148.5mm; padding: 8mm 14mm; }
+        .paper-half .page-body { display: flex; flex-direction: column; min-height: 132mm; }
 
         .cover-outer-border {
             border: 4px double #000;
             padding: 6px;
             box-sizing: border-box;
-            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .cover-inner-border {
             border: 1px solid #000;
             padding: 15px 12px;
             box-sizing: border-box;
-            height: 100%;
+            flex: 1;
         }
 
         .header-letter {
@@ -185,6 +199,9 @@
             vertical-align: top;
         }
 
+        /* Annexure 'P' is long: tighten the tables a little; it flows over as many A4 pages as it needs */
+        #doc5 table.doc-table th, #doc5 table.doc-table td { padding: 2.5px 5px; line-height: 1.3; }
+
         ol.enclosure-list { padding-left: 20px; font-size: 10pt; text-align: justify; }
 
         .bengali-text {
@@ -201,33 +218,50 @@
             border-radius: 4px;
         }
 
-        /* Letterhead print mode: leaves blank space at top for pre-printed school letterhead paper */
-        .paper.letterhead-print {
-            padding-top: 7.1cm !important;
-        }
+        /* Letterhead print mode: leaves blank space at top for pre-printed school letterhead paper
+           (7.1 cm measured from the top edge of the sheet) */
+        .paper.letterhead-print { padding-top: 71mm; }
 
         @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; }
-            .paper-wrapper { display: block !important; }
-            .paper { 
-                box-shadow: none; 
-                width: 100% !important; 
-                margin: 0 !important; 
-                padding: 10mm 12mm !important; 
-                display: block !important; 
-                page-break-after: always;
-                text-align: justify;
+            /* The page margin lives in @page, so pages 2, 3 ... of a long document keep their margins too */
+            @page { size: A4 portrait; margin: 12mm 14mm; }
+
+            html, body {
+                background: #fff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: auto !important;
+                height: auto !important;
             }
-            .paper-half {
-                min-height: 135mm !important;
-                page-break-after: always;
+            .no-print, .tab-nav { display: none !important; }
+            .paper-wrapper { margin: 0 !important; padding: 0 !important; }
+
+            .paper {
+                width: auto !important;
+                min-height: 0 !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                orphans: 3;
+                widows: 3;
             }
-            .paper.letterhead-print {
-                padding-top: 7.1cm !important;
+            /* letterhead: 71 mm from the sheet top minus the 12 mm page margin */
+            .paper.letterhead-print { padding-top: 59mm !important; }
+
+            /* One document = one (or more) whole pages.
+               A break is inserted BEFORE every document except the first one printed,
+               so there is never a blank page at the start, between documents or at the end. */
+            .doc-page + .doc-page { break-before: page; page-break-before: always; }
+            .doc-page.first-visible { break-before: auto !important; page-break-before: auto !important; }
+
+            .paper p, .paper li, .paper .lang-block, .paper .meta-line, .paper .header-letter,
+            .paper table.doc-table tr, .paper .avoid-break, .paper div[style*="display:flex"] {
+                break-inside: avoid;
+                page-break-inside: avoid;
             }
-            .tab-nav { display: none !important; }
-            @page { size: A4 portrait; margin: 10mm; }
+            .paper table.doc-table thead { display: table-header-group; }
+            .paper .sec-head { break-after: avoid; page-break-after: avoid; }
         }
     </style>
 </head>
@@ -243,32 +277,32 @@
             <div class="form-group">
                 <label>Gender / Salutation:</label>
                 <select id="genderTitle">
-                    <option value="Sri" selected>Sri (Male)</option>
-                    <option value="Smt">Smt (Female, Married)</option>
+                    <option value="Sri">Sri (Male)</option>
+                    <option value="Smt" selected>Smt (Female, Married)</option>
                     <option value="Kumari">Kumari (Female, Unmarried)</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Teacher Full Name:</label>
-                <input type="text" id="teacherName" value="Sri Chinmoy Mandal">
+                <input type="text" id="teacherName" value="Smt. Kabita Mondal">
             </div>
             <div class="form-group">
                 <label>Date of Birth:</label>
-                <input type="text" id="dob" value="15.08.1972" placeholder="DD.MM.YYYY">
+                <input type="text" id="dob" value="29.01.1968" placeholder="DD.MM.YYYY">
             </div>
             <div class="form-group">
                 <label>Designation & Subject:</label>
-                <input type="text" id="teacherDesg" value="Assistant Teacher">
+                <input type="text" id="teacherDesg" value="Assistant Teacher (History)">
             </div>
             <div class="form-group">
                 <label>Subject & Qualification (for Experience Certificate):</label>
-                <input type="text" id="subjectQual" value="" placeholder="e.g., English (GRAD) with B.Ed.">
+                <input type="text" id="subjectQual" value="M.A. (History), B.Ed." placeholder="e.g., English (GRAD) with B.Ed.">
             </div>
             <div class="form-group">
                 <label>HOI Designation / Title:</label>
                 <select id="hoiStatus" onchange="toggleCustom('hoiStatus', 'customHoiGroup')">
-                    <option value="Headmaster" selected>Headmaster</option>
-                    <option value="Headmistress">Headmistress</option>
+                    <option value="Headmaster">Headmaster</option>
+                    <option value="Headmistress" selected>Headmistress</option>
                     <option value="Teacher-in-Charge">Teacher-in-Charge</option>
                     <option value="CUSTOM">Other / Manual Entry</option>
                 </select>
@@ -317,19 +351,19 @@
         <div class="grid-3">
             <div class="form-group">
                 <label>Present School Name:</label>
-                <input type="text" id="presentSchool" value="Taldangra Fulmati High School [H.S.]">
+                <input type="text" id="presentSchool" value="Mission Girls' High School [H.S.]">
             </div>
             <div class="form-group">
                 <label>Post Office (P.O.):</label>
-                <input type="text" id="poName" value="Taldangra">
+                <input type="text" id="poName" value="Bankura">
             </div>
             <div class="form-group">
                 <label>Block & P.S.:</label>
-                <input type="text" id="blockPs" value="TALDANGRA">
+                <input type="text" id="blockPs" value="BANKURA">
             </div>
             <div class="form-group">
                 <label>Sub Division:</label>
-                <input type="text" id="subDiv" value="KHATRA">
+                <input type="text" id="subDiv" value="BANKURA SADAR">
             </div>
             <div class="form-group">
                 <label>District:</label>
@@ -337,27 +371,27 @@
             </div>
             <div class="form-group">
                 <label>PIN Code:</label>
-                <input type="text" id="pinCode" value="722152">
+                <input type="text" id="pinCode" value="722101">
             </div>
             <div class="form-group">
                 <label>Joining Date in Present Post:</label>
-                <input type="text" id="presentJoinDate" value="21.04.2005">
+                <input type="text" id="presentJoinDate" value="20.09.2007">
             </div>
             <div class="form-group">
                 <label>Present Joining Pay Scale:</label>
-                <input type="text" id="presentPayScale" value="Rs. 6000-12000/- (ROPA-98) / Level 11">
+                <input type="text" id="presentPayScale" value="Rs. 6000-12000/-">
             </div>
             <div class="form-group">
                 <label>Recruitment Agency:</label>
-                <input type="text" id="presentAgency" value="WBRSSC (Western Region)">
+                <input type="text" id="presentAgency" value="School Managing Committee">
             </div>
             <div class="form-group">
                 <label>Present Approval Memo & Date:</label>
-                <input type="text" id="presentAppr" value="1204/S/SE dated 18.05.2005">
+                <input type="text" id="presentAppr" value="4161/S dated 19.12.2007">
             </div>
             <div class="form-group">
                 <label>Present Confirmation Memo & Date:</label>
-                <input type="text" id="presentConfirm" value="Conf/102 dated 10.05.2007">
+                <input type="text" id="presentConfirm" value="Conf/45 dated 20.09.2009" placeholder="e.g., Conf/12 dated 10.10.2009 (leave blank to print a fill-in line)">
             </div>
             <div class="form-group">
                 <label>CPF / GPF Scheme Coverage:</label>
@@ -374,7 +408,7 @@
             </div>
             <div class="form-group">
                 <label>Correspondence Page No. (C.P. No. in File):</label>
-                <input type="text" id="cpNo" value="C.P. No. 1 to 15" placeholder="e.g., C.P. No. 1-12">
+                <input type="text" id="cpNo" value="C.P. No. 1 to 13" placeholder="e.g., C.P. No. 1-12">
             </div>
             <div class="form-group">
                 <label>Audit Memo / Vetting Ref (Enter 'NA' if None):</label>
@@ -383,16 +417,16 @@
             <div class="form-group">
                 <label>Vacancy Type (Optional, for Experience Certificate):</label>
                 <select id="vacancyType" onchange="toggleVacancyFields(this.value)">
-                    <option value="NONE" selected>None / Not Mentioned</option>
+                    <option value="NONE">None / Not Mentioned</option>
                     <option value="RETIREMENT">Permanent vacancy — Retirement</option>
-                    <option value="RESIGNATION">Permanent vacancy — Resignation</option>
+                    <option value="RESIGNATION" selected>Permanent vacancy — Resignation</option>
                     <option value="NEWPOST">Newly Sanctioned Post</option>
                     <option value="CUSTOM">Other / Manual Entry</option>
                 </select>
             </div>
             <div class="form-group" id="vacancyPersonGroup" style="display:none;">
                 <label>Outgoing Teacher's Name & Designation:</label>
-                <input type="text" id="vacancyPersonName" value="" placeholder="e.g., Sri Nepal Chandra De, A.T.">
+                <input type="text" id="vacancyPersonName" value="D. Kisku, Assistant Teacher" placeholder="e.g., Sri Nepal Chandra De, A.T.">
             </div>
             <div class="form-group" id="vacancySanctionGroup" style="display:none;">
                 <label>New Post Sanctioned By (Authority/Order):</label>
@@ -404,11 +438,11 @@
             </div>
             <div class="form-group">
                 <label>CSSC Recommendation Letter No. & Date (Optional):</label>
-                <input type="text" id="csscLetter" value="" placeholder="e.g., 97/6916/AT(GRAD)/... dated 13.09.2018">
+                <input type="text" id="csscLetter" value="97/6916/AT(HIST)/2007 dated 05.09.2007" placeholder="e.g., 97/6916/AT(GRAD)/... dated 13.09.2018">
             </div>
             <div class="form-group">
                 <label>WBBSE / WBBPE Appointment Letter No. & Date (Optional):</label>
-                <input type="text" id="apptLetter" value="" placeholder="e.g., WBBSE/App/BNK/... dated 08.01.2019">
+                <input type="text" id="apptLetter" value="WBBSE/App/BNK/2007/112 dated 10.09.2007" placeholder="e.g., WBBSE/App/BNK/... dated 08.01.2019">
             </div>
             <div class="form-group">
                 <label>Experience Certificate Print Mode:</label>
@@ -423,35 +457,35 @@
         <div class="grid-4">
             <div class="form-group">
                 <label>School Index No.:</label>
-                <input type="text" id="indexNo" value="U1-083">
+                <input type="text" id="indexNo" value="J1-190" placeholder="e.g., J1-190">
             </div>
             <div class="form-group">
                 <label>H.S. Code:</label>
-                <input type="text" id="hsCode" value="114071">
+                <input type="text" id="hsCode" value="14019">
             </div>
             <div class="form-group">
                 <label>VTC Code:</label>
-                <input type="text" id="vtcCode" value="5006">
+                <input type="text" id="vtcCode" value="5019">
             </div>
             <div class="form-group">
                 <label>Office Phone No.:</label>
-                <input type="text" id="phoneNo" value="03243-265114">
+                <input type="text" id="phoneNo" value="03242-253862">
             </div>
             <div class="form-group">
                 <label>H.M. Mobile No(s):</label>
-                <input type="text" id="mobileNo" value="9933035811/9434654678">
+                <input type="text" id="mobileNo" value="9434012345">
             </div>
             <div class="form-group">
                 <label>School Email ID:</label>
-                <input type="text" id="emailId" value="highschooltaldangrafulmati@gmail.com">
+                <input type="text" id="emailId" value="missiongirlshsbankura@gmail.com">
             </div>
             <div class="form-group">
                 <label>DISE Code:</label>
-                <input type="text" id="diseCode" value="19132104401">
+                <input type="text" id="diseCode" value="19130200101">
             </div>
             <div class="form-group">
                 <label>IOSMS Code:</label>
-                <input type="text" id="iosmsCode" value="2007277">
+                <input type="text" id="iosmsCode" value="2001234">
             </div>
         </div>
 
@@ -466,15 +500,15 @@
         <div class="grid-3">
             <div class="form-group">
                 <label>Exam / SLST Reference:</label>
-                <input type="text" id="selfNocExamRef" value="" placeholder="e.g., 2nd SLST-2025 (Secondary & Higher Secondary)">
+                <input type="text" id="selfNocExamRef" value="2nd SLST-2025 (Secondary & Higher Secondary)" placeholder="e.g., 2nd SLST-2025 (Secondary & Higher Secondary)">
             </div>
             <div class="form-group">
                 <label>HOI Report No.:</label>
-                <input type="text" id="selfNocReportNo" value="" placeholder="e.g., HM/2026/12">
+                <input type="text" id="selfNocReportNo" value="HM/2026/12" placeholder="e.g., HM/2026/12">
             </div>
             <div class="form-group">
                 <label>Administrator / Committee Order / Resolution No.:</label>
-                <input type="text" id="selfNocOrderNo" value="" placeholder="e.g., Admin/NOC/2026/07">
+                <input type="text" id="selfNocOrderNo" value="Admin/NOC/2026/07" placeholder="e.g., Admin/NOC/2026/07">
             </div>
             <div class="form-group">
                 <label>Permission Granted For:</label>
@@ -486,7 +520,7 @@
             </div>
             <div class="form-group">
                 <label>Application Date of the Teacher (Optional):</label>
-                <input type="text" id="selfNocAppDate" value="" placeholder="DD.MM.YYYY">
+                <input type="text" id="selfNocAppDate" value="10.08.2026" placeholder="DD.MM.YYYY">
             </div>
         </div>
 
@@ -497,19 +531,19 @@
 <!-- Output Navigation -->
 <div class="no-print" id="outputNavigation" style="display:none; max-width: 1100px; margin: 0 auto;">
     <div class="tab-nav">
-        <button class="tab-btn active" onclick="showTab('doc1')">1. Applicant Prayer</button>
-        <button class="tab-btn" onclick="showTab('doc2')">2. MC Res / Admin Order</button>
-        <button class="tab-btn" onclick="showTab('doc3')">3. Master Proposal</button>
-        <button class="tab-btn" onclick="showTab('doc4')">4. Draft Order (Bikash Bhawan)</button>
-        <button class="tab-btn" onclick="showTab('doc5')" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma</button>
-        <button class="tab-btn" onclick="showTab('doc6')" style="background:#2b6cb0; color:white;">6. File Cover (Half A4)</button>
-        <button class="tab-btn" onclick="showTab('doc7')" style="background:#2f855a; color:white;">7. Experience Certificate</button>
-        <button class="tab-btn" onclick="showTab('doc8')" style="background:#805ad5; color:white;">8. NOC — HOI Report</button>
-        <button class="tab-btn" onclick="showTab('doc9')" style="background:#805ad5; color:white;">9. NOC — Order/Resolution</button>
-        <button class="tab-btn" onclick="showTab('all')" style="background:#2f855a; color:white;">View All for Printing</button>
+        <button class="tab-btn active" data-tab="doc1" onclick="showTab('doc1', this)">1. Applicant Prayer</button>
+        <button class="tab-btn" data-tab="doc2" onclick="showTab('doc2', this)">2. MC Res / Admin Order</button>
+        <button class="tab-btn" data-tab="doc3" onclick="showTab('doc3', this)">3. Master Proposal</button>
+        <button class="tab-btn" data-tab="doc4" onclick="showTab('doc4', this)">4. Draft Order (Bikash Bhawan)</button>
+        <button class="tab-btn" data-tab="doc5" onclick="showTab('doc5', this)" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma</button>
+        <button class="tab-btn" data-tab="doc6" onclick="showTab('doc6', this)" style="background:#2b6cb0; color:white;">6. File Cover (Half A4)</button>
+        <button class="tab-btn" data-tab="doc7" onclick="showTab('doc7', this)" style="background:#2f855a; color:white;">7. Experience Certificate</button>
+        <button class="tab-btn" data-tab="doc8" onclick="showTab('doc8', this)" style="background:#805ad5; color:white;">8. NOC — HOI Report</button>
+        <button class="tab-btn" data-tab="doc9" onclick="showTab('doc9', this)" style="background:#805ad5; color:white;">9. NOC — Order/Resolution</button>
+        <button class="tab-btn" data-tab="all" onclick="showTab('all', this)" style="background:#2f855a; color:white;">View All for Printing</button>
     </div>
     <div style="text-align: right; margin-bottom: 15px;">
-        <button class="btn btn-print" onclick="window.print()">Print Selected / All Documents</button>
+        <button class="btn btn-print" onclick="fitPages(); window.print();">Print Selected / All Documents</button>
     </div>
 </div>
 
@@ -682,7 +716,7 @@
     </div>
 
     <!-- DOCUMENT 5: ANNEXURE 'P' PROFORMA REPORT (G.O. NO. 249-F(Pen) DATED 27.05.2019) -->
-    <div class="paper doc-page" id="doc5">
+    <div class="paper doc-page" id="doc5" data-fit="flow">
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:10px;">
             <div style="font-size:11pt; font-weight:bold;">ANNEXURE-P</div>
             <div style="font-size:9.5pt; font-weight:bold; text-transform:uppercase;">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
@@ -710,7 +744,7 @@
             </tr>
         </table>
 
-        <div style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
+        <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
             PART-I: DETAILS OF PRESENT SERVICE
         </div>
         <table class="doc-table" style="margin-top:0;">
@@ -751,10 +785,11 @@
             **** Strike off column(s) which is not applicable.
         </div>
 
+        <div class="avoid-break">
         <hr style="margin:10px 0; border:0; border-top:1px dashed #000;">
 
         <!-- STRICTLY LEFT BLANK FOR FINANCE DEPARTMENT / PENSION BRANCH USE -->
-        <div style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">
+        <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">
             PART-II (For use of the Finance Department, Pension Branch)
         </div>
         <table class="doc-table" style="margin-top:0;">
@@ -803,28 +838,23 @@
                 Government of West Bengal
             </div>
         </div>
+        </div>
     </div>
 
     <!-- DOCUMENT 6: HALF A4 FILE COVER (DYNAMICALLY AUTO-FILLED) -->
-    <div class="paper paper-half doc-page" id="doc6">
+    <div class="paper paper-half doc-page" id="doc6" data-fit="half">
         <div class="cover-outer-border">
             <div class="cover-inner-border">
-                <div style="text-align:center; font-weight:bold; font-size:10.5pt; line-height:1.4;">
-                    🏫 INDEX NO. <span class="lbl-indexNo">U1-083</span> :: H.S. CODE : <span class="lbl-hsCode">114071</span> :: VTC CODE : <span class="lbl-vtcCode">5006</span> 🏫
-                </div>
-                <div style="text-align:center; font-weight:bold; font-size:10pt; margin-top:3px;">
-                    ☎️ <span class="lbl-phoneNo">03243-265114</span> (O) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 📞 <span class="lbl-mobileNo">9933035811/9434654678</span>(H.M.)
-                </div>
-                <div style="text-align:center; font-size:9.5pt; font-weight:bold; margin-top:2px;">
-                    e-mail ID: <span class="lbl-emailId">highschooltaldangrafulmati@gmail.com</span>
-                </div>
+                <div id="coverCodesLine" style="text-align:center; font-weight:bold; font-size:10.5pt; line-height:1.4;"></div>
+                <div id="coverContactLine" style="text-align:center; font-weight:bold; font-size:10pt; margin-top:3px;"></div>
+                <div id="coverEmailLine" style="text-align:center; font-size:9.5pt; font-weight:bold; margin-top:2px;"></div>
 
                 <div style="text-align:center; margin-top:10px;">
                     <h1 class="lbl-presentSchoolUpper" style="font-size:17pt; font-weight:900; margin:0; text-transform:uppercase; color:#0f294a; letter-spacing:0.5px;">[PRESENT SCHOOL NAME]</h1>
                     <div style="font-size:12.5pt; font-weight:bold; margin-top:3px; letter-spacing:0.5px;">P.O., BLOCK & P.S.-<span class="lbl-blockPsUpper">TALDANGRA</span></div>
                     <div style="font-size:14pt; font-weight:bold; color:#a83232; margin-top:3px; letter-spacing:1px;">SUB DIV_ <span class="lbl-subDivUpper">KHATRA</span></div>
-                    <div style="font-size:12.5pt; font-weight:bold; margin-top:3px;">DIST. <span class="lbl-districtUpper">BANKURA</span> PIN-<span class="lbl-pinCode">722152</span></div>
-                    <div style="font-size:11.5pt; font-weight:bold; margin-top:5px;">DISE CODE.: <span class="lbl-diseCode">19132104401</span> * IOSMS CODE: <span class="lbl-iosmsCode">2007277</span></div>
+                    <div style="font-size:12.5pt; font-weight:bold; margin-top:3px;">DIST. <span class="lbl-districtUpper">BANKURA</span> PIN-<span class="lbl-pinCode">722101</span></div>
+                    <div id="coverDiseLine" style="font-size:11.5pt; font-weight:bold; margin-top:5px;"></div>
                 </div>
 
                 <hr style="border:0; border-top:2px solid #000; margin:15px 0 18px 0;">
@@ -1004,19 +1034,65 @@
         schoolCount--;
     }
 
-    function showTab(tabId) {
+    function showTab(tabId, btn) {
         const pages = document.querySelectorAll('.doc-page');
-        const btns = document.querySelectorAll('.tab-btn');
-        btns.forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        const activeBtn = btn || document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
 
-        if (tabId === 'all') {
-            pages.forEach(p => p.style.display = 'block');
-        } else {
-            pages.forEach(p => {
-                p.style.display = (p.id === tabId) ? 'block' : 'none';
-            });
-        }
-        event.target.classList.add('active');
+        let firstShown = true;
+        pages.forEach(p => {
+            p.classList.remove('first-visible');
+            const isEmpty = p.dataset.empty === '1';          // e.g. NOC pages when no exam reference is entered
+            const show = (tabId === 'all') ? !isEmpty : (p.id === tabId);
+            p.style.display = show ? 'block' : 'none';
+            if (show && firstShown) { p.classList.add('first-visible'); firstShown = false; }
+        });
+        fitPages();
+    }
+
+    /* ---- A4 portrait "100% fit" ----
+       Printable content box = 182 x 273 mm. Every one-page document is measured and, only if it is
+       taller than the page, shrunk (never below 70%) so it lands on ONE A4 page with no spill-over
+       (= no stray/blank page). Annexure 'P' (data-fit="flow") is allowed to run over several pages. */
+    const PX_PER_MM = 96 / 25.4;
+    const FIT_MIN_SCALE = 0.7;
+    function fitPages() {
+        document.querySelectorAll('.doc-page').forEach(p => {
+            const fit = p.querySelector('.page-fit');
+            const body = p.querySelector('.page-body');
+            if (!fit || !body || p.style.display === 'none' || p.dataset.empty === '1') return;
+
+            // apply scale s (1 = untouched) and return the resulting visual height in px
+            const apply = s => {
+                if (s >= 1) {
+                    body.style.transform = ''; body.style.width = '';
+                    fit.style.height = ''; fit.style.overflow = '';
+                    return body.offsetHeight;
+                }
+                body.style.width = (100 / s) + '%';                 // text re-wraps at the wider measure, then is scaled back to 182 mm
+                body.style.transform = `scale(${s})`;
+                const h = body.offsetHeight * s;
+                fit.style.height = (Math.ceil(h) + 2) + 'px';
+                fit.style.overflow = 'hidden';
+                return h;
+            };
+
+            apply(1);
+            if (p.dataset.fit === 'flow') return;                    // Annexure 'P': flows over as many pages as needed
+            let availMm = (p.dataset.fit === 'half') ? 133 : 268;   // 5 mm safety margin on a full page
+            if (p.classList.contains('letterhead-print')) availMm -= 59;
+            const avail = availMm * PX_PER_MM;
+
+            if (apply(1) <= avail) return;
+            let lo = FIT_MIN_SCALE, hi = 1;
+            if (apply(lo) > avail) return;                           // still too tall at 70 %: keep 70 %, the rest flows on
+            for (let i = 0; i < 9; i++) {                            // largest scale that still fits the page
+                const mid = (lo + hi) / 2;
+                if (apply(mid) <= avail) lo = mid; else hi = mid;
+            }
+            apply(lo);
+        });
     }
 
     // Parses DD.MM.YYYY (optionally with trailing text) into a Date object
@@ -1088,7 +1164,7 @@
         const presentPayScale = document.getElementById('presentPayScale').value || '[Present Scale]';
         const presentAgency = document.getElementById('presentAgency').value || '[Agency]';
         const presentAppr = document.getElementById('presentAppr').value || '[Approval]';
-        const presentConfirm = document.getElementById('presentConfirm').value || '[Confirmation]';
+        const presentConfirm = document.getElementById('presentConfirm').value || '____________';
         
         let gpfStatus = document.getElementById('gpfStatus').value;
         if (gpfStatus === 'CUSTOM') gpfStatus = document.getElementById('customGpfVal').value.trim() || 'G.P.F. Scheme';
@@ -1146,6 +1222,24 @@
         document.querySelectorAll('.lbl-district').forEach(e => e.innerText = district);
         document.querySelectorAll('.lbl-districtUpper').forEach(e => e.innerText = district.toUpperCase());
         document.querySelectorAll('.lbl-pinCode').forEach(e => e.innerText = pinCode);
+
+        // File-cover header lines: only the particulars that are filled in are printed
+        const setLine = (id, html) => { const el = document.getElementById(id); el.innerHTML = html; el.style.display = html ? '' : 'none'; };
+        const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        const codeParts = [];
+        if (indexNo) codeParts.push(`INDEX NO. ${esc(indexNo)}`);
+        if (hsCode)  codeParts.push(`H.S. CODE : ${esc(hsCode)}`);
+        if (vtcCode) codeParts.push(`VTC CODE : ${esc(vtcCode)}`);
+        setLine('coverCodesLine', codeParts.length ? `🏫 ${codeParts.join(' :: ')} 🏫` : '');
+        const contactParts = [];
+        if (phoneNo)  contactParts.push(`☎️ ${esc(phoneNo)} (O)`);
+        if (mobileNo) contactParts.push(`📞 ${esc(mobileNo)}(H.M.)`);
+        setLine('coverContactLine', contactParts.join(' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '));
+        setLine('coverEmailLine', emailId ? `e-mail ID: ${esc(emailId)}` : '');
+        const disePartsArr = [];
+        if (diseCode)  disePartsArr.push(`DISE CODE.: ${esc(diseCode)}`);
+        if (iosmsCode) disePartsArr.push(`IOSMS CODE: ${esc(iosmsCode)}`);
+        setLine('coverDiseLine', disePartsArr.join(' * '));
 
         document.querySelectorAll('.lbl-indexNo').forEach(e => e.innerText = indexNo);
         document.querySelectorAll('.lbl-hsCode').forEach(e => e.innerText = hsCode);
@@ -1238,7 +1332,7 @@
 
             // EXHAUSTIVE ANNEXURE 'P' FORM QUESTIONNAIRE ITEMS (i to xix)
             annexurePrevSchoolsHTML += `
-                <div style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
+                <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
                     DETAILS OF ${idx === 1 ? '1ST' : idx === 2 ? '2ND' : '3RD'} SERVICE (${name.toUpperCase()})
                 </div>
                 <table class="doc-table" style="margin-top:0;">
@@ -1414,7 +1508,7 @@
                 <p><strong>To:</strong> The Administrator, ${presentSchool}.<br>
                 <strong>From:</strong> ${hoiTitle}, ${presentSchool}.</p>
                 <p class="bengali-text"><strong>বিষয়/Subject:</strong> ${teacherName}, ${teacherDesg}-এর চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের (G.O. 269-SE(S)) আবেদন সংক্রান্ত পরিদর্শন রিপোর্ট।</p>
-                <p>I have thoroughly verified the original service records, approval orders, NOC, release orders, LPC, and filled-in Annexure 'P' Proforma of <strong>${teacherName}</strong> for the period <strong>${breakPeriod}</strong>. The candidate joined this school on ${presentJoinDate} through ${presentAgency}. His service record is completely clean and continuous. Recommended for your administrative order.</p>
+                <p>I have thoroughly verified the original service records, approval orders, NOC, release orders, LPC, and filled-in Annexure 'P' Proforma of <strong>${teacherName}</strong> for the period <strong>${breakPeriod}</strong>. The candidate joined this school on ${presentJoinDate} through ${presentAgency}. ${pn.Poss} service record is completely clean and continuous. Recommended for your administrative order.</p>
                 <div style="text-align:right;">_______________________<br><strong>${hoiTitle}</strong></div>
 
                 <hr style="margin:15px 0; border-top:1px dashed #000;">
@@ -1450,6 +1544,13 @@
         const selfNocOrderNo = document.getElementById('selfNocOrderNo').value.trim() || '____________';
         const selfNocPostCategory = document.getElementById('selfNocPostCategory').value;
         const selfNocAppDate = document.getElementById('selfNocAppDate').value.trim();
+
+        // No exam reference -> the two NOC pages are empty placeholders: drop them from tabs, "View All" and print
+        ['doc8', 'doc9'].forEach(id => {
+            document.getElementById(id).dataset.empty = selfNocExamRef ? '0' : '1';
+            const tb = document.querySelector(`.tab-btn[data-tab="${id}"]`);
+            if (tb) tb.style.display = selfNocExamRef ? '' : 'none';
+        });
 
         document.querySelectorAll('.lbl-selfNocReportNo').forEach(e => e.innerText = selfNocReportNo);
 
@@ -1525,8 +1626,39 @@
         document.getElementById('outputNavigation').scrollIntoView({ behavior: 'smooth' });
     }
 
+    // Default data loaded from the scanned service-record PDF (Smt. Kabita Mondal)
+    const DEFAULT_PREV_SCHOOLS = [
+        {
+            name: "Manbazar Girls' High School [H.S.], Purulia",
+            post: 'Assistant Teacher (History)',
+            agency: 'School Managing Committee',
+            period: '19.07.1994 to 19.09.2007',
+            joinScale: 'Rs. 1640-3635/-',
+            lastScale: 'Rs. 6000-12000/- (Last basic pay Rs. 8,800/-)',
+            appr: '3391(4)/1 dated 12.12.1994',
+            confirm: '617/1(2) dated 25.06.2007 (substantive w.e.f. 19.07.1996)',
+            noc: 'NOC Memo No. 15/G dated 12.09.2007',
+            relMemo: 'Res. No. 1 of M.C. Meeting No. 11/07 dated 19.09.2007',
+            relDate: '19.09.2007 (A.N.)'
+        }
+    ];
+
     window.onload = function() {
+        // wrap the content of every document page so it can be measured / fitted to one A4 sheet
+        document.querySelectorAll('.doc-page').forEach(p => {
+            if (p.querySelector(':scope > .page-fit')) return;
+            const fit = document.createElement('div');
+            fit.className = 'page-fit';
+            const body = document.createElement('div');
+            body.className = 'page-body';
+            while (p.firstChild) body.appendChild(p.firstChild);
+            fit.appendChild(body);
+            p.appendChild(fit);
+        });
+
         updateAdminDropdowns('ADMIN');
+        toggleVacancyFields(document.getElementById('vacancyType').value);
+        DEFAULT_PREV_SCHOOLS.forEach(d => addSchoolField(d));
     };
 </script>
 
