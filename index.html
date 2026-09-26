@@ -299,6 +299,10 @@
                 <input type="text" id="subjectQual" value="M.A. (History), B.Ed." placeholder="e.g., English (GRAD) with B.Ed.">
             </div>
             <div class="form-group">
+                <label>Teacher's Mobile No. (Optional, for Annexure 'P' signature block):</label>
+                <input type="text" id="teacherMobile" value="" placeholder="e.g., 9832012345">
+            </div>
+            <div class="form-group">
                 <label>HOI Designation / Title:</label>
                 <select id="hoiStatus" onchange="toggleCustom('hoiStatus', 'customHoiGroup')">
                     <option value="Headmaster">Headmaster</option>
@@ -715,74 +719,125 @@
         </div>
     </div>
 
-    <!-- DOCUMENT 5: ANNEXURE 'P' PROFORMA REPORT (G.O. NO. 249-F(Pen) DATED 27.05.2019) -->
+    <!-- DOCUMENT 5: ANNEXURE 'P' PROFORMA REPORT (EXACT PROFORMA — G.O. NO. 249-F(Pen) DATED 27.05.2019) -->
     <div class="paper doc-page" id="doc5" data-fit="flow">
         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:10px;">
-            <div style="font-size:11pt; font-weight:bold;">ANNEXURE-P</div>
+            <div style="font-size:11pt; font-weight:bold;">ANNEXURE- P</div>
             <div style="font-size:9.5pt; font-weight:bold; text-transform:uppercase;">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
-            <div style="font-size:8pt;">(In terms of Finance Department, Pension Branch Memo No. 249-F(Pen) Dated 27.05.2019)</div>
         </div>
 
-        <table class="doc-table">
+        <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">PART-I</div>
+        <table class="doc-table" style="margin-top:0;">
+            <thead>
+                <tr>
+                    <th style="width:4%;">&nbsp;</th>
+                    <th style="width:61%;">&nbsp;</th>
+                    <th style="width:20%;">&nbsp;</th>
+                    <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
+                </tr>
+            </thead>
             <tr>
                 <td style="width:4%;"><strong>i</strong></td>
-                <td style="width:46%;"><strong>Name of the Officer / Teacher</strong></td>
-                <td style="width:35%;"><strong><span class="lbl-teacherName">[Teacher Name]</span></strong></td>
-                <td style="width:15%;"><strong>Doc. Evidence under <span class="lbl-cpNo">[CP No]</span></strong></td>
+                <td style="width:61%;"><strong>Name of the Teacher</strong></td>
+                <td style="width:20%;"><span class="lbl-teacherName">[Teacher Name]</span></td>
+                <td style="width:15%;" id="de-name">Yes / No</td>
             </tr>
             <tr>
                 <td><strong>ii</strong></td>
                 <td><strong>Date of Birth</strong></td>
                 <td><span class="lbl-dob">[DOB]</span></td>
-                <td><span class="lbl-cpNo">[CP No]</span></td>
+                <td id="de-dob">Yes / No</td>
             </tr>
             <tr>
                 <td><strong>iii</strong></td>
                 <td><strong>Present Post (Designation)</strong></td>
-                <td><span class="lbl-teacherDesg">[Designation]</span>, <span class="lbl-presentSchool">[Present School]</span></td>
-                <td><span class="lbl-cpNo">[CP No]</span></td>
+                <td><span class="lbl-teacherDesg">[Designation]</span></td>
+                <td id="de-post">Yes / No</td>
             </tr>
         </table>
 
         <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
-            PART-I: DETAILS OF PRESENT SERVICE
+            DETAILS OF PRESENT SERVICE
         </div>
         <table class="doc-table" style="margin-top:0;">
-            <tr><td style="width:4%;">i</td><td style="width:46%;">Recruiting procedure - whether through PSC/SSC/CSC or any other organization</td><td style="width:35%;"><span class="lbl-presentAgency">[Agency]</span></td><td style="width:15%;"><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>ii</td><td>Appointing authority</td><td>Managing Committee / Administrator, <span class="lbl-presentSchool">[School]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>iii</td><td>Joined in the post of (Designation)</td><td><span class="lbl-teacherDesg">[Designation]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>iv</td><td>Date of Joining</td><td><span class="lbl-presentJoin">[Joining Date]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>v</td><td>Pay scale in the post of joining</td><td><span class="lbl-presentPayScale">[Present Scale]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>vi</td><td>Joining Order / Approval Order No. & Date</td><td>Order No.: <span class="lbl-presentAppr">[Approval]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>vii</td><td>Date of Confirmation in the present post</td><td>Order No.: <span class="lbl-presentConfirm">[Confirm]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>viii</td><td>Whether covered under C.P.F./G.P.F.</td><td><span class="lbl-gpfStatus">[GPF Status]</span></td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
-            <tr><td>ix</td><td>Pension Rules/Scheme applicable</td><td>West Bengal Recognized Non-Govt. Educational Institution Employees DCRB Scheme 1981</td><td><span class="lbl-cpNo">[CP No]</span></td></tr>
+            <thead>
+                <tr>
+                    <th style="width:4%;">&nbsp;</th>
+                    <th style="width:61%;">&nbsp;</th>
+                    <th style="width:20%;">&nbsp;</th>
+                    <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
+                </tr>
+            </thead>
+            <tr><td style="width:4%;">i</td><td style="width:61%;">Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td style="width:20%;"><span class="lbl-presentAgency">[Agency]</span></td><td style="width:15%;" id="de-ps1">Yes / No</td></tr>
+            <tr><td>ii</td><td>Appointing authority</td><td>Managing Committee / Administrator, <span class="lbl-presentSchool">[School]</span></td><td id="de-ps2">Yes / No</td></tr>
+            <tr><td>iii</td><td>Joined in the post of (Designation)</td><td><span class="lbl-teacherDesg">[Designation]</span></td><td id="de-ps3">Yes / No</td></tr>
+            <tr><td>iv</td><td>Date of Joining</td><td><span class="lbl-presentJoin">[Joining Date]</span></td><td id="de-ps4">Yes / No</td></tr>
+            <tr><td>v</td><td>Pay Scale in the Post of Joining</td><td><span class="lbl-presentPayScale">[Present Scale]</span></td><td id="de-ps5">Yes / No</td></tr>
+            <tr><td>vi</td><td>Letter of Appointment Order No.- Date-</td><td>Order No.: <span class="lbl-presentAppr">[Approval]</span></td><td id="de-ps6">Yes / No</td></tr>
+            <tr><td>vii</td><td>Date of Confirmation in the present post</td><td><span id="ans-ps7">Yes / No</span> Order No.: <span class="lbl-presentConfirm">[Confirm]</span></td><td id="de-ps7">Yes / No</td></tr>
+            <tr><td>viii</td><td>Whether under C.P.F./G.P.F.</td><td><span class="lbl-gpfStatus">[GPF Status]</span></td><td id="de-ps8">Yes / No</td></tr>
+            <tr><td>ix</td><td>Pension Rules/Scheme applicable</td><td>West Bengal Recognized Non-Govt. Educational Institution Employees DCRB Scheme 1981</td><td id="de-ps9">Yes / No</td></tr>
         </table>
 
-        <div id="annexurePrevSchoolsContainer">
-            <!-- Dynamic 1st Service, 2nd Service, 3rd Service Tables (i to xix) -->
+        <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:9.5pt;">
+            <div><strong>Signature of the Applicant</strong> _______________________</div>
+            <div><strong>Signature of the HOI</strong> _______________________</div>
         </div>
+
+        <div id="annexurePrevSchoolsContainer">
+            <!-- Dynamic DETAILS OF 1st / 2nd / 3rd SERVICE tables (i to xix), each followed by its own Applicant/HOI signature line -->
+        </div>
+
+        <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
+            DETAILS OF INTERMEDIATE SERVICE
+        </div>
+        <div style="font-size:8.5pt; margin:3px 0;">Particulars in regard to intermediate service(s), if any, rendered in any establishment on retention of lien in a post and subsequently reverted before termination of the lien period: <span id="lbl-intermediateStatus"><strong>Not Applicable</strong> — no such intermediate service is on record.</span></div>
+        <table class="doc-table" style="margin-top:0;">
+            <thead>
+                <tr>
+                    <th style="width:4%;">&nbsp;</th>
+                    <th style="width:61%;">&nbsp;</th>
+                    <th style="width:20%;">&nbsp;</th>
+                    <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
+                </tr>
+            </thead>
+            <tr><td style="width:4%;">i</td><td style="width:61%;">Released on lien — From the post of: / To join as (Designation):</td><td style="width:20%;">N/A</td><td style="width:15%;" id="de-is1">Yes / No</td></tr>
+            <tr><td>ii</td><td>Details of Order of lien</td><td>N/A</td><td id="de-is2">Yes / No</td></tr>
+            <tr><td>iii</td><td>Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td>N/A</td><td id="de-is3">Yes / No</td></tr>
+            <tr><td>iv</td><td>Appointing Authority/Head of Office</td><td>N/A</td><td id="de-is4">Yes / No</td></tr>
+            <tr><td>v</td><td>Whether applied through proper channel for the post</td><td>N/A</td><td id="de-is5">Yes / No</td></tr>
+            <tr><td>vi</td><td>Whether obtained N.O.C. from the authority in connection with the application for new assignment</td><td>N/A</td><td id="de-is6">Yes / No</td></tr>
+            <tr><td>vii</td><td>Whether under C.P.F./G.P.F.</td><td>N/A</td><td id="de-is7">Yes / No</td></tr>
+            <tr><td>viii</td><td>Pension Rules/Scheme applicable</td><td>N/A</td><td id="de-is8">Yes / No</td></tr>
+            <tr><td>ix</td><td>Date of Joining the post</td><td>N/A</td><td id="de-is9">Yes / No</td></tr>
+            <tr><td>x</td><td>Joining Order</td><td>N/A</td><td id="de-is10">Yes / No</td></tr>
+            <tr><td>xi</td><td>Date of Release from the post</td><td>N/A</td><td id="de-is11">Yes / No</td></tr>
+            <tr><td>xii</td><td>Release Order</td><td>N/A</td><td id="de-is12">Yes / No</td></tr>
+            <tr><td>xiii</td><td>Duration of service in the post</td><td>N/A</td><td id="de-is13">Yes / No</td></tr>
+            <tr><td>xiv</td><td>Date of joining the post on reversion in which lien was allowed</td><td>N/A</td><td id="de-is14">Yes / No</td></tr>
+            <tr><td>xv</td><td>Joining order of the reversion</td><td>N/A</td><td id="de-is15">Yes / No</td></tr>
+        </table>
 
         <br>
         <div style="display:flex; justify-content:space-between; align-items:flex-end;">
             <div>
                 <strong>Signature of the Applicant:</strong> _______________________<br>
-                <strong>Name:</strong> <span class="lbl-teacherName">[Teacher Name]</span><br>
-                <strong>Designation:</strong> <span class="lbl-teacherDesg">[Designation]</span><br>
-                <strong>Place of Posting:</strong> <span class="lbl-presentSchool">[Present School]</span>
+                <strong>Name of the Applicant:</strong> <span class="lbl-teacherName">[Teacher Name]</span><br>
+                <strong>Present Designation:</strong> <span class="lbl-teacherDesg">[Designation]</span><br>
+                <strong>Present Place of Posting:</strong> <span class="lbl-presentSchool">[Present School]</span><br>
+                <strong>Mobile No. (Optional):</strong> <span class="lbl-teacherMobile">[Mobile]</span>
             </div>
             <div style="text-align:center;">
                 ___________________________________<br>
-                <strong>Signature of the Competent Authority / HOI</strong><br>
-                <span class="lbl-presentSchool">[Present School]</span> [Seal]
+                <strong>Signature of the Head of the Institution</strong><br>
+                <br>
+                ___________________________________<br>
+                <strong>Signature of the Competent Authority of the<br>Administrative Department along with official</strong> [Seal]
             </div>
         </div>
 
-        <div style="font-size:7pt; margin-top:8px; border-top:1px solid #000; padding-top:3px;">
-            * Part-I of the proforma is to be filled up by Administrative Department. Authenticated & attested documents/orders with proper mention of C.P. No. are mandatory against each item.<br>
-            ** Deposit of Prorata Pension & Gratuity along with interest under Head "0071-Pension and Other Retirement Benefits".<br>
-            *** Service Book(s) related to all the services are enclosed herewith.<br>
-            **** Strike off column(s) which is not applicable.
+        <div style="font-size:7.5pt; margin-top:8px; border-top:1px solid #000; padding-top:3px;">
+            Note: Against each item, "Yes" indicates documentary evidence stands annexed at the corresponding Enclosure no. in this proposal, and "No" indicates none is annexed; the entry not applicable is struck through.
         </div>
 
         <div class="avoid-break">
@@ -790,53 +845,41 @@
 
         <!-- STRICTLY LEFT BLANK FOR FINANCE DEPARTMENT / PENSION BRANCH USE -->
         <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">
-            PART-II (For use of the Finance Department, Pension Branch)
+            PART- II<br><span style="font-weight:normal; font-size:8pt;">(For use of the Finance Department, Pension Branch)</span>
         </div>
-        <table class="doc-table" style="margin-top:0;">
+        <div style="margin:6px 0;"><strong>Name of the Teacher:</strong> <span class="lbl-teacherName">[Teacher Name]</span></div>
+
+        <div style="margin-top:6px;"><strong>1. Whether the resignation(s) is/are to be treated as technical resignation or clear resignation</strong></div>
+        <table class="doc-table" style="margin-top:4px;">
             <thead>
                 <tr>
-                    <th style="width:5%;">Sl</th>
-                    <th style="width:45%;">Item / Query</th>
-                    <th style="width:12.5%;">1st Service</th>
-                    <th style="width:12.5%;">2nd Service</th>
-                    <th style="width:12.5%;">3rd Service</th>
-                    <th style="width:12.5%;">4th Service</th>
+                    <th style="width:25%;">Service</th>
+                    <th style="width:37.5%;">Technical Resignation</th>
+                    <th style="width:37.5%;">Clear Resignation</th>
                 </tr>
             </thead>
+            <tbody id="partIIResignationRows">
+                <!-- Dynamic rows: 1st / 2nd / 3rd Service -->
+            </tbody>
+        </table>
+
+        <table class="doc-table" style="margin-top:8px;">
             <tbody>
-                <tr style="height:35px;">
-                    <td>1</td>
-                    <td>Whether the resignation(s) is/are to be treated as technical resignation or clear resignation</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                <tr style="height:45px;">
+                    <td style="width:30%;"><strong>2. Observation/Decision with reasons</strong></td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr style="height:45px;">
-                    <td>2</td>
-                    <td>Observation/decision with reasons</td>
-                    <td colspan="4">&nbsp;</td>
-                </tr>
-                <tr style="height:45px;">
-                    <td>3</td>
-                    <td>Comments/Remarks</td>
-                    <td colspan="4">&nbsp;</td>
+                    <td><strong>3. Comments/Remarks</strong></td>
+                    <td>&nbsp;</td>
                 </tr>
             </tbody>
         </table>
 
         <br>
-        <div style="display:flex; justify-content:space-between; margin-top:15px;">
-            <div>
-                Date: ____/____/2026<br>
-                Place: Bikash Bhawan, Kolkata
-            </div>
-            <div style="text-align:center;">
-                ___________________________________<br>
-                <strong>Signature / Sanctioning Authority</strong><br>
-                Finance Department, Pension Branch<br>
-                Government of West Bengal
-            </div>
+        <div style="text-align:right; margin-top:15px;">
+            ___________________________________<br>
+            <strong>Signature of the District Inspector of Schools<br>(Secondary Education), <span class="lbl-district">[District]</span></strong>
         </div>
         </div>
     </div>
@@ -937,6 +980,24 @@
             return { Subj: 'He', subj: 'he', Poss: 'His', poss: 'his', Obj: 'Him', obj: 'him' };
         }
         return { Subj: 'She', subj: 'she', Poss: 'Her', poss: 'her', Obj: 'Her', obj: 'her' };
+    }
+
+    // Auto Yes/No marker for Annexure 'P': whichever answer does NOT apply is struck through,
+    // and whichever DOES apply is shown in bold — driven automatically by whether the
+    // corresponding data was actually entered in the form (fetched at generation time).
+    function de(isYes) {
+        return isYes
+            ? '<strong>Yes</strong> / <span style="text-decoration:line-through;">No</span>'
+            : '<span style="text-decoration:line-through;">Yes</span> / <strong>No</strong>';
+    }
+    // A value counts as "provided" only if it is non-empty and not one of the tool's own placeholders.
+    function filled(v) {
+        if (v === null || v === undefined) return false;
+        const s = String(v).trim();
+        if (!s) return false;
+        const placeholders = ['[teacher name]', '[dob]', '[designation]', '[present school name]', '[agency]',
+            '[approval]', '[present scale]', '[joining date]', '[cp no]', '[district]', 'n/a', 'na', 'not applicable'];
+        return !placeholders.includes(s.toLowerCase());
     }
 
     function updateAdminDropdowns(type) {
@@ -1128,6 +1189,7 @@
         const dob = document.getElementById('dob').value || '[DOB]';
         const teacherDesg = document.getElementById('teacherDesg').value || '[Designation]';
         const subjectQual = document.getElementById('subjectQual').value.trim();
+        const teacherMobile = document.getElementById('teacherMobile').value.trim();
         
         let hoiTitle = document.getElementById('hoiStatus').value;
         if (hoiTitle === 'CUSTOM') hoiTitle = document.getElementById('customHoiVal').value.trim() || 'Head of Institution';
@@ -1257,6 +1319,28 @@
         document.querySelectorAll('.lbl-presentConfirm').forEach(e => e.innerText = presentConfirm);
         document.querySelectorAll('.lbl-gpfStatus').forEach(e => e.innerText = gpfStatus);
         document.querySelectorAll('.lbl-cpNo').forEach(e => e.innerText = cpNo);
+        document.querySelectorAll('.lbl-teacherMobile').forEach(e => e.innerText = teacherMobile || '_______________');
+
+        // ---- ANNEXURE 'P': auto-fill "Documentary Evidence annexed in the Enclo. no" (Yes/No, non-applicable struck) ----
+        const setDE = (id, cond) => { const el = document.getElementById(id); if (el) el.innerHTML = de(cond); };
+        // PART-I identity block
+        setDE('de-name', filled(teacherName));
+        setDE('de-dob', filled(dob));
+        setDE('de-post', filled(teacherDesg));
+        // DETAILS OF PRESENT SERVICE (i - ix)
+        setDE('de-ps1', filled(presentAgency));
+        setDE('de-ps2', filled(presentSchool));
+        setDE('de-ps3', filled(teacherDesg));
+        setDE('de-ps4', filled(presentJoinDate));
+        setDE('de-ps5', filled(presentPayScale));
+        setDE('de-ps6', filled(presentAppr));
+        const confirmYes = filled(presentConfirm) && presentConfirm !== '____________';
+        setDE('de-ps7', confirmYes);
+        setDE('ans-ps7', confirmYes);
+        setDE('de-ps8', filled(gpfStatus));
+        setDE('de-ps9', true);
+        // DETAILS OF INTERMEDIATE SERVICE — no such data is collected by this tool, so all struck to "No"
+        for (let i = 1; i <= 15; i++) setDE(`de-is${i}`, false);
 
         document.querySelectorAll('.lbl-subjectQualParen').forEach(e => {
             e.innerText = subjectQual ? ` – ${subjectQual}` : '';
@@ -1279,6 +1363,7 @@
         let tableRowsHTML = '';
         let applicantNarrativeHTML = '';
         let annexurePrevSchoolsHTML = '';
+        let partIIRowsHTML = '';
         
         let enclosuresHTML = `<li>Formal Prayer / Representation of Sri/Smt. <strong>${teacherName}</strong> submitted through ${hoiTitle}.</li>`;
         if (!isAuditNA) {
@@ -1330,32 +1415,62 @@
                 </tr>
             `;
 
-            // EXHAUSTIVE ANNEXURE 'P' FORM QUESTIONNAIRE ITEMS (i to xix)
+            // EXACT ANNEXURE 'P' PROFORMA QUESTIONNAIRE — "DETAILS OF 1ST/2ND/3RD SERVICE" (items i to xix),
+            // with the "Documentary Evidence annexed in the Enclo. no" column auto Yes/No, non-applicable struck.
+            const svcLabel = idx === 1 ? '1ST' : idx === 2 ? '2ND' : idx === 3 ? '3RD' : `${idx}TH`;
+            const joinDatePart = (period.includes('to') ? period.split('to')[0] : period).trim();
+            const lienAllowed = false; // this tool does not collect a "lien retained" case for prior schools
+            const channelApplied = !!noc;
+            const permissionGranted = !!noc;
+            const gpfCovered = /g\.?p\.?f/i.test(gpfStatus);
+            const cpfCovered = /c\.?p\.?f/i.test(gpfStatus);
             annexurePrevSchoolsHTML += `
                 <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
-                    DETAILS OF ${idx === 1 ? '1ST' : idx === 2 ? '2ND' : '3RD'} SERVICE (${name.toUpperCase()})
+                    DETAILS OF ${svcLabel} SERVICE (${name.toUpperCase()})
                 </div>
                 <table class="doc-table" style="margin-top:0;">
-                    <tr><td style="width:4%;">i</td><td style="width:46%;">Recruiting procedure - whether through PSC/SSC/CSC/RRB or other organization</td><td style="width:35%;">${agency}</td><td style="width:15%;">${cpNo}</td></tr>
-                    <tr><td>ii</td><td>Appointing authority / Head of Office</td><td>Managing Committee / HOI, ${name}</td><td>${cpNo}</td></tr>
-                    <tr><td>iii</td><td>Joined in the post of (Designation)</td><td>${post}</td><td>${cpNo}</td></tr>
-                    <tr><td>iv</td><td>Date of Joining</td><td>${period.split('to')[0] || period}</td><td>${cpNo}</td></tr>
-                    <tr><td>v</td><td>Pay scale in the post of joining</td><td><strong>${jScale}</strong></td><td>${cpNo}</td></tr>
-                    <tr><td>vi</td><td>Joining order / Approval Order No. & Date</td><td>Order No.: ${appr}</td><td>${cpNo}</td></tr>
-                    <tr><td>vii</td><td>Released from the post of (Designation)</td><td>${post}</td><td>${cpNo}</td></tr>
-                    <tr><td>viii</td><td>Pay scale in the post held last</td><td><strong>${lScale}</strong></td><td>${cpNo}</td></tr>
-                    <tr><td>ix</td><td>Date of Release</td><td>${release}</td><td>${cpNo}</td></tr>
-                    <tr><td>x</td><td>Release order No. & Date</td><td>Order No.: ${relMemo}</td><td>${cpNo}</td></tr>
-                    <tr><td>xi</td><td>Whether allowed lien in the post of this service</td><td>No / Not Applicable</td><td>${cpNo}</td></tr>
-                    <tr><td>xii</td><td>If incumbent did not revert, order of termination of lien</td><td>Not Applicable</td><td>${cpNo}</td></tr>
-                    <tr><td>xiii</td><td>If reverted to parent office, whether within lien period</td><td>Not Applicable</td><td>${cpNo}</td></tr>
-                    <tr><td>xiv</td><td>Whether applied through proper channel for next service</td><td>${noc ? `Yes (Permission vide ${noc})` : 'N/A'}</td><td>${cpNo}</td></tr>
-                    <tr><td>xv</td><td>Whether competent authority accorded permission / NOC</td><td>${noc ? `Yes (Order/Res: ${noc})` : 'N/A'}</td><td>${cpNo}</td></tr>
-                    <tr><td>xvi</td><td>Whether covered under C.P.F. / G.P.F.</td><td>${gpfStatus}</td><td>${cpNo}</td></tr>
-                    <tr><td>xvii</td><td>If covered under G.P.F., whether G.P.F. transferred</td><td>Yes / Transferred to present school</td><td>${cpNo}</td></tr>
-                    <tr><td>xviii</td><td>If C.P.F., whether share along with interest transferred</td><td>N/A (Covered under GPF)</td><td>${cpNo}</td></tr>
-                    <tr><td>xix</td><td>Pension Rules / Scheme applicable</td><td>DCRB Scheme 1981</td><td>${cpNo}</td></tr>
+                    <thead>
+                        <tr>
+                            <th style="width:4%;">&nbsp;</th>
+                            <th style="width:61%;">&nbsp;</th>
+                            <th style="width:20%;">&nbsp;</th>
+                            <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
+                        </tr>
+                    </thead>
+                    <tr><td style="width:4%;">i</td><td style="width:61%;">Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td style="width:20%;">${agency}</td><td style="width:15%;">${de(filled(agency))}</td></tr>
+                    <tr><td>ii</td><td>Appointing Authority/Head of Office</td><td>Managing Committee / HOI, ${name}</td><td>${de(filled(name))}</td></tr>
+                    <tr><td>iii</td><td>Joined in the post of (Designation)</td><td>${post}</td><td>${de(filled(post))}</td></tr>
+                    <tr><td>iv</td><td>Date of Joining</td><td>${joinDatePart}</td><td>${de(filled(joinDatePart))}</td></tr>
+                    <tr><td>v</td><td>Pay scale in the post of joining</td><td>${jScale}</td><td>${de(filled(jScale))}</td></tr>
+                    <tr><td>vi</td><td>Joining Order Order No.:- Date:-</td><td>Order No.: ${appr}</td><td>${de(filled(appr))}</td></tr>
+                    <tr><td>vii</td><td>Released from the post of (Designation)</td><td>${post}</td><td>${de(filled(post))}</td></tr>
+                    <tr><td>viii</td><td>Pay scale in the post held last</td><td>${lScale}</td><td>${de(filled(lScale))}</td></tr>
+                    <tr><td>ix</td><td>Date of Resignation</td><td>${release}</td><td>${de(filled(release))}</td></tr>
+                    <tr><td>x</td><td>Acceptance of Resignation</td><td>Order No.: ${relMemo}</td><td>${de(filled(relMemo))}</td></tr>
+                    <tr><td>xi</td><td>Whether allowed lien in the post of 1<sup>st</sup> service</td><td>${de(lienAllowed)}</td><td>${de(lienAllowed)}</td></tr>
+                    <tr><td>xii</td><td>If the incumbent did not revert to the parent office, then order of termination of lien</td><td>Not Applicable</td><td>${de(false)}</td></tr>
+                    <tr><td>xiii</td><td>If the incumbent reverted to the parent office, whether that reversion took place within lien period</td><td>Not Applicable</td><td>${de(false)}</td></tr>
+                    <tr><td>xiv</td><td>Whether applied through proper channel for 2<sup>nd</sup> service</td><td>${de(channelApplied)}</td><td>${de(channelApplied)}</td></tr>
+                    <tr><td>xv</td><td>Whether competent authority accorded permission to such application for new post</td><td>${permissionGranted ? `Order No.: ${noc}` : de(permissionGranted)}</td><td>${de(permissionGranted)}</td></tr>
+                    <tr><td>xvi</td><td>Whether under C.P.F./G.P.F.</td><td>${gpfStatus}</td><td>${de(filled(gpfStatus))}</td></tr>
+                    <tr><td>xvii</td><td>If covered under G.P.F., whether G.P.F. amount had been transferred to the office of the 2<sup>nd</sup> service</td><td>${de(gpfCovered)}</td><td>${de(gpfCovered)}</td></tr>
+                    <tr><td>xviii</td><td>If covered under C.P.F., whether C.P.F. (employer's share) along with interest as applicable had been transferred to the office of the 2<sup>nd</sup> service in the Govt. Exchequer</td><td>${de(cpfCovered)}</td><td>${de(cpfCovered)}</td></tr>
+                    <tr><td>xix</td><td>Pension Rules/Scheme applicable</td><td>DCRB Scheme 1981</td><td>${de(true)}</td></tr>
                 </table>
+                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:9.5pt;">
+                    <div><strong>Signature of the Applicant</strong> _______________________</div>
+                    <div><strong>Signature of the HOI</strong> _______________________</div>
+                </div>
+            `;
+
+            // PART-II: Technical Resignation applies where prior permission/NOC to join the next
+            // service was on record; otherwise it is treated as a Clear Resignation.
+            partIIRowsHTML += `
+                <tr>
+                    <td>${svcLabel}</td>
+                    <td>${de(channelApplied)}</td>
+                    <td>${de(!channelApplied)}</td>
+                </tr>
             `;
 
             enclosuresHTML += `
@@ -1395,6 +1510,9 @@
         document.querySelectorAll('.lbl-tableRows').forEach(e => e.innerHTML = tableRowsHTML);
         document.getElementById('lbl-enclosuresList').innerHTML = enclosuresHTML;
         document.getElementById('annexurePrevSchoolsContainer').innerHTML = annexurePrevSchoolsHTML;
+        document.getElementById('partIIResignationRows').innerHTML = partIIRowsHTML || `
+            <tr><td>1st</td><td colspan="2">Not Applicable — no previous service on record</td></tr>
+        `;
 
         // ============ DOCUMENT 7: TEACHING EXPERIENCE CERTIFICATE ============
         // Overall earliest joining date = first previous school's start (if any), else present joining date
