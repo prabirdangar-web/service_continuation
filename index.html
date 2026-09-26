@@ -222,191 +222,59 @@
            (7.1 cm measured from the top edge of the sheet) */
         .paper.letterhead-print { padding-top: 71mm; }
 
-
-        /* ================================================================
-           ANNEXURE-P: EXACTLY 4 A4 PORTRAIT PAGES
-           Lucida Bright, 14 pt throughout. Each section is an independent
-           A4 print page; the existing generated data/enclosure references
-           are retained.
-           ================================================================ */
-        #doc5.annexure-p-document {
-            font-family: "Lucida Bright", "Book Antiqua", Georgia, serif !important;
+        /* ================= ANNEXURE-P: FOUR A4 PORTRAIT PAGES ================= */
+        .annex-p-page {
+            font-family: 'Lucida Bright', 'Lucida Serif', Georgia, serif !important;
             font-size: 14pt !important;
-            line-height: 1.18 !important;
+            line-height: 1.28 !important;
             text-align: left !important;
-            padding: 0 !important;
-            width: auto !important;
-            min-height: 0 !important;
+            width: 210mm !important;
+            height: 297mm !important;
+            min-height: 297mm !important;
+            box-sizing: border-box !important;
             margin: 0 !important;
-            box-shadow: none !important;
+            padding: 10mm 11mm !important;
+            overflow: hidden !important;
+            background:#fff !important;
         }
-        #doc5 .annex-p-page {
-            width: 100%;
-            min-height: 273mm;
-            box-sizing: border-box;
-            position: relative;
-            page-break-after: always;
-            break-after: page;
-            overflow: hidden;
-            font-family: "Lucida Bright", "Book Antiqua", Georgia, serif !important;
-            font-size: 14pt !important;
-            line-height: 1.18 !important;
-            color: #000 !important;
-        }
-        #doc5 .annex-p-page:last-child {
-            page-break-after: auto;
-            break-after: auto;
-        }
-        #doc5 .annex-p-page *,
-        #doc5 .annex-p-page table,
-        #doc5 .annex-p-page th,
-        #doc5 .annex-p-page td {
-            font-family: "Lucida Bright", "Book Antiqua", Georgia, serif !important;
-        }
-        #doc5 .annex-p-heading {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 5px;
-            margin: 0 0 8px 0;
-        }
-        #doc5 .annex-p-main-title {
-            font-size: 20pt !important;
-            font-weight: 700 !important;
-            line-height: 1.05 !important;
-        }
-        #doc5 .annex-p-sub-title {
-            font-size: 14pt !important;
-            font-weight: 700 !important;
-            line-height: 1.12 !important;
-            text-transform: uppercase;
-            margin-top: 3px;
-        }
-        #doc5 .annex-p-page-title {
-            font-size: 16pt !important;
-            font-weight: 700 !important;
-            line-height: 1.12 !important;
-            margin-top: 5px;
-            text-transform: uppercase;
-        }
-        #doc5 .sec-head {
-            font-size: 16pt !important;
-            font-weight: 700 !important;
-            line-height: 1.1 !important;
-            padding: 4px 5px !important;
-            margin-top: 6px !important;
-            background: #fff !important;
-            border: 2px solid #000 !important;
-            text-align: center !important;
-        }
-        #doc5 table.doc-table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            margin: 3px 0 7px 0 !important;
-        }
-        #doc5 table.doc-table th,
-        #doc5 table.doc-table td {
-            border: 1px solid #000 !important;
-            padding: 2px 4px !important;
-            font-size: 14pt !important;
-            line-height: 1.12 !important;
-            vertical-align: top !important;
-            text-align: left !important;
-        }
-        #doc5 table.doc-table th {
-            font-weight: 700 !important;
-        }
-        #doc5 .annex-p-page-2 .sec-head {
-            margin-top: 0 !important;
-        }
-        #doc5 .annex-p-page-2 > div[id="annexurePrevSchoolsContainer"] > div {
-            margin-top: 0 !important;
-        }
-        #doc5 .annex-p-page-2 > div[id="annexurePrevSchoolsContainer"] > div + table {
-            margin-top: 0 !important;
-        }
-        #doc5 .annex-p-page-3 .sec-head {
-            margin-top: 0 !important;
-        }
-        #doc5 .annex-p-page-3 > div[style*="font-size:8.5pt"] {
-            font-size: 14pt !important;
-            line-height: 1.15 !important;
-            margin: 5px 0 !important;
-        }
-        #doc5 .annex-p-page-3 .doc-table td,
-        #doc5 .annex-p-page-3 .doc-table th {
-            font-size: 14pt !important;
-        }
-        #doc5 .annex-p-page-4 .sec-head {
-            margin-top: 0 !important;
-        }
-        #doc5 .annex-p-page-4 .doc-table td,
-        #doc5 .annex-p-page-4 .doc-table th {
-            font-size: 14pt !important;
-        }
-        #doc5 .annex-p-page-4 .doc-table tr[style*="height:45px"] {
-            height: 55px !important;
-        }
-        #doc5 .annex-p-page-4 > div[style*="text-align:right"] {
-            font-size: 14pt !important;
-        }
-
-        @media screen {
-            #doc5 .annex-p-page {
-                background: #fff;
-                width: 210mm;
-                min-height: 297mm;
-                padding: 12mm 14mm;
-                margin: 0 auto 20px auto;
-                box-shadow: 0 0 12px rgba(0,0,0,.15);
-            }
-        }
+        .annex-p-body { width: 100%; }
+        .annex-p-title { text-align:center; font-size:20pt; font-weight:900; margin:0 0 4mm; text-decoration:underline; }
+        .annex-p-subtitle { text-align:center; font-size:14pt; font-weight:700; line-height:1.25; margin:0 0 5mm; }
+        .annex-p-heading { text-align:center; font-size:18pt; font-weight:900; border:2px solid #000; padding:3mm 2mm; margin:0 0 2mm; line-height:1.15; }
+        .annex-p-subheading { text-align:center; font-size:16pt; font-weight:900; margin:5mm 0 2mm; text-decoration:underline; }
+        .annex-p-description { font-size:14pt; font-weight:700; margin:3mm 0 5mm; line-height:1.3; }
+        .annex-p-name, .annex-p-question { font-size:14pt; margin:4mm 0; line-height:1.3; }
+        .annex-p-table { width:100% !important; margin:0 0 4mm !important; border-collapse:collapse !important; }
+        .annex-p-table th, .annex-p-table td { border:1.5px solid #000 !important; padding:2.2mm 2mm !important; font-family:'Lucida Bright','Lucida Serif',Georgia,serif !important; font-size:14pt !important; line-height:1.2 !important; vertical-align:top !important; text-align:left !important; }
+        .annex-p-table th { font-weight:900 !important; text-align:center !important; }
+        .annex-p-signline { font-size:14pt; font-weight:700; margin-top:3mm; display:flex; justify-content:space-between; gap:8mm; }
+        .annex-p-signline span { text-align:right; }
+        .annex-p-signature-right { text-align:right; font-size:14pt; font-weight:700; margin-top:12mm; }
+        .annex-p-page .school-service-table { font-size:14pt !important; }
         @media print {
-            #doc5.annexure-p-document {
-                display: block !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                width: auto !important;
-            }
-            #doc5 .annex-p-page {
-                width: auto !important;
-                min-height: 273mm !important;
-                height: 273mm !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                overflow: hidden !important;
-                box-shadow: none !important;
-                page-break-after: always !important;
-                break-after: page !important;
-            }
-            #doc5 .annex-p-page:last-child {
+            @page { size: A4 portrait; margin: 0 !important; }
+            .annex-p-page {
+                page-break-before: always !important;
+                break-before: page !important;
                 page-break-after: auto !important;
                 break-after: auto !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                max-height: 297mm !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
+                padding: 10mm 11mm !important;
+                overflow: hidden !important;
             }
-            #doc5 .annex-p-page *,
-            #doc5 .annex-p-page table,
-            #doc5 .annex-p-page th,
-            #doc5 .annex-p-page td {
-                font-family: "Lucida Bright", "Book Antiqua", Georgia, serif !important;
-            }
-            #doc5 .annex-p-page,
-            #doc5 .annex-p-page p,
-            #doc5 .annex-p-page div,
-            #doc5 .annex-p-page span,
-            #doc5 .annex-p-page li {
-                font-size: 14pt !important;
-                line-height: 1.15 !important;
-            }
-            #doc5 .annex-p-main-title { font-size: 20pt !important; }
-            #doc5 .annex-p-sub-title { font-size: 14pt !important; }
-            #doc5 .annex-p-page-title,
-            #doc5 .sec-head { font-size: 16pt !important; }
-            #doc5 .annex-p-page table.doc-table th,
-            #doc5 .annex-p-page table.doc-table td {
-                font-size: 14pt !important;
-                padding: 2px 4px !important;
-            }
+            .annex-p-page.first-visible { page-break-before:auto !important; break-before:auto !important; }
+            .annex-p-page .page-body { transform:none !important; width:auto !important; }
+            .annex-p-page .page-fit { height:auto !important; overflow:visible !important; }
+            .annex-p-page, .annex-p-page * { font-family:'Lucida Bright','Lucida Serif',Georgia,serif !important; }
+            .annex-p-page table.doc-table thead { display:table-header-group; }
+            .annex-p-page table.doc-table tr { break-inside:avoid !important; page-break-inside:avoid !important; }
         }
+
         @media print {
             /* The page margin lives in @page, so pages 2, 3 ... of a long document keep their margins too */
             @page { size: A4 portrait; margin: 12mm 14mm; }
@@ -724,7 +592,7 @@
         <button class="tab-btn" data-tab="doc2" onclick="showTab('doc2', this)">2. MC Res / Admin Order</button>
         <button class="tab-btn" data-tab="doc3" onclick="showTab('doc3', this)">3. Master Proposal</button>
         <button class="tab-btn" data-tab="doc4" onclick="showTab('doc4', this)">4. Draft Order (Bikash Bhawan)</button>
-        <button class="tab-btn" data-tab="doc5" onclick="showTab('doc5', this)" style="background:#1a5693; color:white;">5. Annexure 'P' Proforma</button>
+        <button class="tab-btn" data-tab="doc5" onclick="showTab('doc5', this)" style="background:#1a5693; color:white;">5. Annexure 'P' — 4 A4 Pages</button>
         <button class="tab-btn" data-tab="doc6" onclick="showTab('doc6', this)" style="background:#2b6cb0; color:white;">6. File Cover (Half A4)</button>
         <button class="tab-btn" data-tab="doc7" onclick="showTab('doc7', this)" style="background:#2f855a; color:white;">7. Experience Certificate</button>
         <button class="tab-btn" data-tab="doc8" onclick="showTab('doc8', this)" style="background:#805ad5; color:white;">8. NOC — HOI Report</button>
@@ -904,197 +772,111 @@
         </div>
     </div>
 
-    <!-- DOCUMENT 5: ANNEXURE 'P' PROFORMA REPORT (EXACT PROFORMA — G.O. NO. 249-F(Pen) DATED 27.05.2019) -->
-    <div class="paper doc-page annexure-p-document" id="doc5" data-fit="none">
-  <section class="annex-p-page annex-p-page-1">
-    
-<div class="annex-p-heading">
-  <div class="annex-p-main-title">ANNEXURE- P</div>
-  <div class="annex-p-sub-title">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
-  <div class="annex-p-page-title">PAGE 1 — PART-I & DETAILS OF PRESENT SERVICE</div>
-</div>
-
-    <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">PART-I</div>
-        <table class="doc-table" style="margin-top:0;">
-            <thead>
-                <tr>
-                    <th style="width:4%;">&nbsp;</th>
-                    <th style="width:61%;">&nbsp;</th>
-                    <th style="width:20%;">&nbsp;</th>
-                    <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
-                </tr>
-            </thead>
-            <tr>
-                <td style="width:4%;"><strong>i</strong></td>
-                <td style="width:61%;"><strong>Name of the Teacher</strong></td>
-                <td style="width:20%;"><span class="lbl-teacherName">[Teacher Name]</span></td>
-                <td style="width:15%;" id="de-name">—</td>
-            </tr>
-            <tr>
-                <td><strong>ii</strong></td>
-                <td><strong>Date of Birth</strong></td>
-                <td><span class="lbl-dob">[DOB]</span></td>
-                <td id="de-dob">—</td>
-            </tr>
-            <tr>
-                <td><strong>iii</strong></td>
-                <td><strong>Present Post (Designation)</strong></td>
-                <td><span class="lbl-teacherDesg">[Designation]</span></td>
-                <td id="de-post">—</td>
-            </tr>
-        </table>
-
-        <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
-            DETAILS OF PRESENT SERVICE
+    <!-- ANNEXURE 'P': FOUR FIXED A4 PORTRAIT PAGES -->
+    <div class="paper doc-page annex-p-page" id="doc5p1" data-annex-p="1">
+        <div class="annex-p-body">
+            <div class="annex-p-title">ANNEXURE- P</div>
+            <div class="annex-p-subtitle">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
+            <div class="annex-p-heading">PART-I</div>
+            <table class="doc-table annex-p-table">
+                <thead><tr><th style="width:4%;">&nbsp;</th><th style="width:61%;">&nbsp;</th><th style="width:20%;">&nbsp;</th><th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th></tr></thead>
+                <tr><td><strong>i</strong></td><td><strong>Name of the Teacher</strong></td><td><span class="lbl-teacherName">[Teacher Name]</span></td><td id="de-name">—</td></tr>
+                <tr><td><strong>ii</strong></td><td><strong>Date of Birth</strong></td><td><span class="lbl-dob">[DOB]</span></td><td id="de-dob">—</td></tr>
+                <tr><td><strong>iii</strong></td><td><strong>Present Post (Designation)</strong></td><td><span class="lbl-teacherDesg">[Designation]</span></td><td id="de-post">—</td></tr>
+            </table>
+            <div class="annex-p-heading">DETAILS OF PRESENT SERVICE</div>
+            <table class="doc-table annex-p-table">
+                <thead><tr><th style="width:4%;">&nbsp;</th><th style="width:61%;">&nbsp;</th><th style="width:20%;">&nbsp;</th><th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th></tr></thead>
+                <tr><td>i</td><td>Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td><span class="lbl-presentAgency">[Agency]</span></td><td id="de-ps1">—</td></tr>
+                <tr><td>ii</td><td>Appointing authority</td><td>Managing Committee / Administrator, <span class="lbl-presentSchool">[School]</span></td><td id="de-ps2">—</td></tr>
+                <tr><td>iii</td><td>Joined in the post of (Designation)</td><td><span class="lbl-teacherDesg">[Designation]</span></td><td id="de-ps3">—</td></tr>
+                <tr><td>iv</td><td>Date of Joining</td><td><span class="lbl-presentJoin">[Joining Date]</span></td><td id="de-ps4">—</td></tr>
+                <tr><td>v</td><td>Pay Scale in the Post of Joining</td><td><span class="lbl-presentPayScale">[Present Scale]</span></td><td id="de-ps5">—</td></tr>
+                <tr><td>vi</td><td>Letter of Appointment Order No.- Date-</td><td>Order No.: <span class="lbl-presentAppr">[Approval]</span></td><td id="de-ps6">—</td></tr>
+                <tr><td>vii</td><td>Date of Confirmation in the present post</td><td><span id="ans-ps7">Yes / No</span> Order No.: <span class="lbl-presentConfirm">[Confirm]</span></td><td id="de-ps7">—</td></tr>
+                <tr><td>viii</td><td>Whether under C.P.F./G.P.F.</td><td><span class="lbl-gpfStatus">[GPF Status]</span></td><td id="de-ps8">—</td></tr>
+                <tr><td>ix</td><td>Pension Rules/Scheme applicable</td><td>West Bengal Recognized Non-Govt. Educational Institution Employees DCRB Scheme 1981</td><td id="de-ps9">—</td></tr>
+            </table>
+            <div class="annex-p-signline"><strong>Signature of the Applicant</strong> _______________________ <span><strong>Signature of the HOI</strong> _______________________</span></div>
         </div>
-        <table class="doc-table" style="margin-top:0;">
-            <thead>
-                <tr>
-                    <th style="width:4%;">&nbsp;</th>
-                    <th style="width:61%;">&nbsp;</th>
-                    <th style="width:20%;">&nbsp;</th>
-                    <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
-                </tr>
-            </thead>
-            <tr><td style="width:4%;">i</td><td style="width:61%;">Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td style="width:20%;"><span class="lbl-presentAgency">[Agency]</span></td><td style="width:15%;" id="de-ps1">—</td></tr>
-            <tr><td>ii</td><td>Appointing authority</td><td>Managing Committee / Administrator, <span class="lbl-presentSchool">[School]</span></td><td id="de-ps2">—</td></tr>
-            <tr><td>iii</td><td>Joined in the post of (Designation)</td><td><span class="lbl-teacherDesg">[Designation]</span></td><td id="de-ps3">—</td></tr>
-            <tr><td>iv</td><td>Date of Joining</td><td><span class="lbl-presentJoin">[Joining Date]</span></td><td id="de-ps4">—</td></tr>
-            <tr><td>v</td><td>Pay Scale in the Post of Joining</td><td><span class="lbl-presentPayScale">[Present Scale]</span></td><td id="de-ps5">—</td></tr>
-            <tr><td>vi</td><td>Letter of Appointment Order No.- Date-</td><td>Order No.: <span class="lbl-presentAppr">[Approval]</span></td><td id="de-ps6">—</td></tr>
-            <tr><td>vii</td><td>Date of Confirmation in the present post</td><td><span id="ans-ps7">Yes / No</span> Order No.: <span class="lbl-presentConfirm">[Confirm]</span></td><td id="de-ps7">—</td></tr>
-            <tr><td>viii</td><td>Whether under C.P.F./G.P.F.</td><td><span class="lbl-gpfStatus">[GPF Status]</span></td><td id="de-ps8">—</td></tr>
-            <tr><td>ix</td><td>Pension Rules/Scheme applicable</td><td>West Bengal Recognized Non-Govt. Educational Institution Employees DCRB Scheme 1981</td><td id="de-ps9">—</td></tr>
-        </table>
+    </div>
 
-        <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:9.5pt;">
-            <div><strong>Signature of the Applicant</strong> _______________________</div>
-            <div><strong>Signature of the HOI</strong> _______________________</div>
+    <div class="paper doc-page annex-p-page" id="doc5p2" data-annex-p="2">
+        <div class="annex-p-body">
+            <div class="annex-p-heading">DETAILS OF 1ST SERVICE</div>
+            <div id="annexureFirstSchoolContainer"></div>
         </div>
+    </div>
 
-        
-  </section>
-  <section class="annex-p-page annex-p-page-2">
-    
-<div class="annex-p-heading">
-  <div class="annex-p-main-title">ANNEXURE- P</div>
-  <div class="annex-p-sub-title">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
-  <div class="annex-p-page-title">PAGE 2 — DETAILS OF 1ST SERVICE ONLY</div>
-</div>
-
-    <div id="annexurePrevSchoolsContainer">
-            <!-- Dynamic DETAILS OF 1st / 2nd / 3rd SERVICE tables (i to xix), each followed by its own Applicant/HOI signature line -->
+    <div class="paper doc-page annex-p-page" id="doc5p3" data-annex-p="3">
+        <div class="annex-p-body">
+            <div class="annex-p-heading">DETAILS OF INTERMEDIATE SERVICE</div>
+            <div class="annex-p-description">Particulars in regard to intermediate services rendered in any establishment on retention of lien in a post and subsequently reverted before termination of lien period, if any:</div>
+            <div class="annex-p-subheading">DETAILS OF INTERMEDIATE SERVICE</div>
+            <table class="doc-table annex-p-table">
+                <thead><tr><th style="width:4%;">&nbsp;</th><th style="width:61%;">&nbsp;</th><th style="width:20%;">&nbsp;</th><th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th></tr></thead>
+                <tr><td>i</td><td>Released on lien — From the post of: / To join as (Designation):</td><td>N/A</td><td id="de-is1">—</td></tr>
+                <tr><td>ii</td><td>Details of Order of lien</td><td>N/A</td><td id="de-is2">—</td></tr>
+                <tr><td>iii</td><td>Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td>N/A</td><td id="de-is3">—</td></tr>
+                <tr><td>iv</td><td>Appointing Authority/Head of Office</td><td>N/A</td><td id="de-is4">—</td></tr>
+                <tr><td>v</td><td>Whether applied through proper channel for the post</td><td>N/A</td><td id="de-is5">—</td></tr>
+                <tr><td>vi</td><td>Whether obtained N.O.C. from the authority in connection with the application for new assignment</td><td>N/A</td><td id="de-is6">—</td></tr>
+                <tr><td>vii</td><td>Whether under C.P.F./G.P.F.</td><td>N/A</td><td id="de-is7">—</td></tr>
+                <tr><td>viii</td><td>Pension Rules/Scheme applicable</td><td>N/A</td><td id="de-is8">—</td></tr>
+                <tr><td>ix</td><td>Date of Joining the post</td><td>N/A</td><td id="de-is9">—</td></tr>
+                <tr><td>x</td><td>Joining Order</td><td>N/A</td><td id="de-is10">—</td></tr>
+                <tr><td>xi</td><td>Date of Release from the post</td><td>N/A</td><td id="de-is11">—</td></tr>
+                <tr><td>xii</td><td>Release Order</td><td>N/A</td><td id="de-is12">—</td></tr>
+                <tr><td>xiii</td><td>Duration of service in the post</td><td>N/A</td><td id="de-is13">—</td></tr>
+                <tr><td>xiv</td><td>Date of joining the post on reversion in which lien was allowed</td><td>N/A</td><td id="de-is14">—</td></tr>
+                <tr><td>xv</td><td>Joining order of the reversion</td><td>N/A</td><td id="de-is15">—</td></tr>
+            </table>
         </div>
+    </div>
 
-        
-  </section>
-  <section class="annex-p-page annex-p-page-3">
-    
-<div class="annex-p-heading">
-  <div class="annex-p-main-title">ANNEXURE- P</div>
-  <div class="annex-p-sub-title">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
-  <div class="annex-p-page-title">PAGE 3 — DETAILS OF INTERMEDIATE SERVICE</div>
-</div>
-
-    <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
-            DETAILS OF INTERMEDIATE SERVICE
-        </div>
-        <div style="font-size:8.5pt; margin:3px 0;">Particulars in regard to intermediate service(s), if any, rendered in any establishment on retention of lien in a post and subsequently reverted before termination of the lien period: <span id="lbl-intermediateStatus"><strong>Not Applicable</strong> — no such intermediate service is on record.</span></div>
-        <table class="doc-table" style="margin-top:0;">
-            <thead>
-                <tr>
-                    <th style="width:4%;">&nbsp;</th>
-                    <th style="width:61%;">&nbsp;</th>
-                    <th style="width:20%;">&nbsp;</th>
-                    <th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th>
-                </tr>
-            </thead>
-            <tr><td style="width:4%;">i</td><td style="width:61%;">Released on lien — From the post of: / To join as (Designation):</td><td style="width:20%;">N/A</td><td style="width:15%;" id="de-is1">—</td></tr>
-            <tr><td>ii</td><td>Details of Order of lien</td><td>N/A</td><td id="de-is2">—</td></tr>
-            <tr><td>iii</td><td>Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td>N/A</td><td id="de-is3">—</td></tr>
-            <tr><td>iv</td><td>Appointing Authority/Head of Office</td><td>N/A</td><td id="de-is4">—</td></tr>
-            <tr><td>v</td><td>Whether applied through proper channel for the post</td><td>N/A</td><td id="de-is5">—</td></tr>
-            <tr><td>vi</td><td>Whether obtained N.O.C. from the authority in connection with the application for new assignment</td><td>N/A</td><td id="de-is6">—</td></tr>
-            <tr><td>vii</td><td>Whether under C.P.F./G.P.F.</td><td>N/A</td><td id="de-is7">—</td></tr>
-            <tr><td>viii</td><td>Pension Rules/Scheme applicable</td><td>N/A</td><td id="de-is8">—</td></tr>
-            <tr><td>ix</td><td>Date of Joining the post</td><td>N/A</td><td id="de-is9">—</td></tr>
-            <tr><td>x</td><td>Joining Order</td><td>N/A</td><td id="de-is10">—</td></tr>
-            <tr><td>xi</td><td>Date of Release from the post</td><td>N/A</td><td id="de-is11">—</td></tr>
-            <tr><td>xii</td><td>Release Order</td><td>N/A</td><td id="de-is12">—</td></tr>
-            <tr><td>xiii</td><td>Duration of service in the post</td><td>N/A</td><td id="de-is13">—</td></tr>
-            <tr><td>xiv</td><td>Date of joining the post on reversion in which lien was allowed</td><td>N/A</td><td id="de-is14">—</td></tr>
-            <tr><td>xv</td><td>Joining order of the reversion</td><td>N/A</td><td id="de-is15">—</td></tr>
-        </table>
-
-        <br>
-        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-            <div>
-                <strong>Signature of the Applicant:</strong> _______________________<br>
-                <strong>Name of the Applicant:</strong> <span class="lbl-teacherName">[Teacher Name]</span><br>
-                <strong>Present Designation:</strong> <span class="lbl-teacherDesg">[Designation]</span><br>
-                <strong>Present Place of Posting:</strong> <span class="lbl-presentSchool">[Present School]</span><br>
-                <strong>Mobile No. (Optional):</strong> <span class="lbl-teacherMobile">[Mobile]</span>
+    <div class="paper doc-page annex-p-page" id="doc5p4" data-annex-p="4">
+        <div class="annex-p-body">
+            <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:14pt;">
+                PART- II<br><span style="font-weight:normal; font-size:12pt;">(For use of the Finance Department, Pension Branch)</span>
             </div>
-            <div style="text-align:center;">
+            <div style="margin:6px 0; font-size:14pt;"><strong>Name of the Teacher:</strong> <span class="lbl-teacherName">[Teacher Name]</span></div>
+
+            <div style="margin-top:6px; font-size:14pt;"><strong>1. Whether the resignation(s) is/are to be treated as technical resignation or clear resignation</strong></div>
+            <table class="doc-table annex-p-table" style="margin-top:4px;">
+                <thead>
+                    <tr>
+                        <th style="width:25%;">Service</th>
+                        <th style="width:37.5%;">Technical Resignation</th>
+                        <th style="width:37.5%;">Clear Resignation</th>
+                    </tr>
+                </thead>
+                <tbody id="partIIResignationRows">
+                    <!-- Dynamic rows: 1st / 2nd / 3rd Service -->
+                </tbody>
+            </table>
+
+            <table class="doc-table annex-p-table" style="margin-top:8px;">
+                <tbody>
+                    <tr style="height:45px;">
+                        <td style="width:30%;"><strong>2. Observation/Decision with reasons</strong></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr style="height:45px;">
+                        <td><strong>3. Comments/Remarks</strong></td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br>
+            <div style="text-align:right; margin-top:15px; font-size:14pt;">
                 ___________________________________<br>
-                <strong>Signature of the Head of the Institution</strong><br>
-                <br>
-                ___________________________________<br>
-                <strong>Signature of the Competent Authority of the<br>Administrative Department along with official</strong> [Seal]
+                <strong>Signature of the District Inspector of Schools<br>(Secondary Education), <span class="lbl-district">[District]</span></strong>
             </div>
         </div>
+    </div>
 
-        
-  </section>
-  <section class="annex-p-page annex-p-page-4">
-    
-<div class="annex-p-heading">
-  <div class="annex-p-main-title">ANNEXURE- P</div>
-  <div class="annex-p-sub-title">PROFORMA REPORT TO BE FILLED UP BY THE ADMINISTRATIVE DEPARTMENT FOR CONSIDERING COUNTING OF PAST SERVICE</div>
-  <div class="annex-p-page-title">PAGE 4 — PART-II ONLY</div>
-</div>
-
-    <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; font-size:9pt;">
-            PART- II<br><span style="font-weight:normal; font-size:8pt;">(For use of the Finance Department, Pension Branch)</span>
-        </div>
-        <div style="margin:6px 0;"><strong>Name of the Teacher:</strong> <span class="lbl-teacherName">[Teacher Name]</span></div>
-
-        <div style="margin-top:6px;"><strong>1. Whether the resignation(s) is/are to be treated as technical resignation or clear resignation</strong></div>
-        <table class="doc-table" style="margin-top:4px;">
-            <thead>
-                <tr>
-                    <th style="width:25%;">Service</th>
-                    <th style="width:37.5%;">Technical Resignation</th>
-                    <th style="width:37.5%;">Clear Resignation</th>
-                </tr>
-            </thead>
-            <tbody id="partIIResignationRows">
-                <!-- Dynamic rows: 1st / 2nd / 3rd Service -->
-            </tbody>
-        </table>
-
-        <table class="doc-table" style="margin-top:8px;">
-            <tbody>
-                <tr style="height:45px;">
-                    <td style="width:30%;"><strong>2. Observation/Decision with reasons</strong></td>
-                    <td>&nbsp;</td>
-                </tr>
-                <tr style="height:45px;">
-                    <td><strong>3. Comments/Remarks</strong></td>
-                    <td>&nbsp;</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br>
-        <div style="text-align:right; margin-top:15px;">
-            ___________________________________<br>
-            <strong>Signature of the District Inspector of Schools<br>(Secondary Education), <span class="lbl-district">[District]</span></strong>
-        </div>
-  </section>
-</div>
-
-<!-- DOCUMENT 6: HALF A4 FILE COVER (DYNAMICALLY AUTO-FILLED) -->
+    <!-- DOCUMENT 6: HALF A4 FILE COVER (DYNAMICALLY AUTO-FILLED) -->
     <div class="paper paper-half doc-page" id="doc6" data-fit="half">
         <div class="cover-outer-border">
             <div class="cover-inner-border">
@@ -1315,7 +1097,8 @@
         pages.forEach(p => {
             p.classList.remove('first-visible');
             const isEmpty = p.dataset.empty === '1';          // e.g. NOC pages when no exam reference is entered
-            const show = (tabId === 'all') ? !isEmpty : (p.id === tabId);
+            const isAnnexP = p.classList.contains('annex-p-page');
+            const show = (tabId === 'all') ? !isEmpty : (tabId === 'doc5' ? isAnnexP : (p.id === tabId));
             p.style.display = show ? 'block' : 'none';
             if (show && firstShown) { p.classList.add('first-visible'); firstShown = false; }
         });
@@ -1652,7 +1435,7 @@
             const channelApplied = !!noc;
             const gpfCovered = /g\.?p\.?f/i.test(gpfStatus);
             const cpfCovered = /c\.?p\.?f/i.test(gpfStatus);
-            if (idx === 1) annexurePrevSchoolsHTML += `
+            annexurePrevSchoolsHTML += `
                 <div class="sec-head" style="font-weight:bold; text-align:center; background:#f0f0f0; border:1px solid #000; padding:2px; margin-top:6px; font-size:9pt;">
                     DETAILS OF ${svcLabel} SERVICE (${name.toUpperCase()})
                 </div>
@@ -1741,7 +1524,15 @@
         document.querySelectorAll('.lbl-applicantNarrative').forEach(e => e.innerHTML = applicantNarrativeHTML);
         document.querySelectorAll('.lbl-tableRows').forEach(e => e.innerHTML = tableRowsHTML);
         document.getElementById('lbl-enclosuresList').innerHTML = enclosuresHTML;
-        document.getElementById('annexurePrevSchoolsContainer').innerHTML = annexurePrevSchoolsHTML;
+        document.getElementById('annexureFirstSchoolContainer').innerHTML = annexurePrevSchoolsHTML ? annexurePrevSchoolsHTML.split('<div class="sec-head"').slice(1,2).map(x => '<div class="sec-head"' + x).join('') : '<div style="font-size:14pt;font-weight:700;padding:10mm 0;">No previous service on record.</div>';
+        // Annexure-P Page 2 intentionally contains ONLY the first previous service.
+        const firstServiceHost = document.getElementById('annexureFirstSchoolContainer');
+        if (firstServiceHost) {
+            const firstTable = firstServiceHost.querySelector('table');
+            if (firstTable) firstTable.classList.add('school-service-table', 'annex-p-table');
+            firstServiceHost.querySelectorAll('.sec-head').forEach((h, i) => { if (i === 0) h.remove(); else h.classList.add('annex-p-subheading'); });
+            firstServiceHost.querySelectorAll('div[style*="font-size:9.5pt"]').forEach(x => x.style.fontSize='14pt');
+        }
         document.getElementById('partIIResignationRows').innerHTML = partIIRowsHTML || `
             <tr><td>1st</td><td colspan="2">Not Applicable — no previous service on record</td></tr>
         `;
