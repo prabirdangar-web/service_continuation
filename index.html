@@ -316,15 +316,73 @@
             .paper table.doc-table thead { display: table-header-group; }
             .paper .sec-head { break-after: avoid; page-break-after: avoid; }
         }
+
+        /* ================= CLOUD (FIREBASE) BAR & MODAL ================= */
+        #authBar {
+            max-width: 1100px; margin: 0 auto 15px auto; background: #0f294a; color: #fff;
+            border-radius: 8px; padding: 10px 18px; display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.9rem;
+        }
+        #authBar input { width: auto; padding: 7px 10px; font-size: 0.85rem; border-radius: 4px; border: none; }
+        #authBar .btn { padding: 7px 14px; font-size: 0.85rem; }
+        .btn-cloud { background: #2f855a; color: #fff; }
+        .btn-cloud:hover { background: #276749; }
+        .btn-cloud-outline { background: transparent; color: #fff; border: 1px solid #fff !important; }
+        #cloudStatusMsg { font-size: 0.8rem; opacity: 0.85; }
+        #savedRecordsModal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 999; align-items: center; justify-content: center;
+        }
+        #savedRecordsModal .modal-inner {
+            background: #fff; border-radius: 8px; padding: 20px; width: 90%; max-width: 600px;
+            max-height: 80vh; overflow-y: auto;
+        }
+        .saved-record-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 5px; border-bottom: 1px solid #e2e8f0; gap: 10px;
+        }
+        .saved-record-row .btn { padding: 6px 12px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
+
+<div id="authBar" class="no-print">
+    <div id="authSignedOut" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span style="font-weight:600;">☁️ Cloud Sign-In:</span>
+        <input type="email" id="authEmail" placeholder="Email">
+        <input type="password" id="authPassword" placeholder="Password">
+        <button type="button" class="btn btn-cloud" onclick="cloudSignIn()">Sign In</button>
+        <span id="cloudStatusMsg"></span>
+    </div>
+    <div id="authSignedIn" style="display:none; gap:8px; align-items:center;">
+        <span>Signed in as <strong id="authUserEmail"></strong></span>
+        <button type="button" class="btn btn-cloud-outline" onclick="cloudSignOut()">Sign Out</button>
+    </div>
+</div>
+
+<div id="savedRecordsModal">
+    <div class="modal-inner">
+        <h2 style="margin-top:0;">Saved Records</h2>
+        <div id="savedRecordsList">Loading…</div>
+        <div style="text-align:right; margin-top:15px;">
+            <button type="button" class="btn" style="background:#718096; color:#fff;" onclick="closeSavedRecordsModal()">Close</button>
+        </div>
+    </div>
+</div>
 
 <div class="container no-print">
     <div class="card">
         <h1>WB SE Service Continuation & Form 'P' Generator</h1>
         <p style="margin-top:-8px; color:#718096;">Full Administrative Proposal & Finance Dept Annexure 'P' Proforma (G.O. No. 249-F(Pen) dated 27.05.2019)</p>
-        
+
+        <div style="background:#f0f4f8; border:1px solid #cbd5e0; border-radius:6px; padding:12px 15px; margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <label style="margin:0;">Record Name:</label>
+            <input type="text" id="cloudRecordName" placeholder="e.g., Kabita Mondal - Bankura" style="width:260px;">
+            <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save to Cloud</button>
+            <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="openSavedRecordsModal()">☁️ Load Saved Records</button>
+            <span id="cloudSaveMsg" style="font-size:0.85rem; color:#718096;"></span>
+        </div>
+
         <h2>1. Teacher & Governance Setup</h2>
         <div class="grid-3">
             <div class="form-group">
@@ -1801,6 +1859,169 @@
         toggleVacancyFields(document.getElementById('vacancyType').value);
         DEFAULT_PREV_SCHOOLS.forEach(d => addSchoolField(d));
     };
+</script>
+
+<!-- ================= FIREBASE: HOSTING + FIRESTORE SAVE/LOAD ================= -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+    // ---- Your Firebase project config (tfhs-portal) ----
+    const firebaseConfig = {
+        apiKey: "AIzaSyCiqQFsnbSi6eCgUI_W3NTybzIkRmCI_54",
+        authDomain: "tfhs-portal.firebaseapp.com",
+        projectId: "tfhs-portal",
+        storageBucket: "tfhs-portal.firebasestorage.app",
+        messagingSenderId: "316041012204",
+        appId: "1:316041012204:web:04ee8b19374c60f63716c9"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const fbAuth = firebase.auth();
+    const fbDb = firebase.firestore();
+    const CLOUD_COLLECTION = 'pSuiteForms'; // dedicated collection for this tool; does not touch any existing collection
+
+    // ---------------- AUTH ----------------
+    function cloudSignIn() {
+        const email = document.getElementById('authEmail').value.trim();
+        const password = document.getElementById('authPassword').value;
+        const statusEl = document.getElementById('cloudStatusMsg');
+        if (!email || !password) { statusEl.textContent = 'Enter email & password.'; return; }
+        statusEl.textContent = 'Signing in…';
+        fbAuth.signInWithEmailAndPassword(email, password)
+            .then(() => { statusEl.textContent = ''; })
+            .catch(err => { statusEl.textContent = err.message; });
+    }
+
+    function cloudSignOut() {
+        fbAuth.signOut();
+    }
+
+    fbAuth.onAuthStateChanged(user => {
+        const signedOutEl = document.getElementById('authSignedOut');
+        const signedInEl = document.getElementById('authSignedIn');
+        if (user) {
+            signedOutEl.style.display = 'none';
+            signedInEl.style.display = 'flex';
+            document.getElementById('authUserEmail').textContent = user.email || user.uid;
+        } else {
+            signedOutEl.style.display = 'flex';
+            signedInEl.style.display = 'none';
+        }
+    });
+
+    // ---------------- COLLECT / POPULATE FORM DATA ----------------
+    // Gathers every labeled input & select inside the input form (NOT the generated documents).
+    function collectFormData() {
+        const fields = {};
+        document.querySelectorAll('.container.no-print input[id], .container.no-print select[id]').forEach(el => {
+            fields[el.id] = el.value;
+        });
+        return { fields, schoolCount };
+    }
+
+    function populateFormData(record) {
+        const data = record.fields || {};
+        const savedSchoolCount = record.schoolCount || 0;
+
+        // Rebuild the correct number of "Previous School" cards first (blank), then fill by id below.
+        document.getElementById('schoolsContainer').innerHTML = '';
+        schoolCount = 0;
+        for (let i = 0; i < savedSchoolCount; i++) addSchoolField();
+
+        Object.keys(data).forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.value = data[id];
+            if (el.tagName === 'SELECT') el.dispatchEvent(new Event('change'));
+        });
+    }
+
+    // ---------------- SAVE ----------------
+    function saveFormToCloud() {
+        const msgEl = document.getElementById('cloudSaveMsg');
+        const user = fbAuth.currentUser;
+        if (!user) { msgEl.style.color = '#c53030'; msgEl.textContent = 'Please sign in first (top bar).'; return; }
+
+        let label = document.getElementById('cloudRecordName').value.trim();
+        if (!label) label = document.getElementById('teacherName').value.trim() || 'Untitled Record';
+
+        const record = collectFormData();
+        msgEl.style.color = '#718096';
+        msgEl.textContent = 'Saving…';
+
+        fbDb.collection(CLOUD_COLLECTION).add({
+            label: label,
+            fields: record.fields,
+            schoolCount: record.schoolCount,
+            createdBy: user.uid,
+            createdByEmail: user.email || null,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            msgEl.style.color = '#2f855a';
+            msgEl.textContent = 'Saved ✓';
+        }).catch(err => {
+            msgEl.style.color = '#c53030';
+            msgEl.textContent = 'Save failed: ' + err.message;
+        });
+    }
+
+    // ---------------- LOAD / LIST / DELETE ----------------
+    function openSavedRecordsModal() {
+        const user = fbAuth.currentUser;
+        const modal = document.getElementById('savedRecordsModal');
+        const listEl = document.getElementById('savedRecordsList');
+        if (!user) { alert('Please sign in first (top bar) to view saved records.'); return; }
+
+        modal.style.display = 'flex';
+        listEl.textContent = 'Loading…';
+
+        fbDb.collection(CLOUD_COLLECTION)
+            .where('createdBy', '==', user.uid)
+            .orderBy('updatedAt', 'desc')
+            .get()
+            .then(snapshot => {
+                if (snapshot.empty) { listEl.innerHTML = '<p style="color:#718096;">No saved records yet.</p>'; return; }
+                listEl.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const when = d.updatedAt && d.updatedAt.toDate ? d.updatedAt.toDate().toLocaleString() : '';
+                    const row = document.createElement('div');
+                    row.className = 'saved-record-row';
+                    row.innerHTML = `
+                        <div><strong>${d.label || 'Untitled'}</strong><br><span style="font-size:0.75rem; color:#718096;">${when}</span></div>
+                        <div>
+                            <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="loadFormFromCloud('${doc.id}')">Load</button>
+                            <button type="button" class="btn" style="background:#c53030; color:#fff;" onclick="deleteFormFromCloud('${doc.id}')">Delete</button>
+                        </div>`;
+                    listEl.appendChild(row);
+                });
+            })
+            .catch(err => { listEl.innerHTML = `<p style="color:#c53030;">Failed to load: ${err.message}</p>`; });
+    }
+
+    function closeSavedRecordsModal() {
+        document.getElementById('savedRecordsModal').style.display = 'none';
+    }
+
+    function loadFormFromCloud(docId) {
+        fbDb.collection(CLOUD_COLLECTION).doc(docId).get()
+            .then(doc => {
+                if (!doc.exists) { alert('Record not found.'); return; }
+                populateFormData(doc.data());
+                closeSavedRecordsModal();
+                document.getElementById('cloudSaveMsg').style.color = '#2f855a';
+                document.getElementById('cloudSaveMsg').textContent = 'Loaded "' + (doc.data().label || '') + '"';
+            })
+            .catch(err => alert('Load failed: ' + err.message));
+    }
+
+    function deleteFormFromCloud(docId) {
+        if (!confirm('Delete this saved record permanently?')) return;
+        fbDb.collection(CLOUD_COLLECTION).doc(docId).delete()
+            .then(() => openSavedRecordsModal())
+            .catch(err => alert('Delete failed: ' + err.message));
+    }
 </script>
 
 </body>
