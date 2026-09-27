@@ -126,7 +126,7 @@
             margin: 0 auto 30px auto;
             box-shadow: 0 0 12px rgba(0,0,0,0.15);
             box-sizing: border-box;
-            font-family: 'Times New Roman', 'Kalpurush', 'SolaimanLipi', serif;
+            font-family: 'Lucida Bright', Arial, 'Kalpurush', 'SolaimanLipi', serif;
             font-size: 10pt;
             line-height: 1.5;
             color: #000;
@@ -228,7 +228,7 @@
            SERVICE + identification block (page 3) all fit within one 297mm page each with nothing
            clipped by the page's overflow:hidden — do not raise these sizes back up without re-checking. */
         .annex-p-page {
-            font-family: 'Lucida Bright', 'Lucida Serif', Georgia, serif !important;
+            font-family: 'Lucida Bright', Arial, Georgia, serif !important;
             font-size: 10pt !important;
             line-height: 1.15 !important;
             text-align: left !important;
@@ -249,7 +249,7 @@
         .annex-p-description { font-size:10pt; font-weight:700; margin:2mm 0 3mm; line-height:1.2; }
         .annex-p-name, .annex-p-question { font-size:10pt; margin:2mm 0; line-height:1.2; }
         .annex-p-table { width:100% !important; margin:0 0 2.5mm !important; border-collapse:collapse !important; }
-        .annex-p-table th, .annex-p-table td { border:1.2px solid #000 !important; padding:1.2mm 1.8mm !important; font-family:'Lucida Bright','Lucida Serif',Georgia,serif !important; font-size:10pt !important; line-height:1.1 !important; vertical-align:top !important; text-align:left !important; }
+        .annex-p-table th, .annex-p-table td { border:1.2px solid #000 !important; padding:1.2mm 1.8mm !important; font-family:'Lucida Bright',Arial,Georgia,serif !important; font-size:10pt !important; line-height:1.1 !important; vertical-align:top !important; text-align:left !important; }
         .annex-p-table th { font-weight:900 !important; text-align:center !important; }
         .annex-p-signline { font-size:10pt; font-weight:700; margin-top:2mm; display:flex; justify-content:space-between; gap:8mm; }
         .annex-p-signline span { text-align:right; }
@@ -274,7 +274,7 @@
             .annex-p-page.first-visible { page-break-before:auto !important; break-before:auto !important; }
             .annex-p-page .page-body { transform:none !important; width:auto !important; }
             .annex-p-page .page-fit { height:auto !important; overflow:visible !important; }
-            .annex-p-page, .annex-p-page * { font-family:'Lucida Bright','Lucida Serif',Georgia,serif !important; }
+            .annex-p-page, .annex-p-page * { font-family:'Lucida Bright',Arial,Georgia,serif !important; }
             .annex-p-page table.doc-table thead { display:table-header-group; }
             .annex-p-page table.doc-table tr { break-inside:avoid !important; page-break-inside:avoid !important; }
         }
@@ -850,11 +850,11 @@
             <table class="doc-table annex-p-table">
                 <thead><tr><th style="width:4%;">&nbsp;</th><th style="width:61%;">&nbsp;</th><th style="width:20%;">&nbsp;</th><th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th></tr></thead>
                 <tr><td>i</td><td>Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td><span class="lbl-presentAgency">[Agency]</span></td><td id="de-ps1">—</td></tr>
-                <tr><td>ii</td><td>Appointing authority</td><td>Managing Committee / Administrator, <span class="lbl-presentSchool">[School]</span></td><td id="de-ps2">—</td></tr>
+                <tr><td>ii</td><td>Appointing authority</td><td><span class="lbl-adminAuthority">[Managing Committee / Administrator]</span>, <span class="lbl-presentSchool">[School]</span></td><td id="de-ps2">—</td></tr>
                 <tr><td>iii</td><td>Joined in the post of (Designation)</td><td><span class="lbl-teacherDesg">[Designation]</span></td><td id="de-ps3">—</td></tr>
                 <tr><td>iv</td><td>Date of Joining</td><td><span class="lbl-presentJoin">[Joining Date]</span></td><td id="de-ps4">—</td></tr>
                 <tr><td>v</td><td>Pay Scale in the Post of Joining</td><td><span class="lbl-presentPayScale">[Present Scale]</span></td><td id="de-ps5">—</td></tr>
-                <tr><td>vi</td><td>Letter of Appointment Order No.- Date-</td><td>Order No.: <span class="lbl-presentAppr">[Approval]</span></td><td id="de-ps6">—</td></tr>
+                <tr><td>vi</td><td>Letter of Appointment Order No.- Date-</td><td>Order No.: <span class="lbl-presentApptLetter">[Appointment Letter]</span></td><td id="de-ps6">—</td></tr>
                 <tr><td>vii</td><td>Date of Confirmation in the present post</td><td><span id="ans-ps7">Yes / No</span> Order No.: <span class="lbl-presentConfirm">[Confirm]</span></td><td id="de-ps7">—</td></tr>
                 <tr><td>viii</td><td>Whether under C.P.F./G.P.F.</td><td><span class="lbl-gpfStatus">[GPF Status]</span></td><td id="de-ps8">—</td></tr>
                 <tr><td>ix</td><td>Pension Rules/Scheme applicable</td><td>West Bengal Recognized Non-Govt. Educational Institution Employees DCRB Scheme 1981</td><td id="de-ps9">—</td></tr>
@@ -1098,9 +1098,11 @@
         const joinScale = defaultData ? defaultData.joinScale : 'Rs. 4650-10175/- (ROPA-98)';
         const lastScale = defaultData ? defaultData.lastScale : 'Rs. 7100-37600/- GP 4100/- (ROPA-09)';
         const appr = defaultData ? defaultData.appr : '';
+        const joinOrder = defaultData ? (defaultData.joinOrder || '') : '';
         const confirm = defaultData ? defaultData.confirm : '';
         const noc = defaultData ? defaultData.noc : '';
         const relMemo = defaultData ? defaultData.relMemo : '';
+        const acceptResign = defaultData ? (defaultData.acceptResign || '') : '';
         const relDate = defaultData ? defaultData.relDate : '';
 
         card.innerHTML = `
@@ -1136,6 +1138,10 @@
                     <input type="text" id="prevAppr_${schoolCount}" value="${appr}" placeholder="e.g., 785-S/G dated 15.11.1997">
                 </div>
                 <div class="form-group">
+                    <label>Joining Order No. & Date (Annexure P item vi — leave blank to reuse Approval Memo above):</label>
+                    <input type="text" id="prevJoinOrder_${schoolCount}" value="${joinOrder}" placeholder="e.g., School Order No. 12 dated 06.10.1997">
+                </div>
+                <div class="form-group">
                     <label>Confirmation Memo & Date:</label>
                     <input type="text" id="prevConfirm_${schoolCount}" value="${confirm}" placeholder="e.g., Conf/12/G dated 10.10.1999">
                 </div>
@@ -1146,6 +1152,10 @@
                 <div class="form-group">
                     <label>Release Order Res. / Memo No. & Date:</label>
                     <input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005">
+                </div>
+                <div class="form-group">
+                    <label>Acceptance of Resignation Order No. & Date (Annexure P item x — leave blank to reuse Release Order above):</label>
+                    <input type="text" id="prevAcceptResign_${schoolCount}" value="${acceptResign}" placeholder="e.g., Res. No. 04 dated 12.03.2005 (Acceptance)">
                 </div>
                 <div class="form-group">
                     <label>Release Date & Time:</label>
@@ -1294,6 +1304,8 @@
         const presentAgency = document.getElementById('presentAgency').value || '[Agency]';
         const presentAppr = document.getElementById('presentAppr').value || '[Approval]';
         const presentConfirm = document.getElementById('presentConfirm').value || '____________';
+        // Annexure P item vi (Letter of Appointment) is distinct from the DI's Approval Memo above;
+        // reuse the WBBSE/WBBPE Appointment Letter field if filled in, else fall back to the Approval Memo.
         
         let gpfStatus = document.getElementById('gpfStatus').value;
         if (gpfStatus === 'CUSTOM') gpfStatus = document.getElementById('customGpfVal').value.trim() || 'G.P.F. Scheme';
@@ -1314,6 +1326,7 @@
         const letterheadMode = document.getElementById('letterheadMode').value;
         const csscLetter = document.getElementById('csscLetter').value.trim();
         const apptLetter = document.getElementById('apptLetter').value.trim();
+        const presentApptLetter = apptLetter || presentAppr;
 
         let addressedToTitle = presTitle;
         let addressedToBody = presentSchool;
@@ -1383,6 +1396,7 @@
         document.querySelectorAll('.lbl-presentPayScale').forEach(e => e.innerText = presentPayScale);
         document.querySelectorAll('.lbl-presentAgency').forEach(e => e.innerText = presentAgency);
         document.querySelectorAll('.lbl-presentAppr').forEach(e => e.innerText = presentAppr);
+        document.querySelectorAll('.lbl-presentApptLetter').forEach(e => e.innerText = presentApptLetter);
         document.querySelectorAll('.lbl-presentConfirm').forEach(e => e.innerText = presentConfirm);
         document.querySelectorAll('.lbl-gpfStatus').forEach(e => e.innerText = gpfStatus);
         document.querySelectorAll('.lbl-cpNo').forEach(e => e.innerText = cpNo);
@@ -1445,9 +1459,11 @@
             const jScale = card.querySelector(`[id^="prevJoinScale_"]`).value || 'As per Approval';
             const lScale = card.querySelector(`[id^="prevLastScale_"]`).value || 'As per LPC';
             const appr = card.querySelector(`[id^="prevAppr_"]`).value || 'Approval N/A';
+            const joinOrder = card.querySelector(`[id^="prevJoinOrder_"]`).value.trim() || appr;
             const confirm = card.querySelector(`[id^="prevConfirm_"]`).value || 'Confirmation N/A';
             const noc = card.querySelector(`[id^="prevNOC_"]`).value.trim();
             const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || 'Release Res. N/A';
+            const acceptResign = card.querySelector(`[id^="prevAcceptResign_"]`).value.trim() || relMemo;
             const release = card.querySelector(`[id^="prevRelease_"]`).value || 'Release Date N/A';
 
             if (idx === 1 && period.includes('to')) {
@@ -1459,13 +1475,13 @@
                 nocSummaryLines.push(`Prior Permission / NOC to join from ${name} was granted vide ${noc}.`);
             }
 
-            addEnc(`prevAppr_${idx}`, `Attested copy of Appointment, Joining, Approval Order (${appr}), and Confirmation Order (${confirm}) of <strong>${name}</strong>.`);
+            addEnc(`prevAppr_${idx}`, `Attested copy of Appointment, Joining Order (${joinOrder}), Approval Order (${appr}), and Confirmation Order (${confirm}) of <strong>${name}</strong>.`);
             if (noc) addEnc(`prevNOC_${idx}`, `Attested copy of Prior Permission / NOC of <strong>${name}</strong> (${noc}).`);
-            addEnc(`prevRelease_${idx}`, `Attested copy of Release Order / Release Resolution of <strong>${name}</strong> (${relMemo}).`);
+            addEnc(`prevRelease_${idx}`, `Attested copy of Release Order / Release Resolution and Acceptance of Resignation (${acceptResign}) of <strong>${name}</strong>.`);
             addEnc(`prevContinuous_${idx}`, `Certificate of Continuous & Satisfactory Service from <strong>${name}</strong>.`);
             addEnc(`prevLPC_${idx}`, `Last Pay Certificate (LPC) / Pay Drawn Certificate issued by <strong>${name}</strong>.`);
 
-            schoolsData.push({ idx, name, post, agency, period, jScale, lScale, appr, confirm, noc, relMemo, release });
+            schoolsData.push({ idx, name, post, agency, period, jScale, lScale, appr, joinOrder, confirm, noc, relMemo, acceptResign, release });
         });
 
         addEnc('presentAppt', `Attested copy of Appointment Letter & Joining Report in ${presentSchool}.`);
@@ -1484,7 +1500,7 @@
         // ---- PASS 2: build the narrative / summary table / Annexure 'P' service tables / Part-II rows,
         // now citing the real Sl No of the matching enclosure in each "Documentary Evidence" column. ----
         schoolsData.forEach(s => {
-            const { idx, name, post, agency, period, jScale, lScale, appr, confirm, noc, relMemo, release } = s;
+            const { idx, name, post, agency, period, jScale, lScale, appr, joinOrder, confirm, noc, relMemo, acceptResign, release } = s;
 
             applicantNarrativeHTML += `
                 <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong> (Confirmed vide <strong>${confirm}</strong>). ${noc ? `Prior Permission / NOC was granted vide <strong>${noc}</strong>. ` : ''}Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
@@ -1527,11 +1543,11 @@
                     <tr><td>iii</td><td>Joined in the post of (Designation)</td><td>${post}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
                     <tr><td>iv</td><td>Date of Joining</td><td>${joinDatePart}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
                     <tr><td>v</td><td>Pay scale in the post of joining</td><td>${jScale}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
-                    <tr><td>vi</td><td>Joining Order Order No.:- Date:-</td><td>Order No.: ${appr}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
+                    <tr><td>vi</td><td>Joining Order Order No.:- Date:-</td><td>Order No.: ${joinOrder}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
                     <tr><td>vii</td><td>Released from the post of (Designation)</td><td>${post}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
                     <tr><td>viii</td><td>Pay scale in the post held last</td><td>${lScale}</td><td>${enc(`prevLPC_${idx}`)}</td></tr>
                     <tr><td>ix</td><td>Date of Resignation</td><td>${release}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
-                    <tr><td>x</td><td>Acceptance of Resignation</td><td>Order No.: ${relMemo}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
+                    <tr><td>x</td><td>Acceptance of Resignation</td><td>Order No.: ${acceptResign}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
                     <tr><td>xi</td><td>Whether allowed lien in the post of 1<sup>st</sup> service</td><td>${de(false)}</td><td>—</td></tr>
                     <tr><td>xii</td><td>If the incumbent did not revert to the parent office, then order of termination of lien</td><td>Not Applicable</td><td>—</td></tr>
                     <tr><td>xiii</td><td>If the incumbent reverted to the parent office, whether that reversion took place within lien period</td><td>Not Applicable</td><td>—</td></tr>
