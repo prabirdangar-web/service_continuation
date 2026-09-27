@@ -127,7 +127,7 @@
             box-shadow: 0 0 12px rgba(0,0,0,0.15);
             box-sizing: border-box;
             font-family: 'Times New Roman', 'Kalpurush', 'SolaimanLipi', serif;
-            font-size: 10.5pt;
+            font-size: 10pt;
             line-height: 1.5;
             color: #000;
             text-align: justify;
@@ -223,34 +223,38 @@
         .paper.letterhead-print { padding-top: 71mm; }
 
         /* ================= ANNEXURE-P: FOUR A4 PORTRAIT PAGES ================= */
+        /* Sizes below are tuned (and verified by rendering) so PART-I + DETAILS OF PRESENT SERVICE
+           (page 1), the fullest single previous-service table (page 2), and DETAILS OF INTERMEDIATE
+           SERVICE + identification block (page 3) all fit within one 297mm page each with nothing
+           clipped by the page's overflow:hidden — do not raise these sizes back up without re-checking. */
         .annex-p-page {
             font-family: 'Lucida Bright', 'Lucida Serif', Georgia, serif !important;
-            font-size: 14pt !important;
-            line-height: 1.28 !important;
+            font-size: 10pt !important;
+            line-height: 1.15 !important;
             text-align: left !important;
             width: 210mm !important;
             height: 297mm !important;
             min-height: 297mm !important;
             box-sizing: border-box !important;
             margin: 0 !important;
-            padding: 10mm 11mm !important;
+            padding: 8mm 9mm !important;
             overflow: hidden !important;
             background:#fff !important;
         }
         .annex-p-body { width: 100%; }
-        .annex-p-title { text-align:center; font-size:20pt; font-weight:900; margin:0 0 4mm; text-decoration:underline; }
-        .annex-p-subtitle { text-align:center; font-size:14pt; font-weight:700; line-height:1.25; margin:0 0 5mm; }
-        .annex-p-heading { text-align:center; font-size:18pt; font-weight:900; border:2px solid #000; padding:3mm 2mm; margin:0 0 2mm; line-height:1.15; }
-        .annex-p-subheading { text-align:center; font-size:16pt; font-weight:900; margin:5mm 0 2mm; text-decoration:underline; }
-        .annex-p-description { font-size:14pt; font-weight:700; margin:3mm 0 5mm; line-height:1.3; }
-        .annex-p-name, .annex-p-question { font-size:14pt; margin:4mm 0; line-height:1.3; }
-        .annex-p-table { width:100% !important; margin:0 0 4mm !important; border-collapse:collapse !important; }
-        .annex-p-table th, .annex-p-table td { border:1.5px solid #000 !important; padding:2.2mm 2mm !important; font-family:'Lucida Bright','Lucida Serif',Georgia,serif !important; font-size:14pt !important; line-height:1.2 !important; vertical-align:top !important; text-align:left !important; }
+        .annex-p-title { text-align:center; font-size:15pt; font-weight:900; margin:0 0 2mm; text-decoration:underline; }
+        .annex-p-subtitle { text-align:center; font-size:10pt; font-weight:700; line-height:1.2; margin:0 0 3mm; }
+        .annex-p-heading { text-align:center; font-size:13pt; font-weight:900; border:2px solid #000; padding:1.5mm 2mm; margin:0 0 1.5mm; line-height:1.1; }
+        .annex-p-subheading { text-align:center; font-size:11.5pt; font-weight:900; margin:2.5mm 0 1.5mm; text-decoration:underline; }
+        .annex-p-description { font-size:10pt; font-weight:700; margin:2mm 0 3mm; line-height:1.2; }
+        .annex-p-name, .annex-p-question { font-size:10pt; margin:2mm 0; line-height:1.2; }
+        .annex-p-table { width:100% !important; margin:0 0 2.5mm !important; border-collapse:collapse !important; }
+        .annex-p-table th, .annex-p-table td { border:1.2px solid #000 !important; padding:1.2mm 1.8mm !important; font-family:'Lucida Bright','Lucida Serif',Georgia,serif !important; font-size:10pt !important; line-height:1.1 !important; vertical-align:top !important; text-align:left !important; }
         .annex-p-table th { font-weight:900 !important; text-align:center !important; }
-        .annex-p-signline { font-size:14pt; font-weight:700; margin-top:3mm; display:flex; justify-content:space-between; gap:8mm; }
+        .annex-p-signline { font-size:10pt; font-weight:700; margin-top:2mm; display:flex; justify-content:space-between; gap:8mm; }
         .annex-p-signline span { text-align:right; }
-        .annex-p-signature-right { text-align:right; font-size:14pt; font-weight:700; margin-top:12mm; }
-        .annex-p-page .school-service-table { font-size:14pt !important; }
+        .annex-p-signature-right { text-align:right; font-size:10pt; font-weight:700; margin-top:8mm; }
+        .annex-p-page .school-service-table { font-size:10pt !important; }
         @media print {
             @page { size: A4 portrait; margin: 0 !important; }
             .annex-p-page {
@@ -872,7 +876,8 @@
             <div class="annex-p-description">Particulars in regard to intermediate services rendered in any establishment on retention of lien in a post and subsequently reverted before termination of lien period, if any:</div>
             <div class="annex-p-subheading">DETAILS OF INTERMEDIATE SERVICE</div>
             <table class="doc-table annex-p-table">
-                <thead><tr><th style="width:4%;">&nbsp;</th><th style="width:61%;">&nbsp;</th><th style="width:20%;">&nbsp;</th><th style="width:15%;">Documentary Evidence annexed in the Enclo. no</th></tr></thead>
+                <thead><tr><th style="width:4%;">&nbsp;</th><th style="width:46%;">Name of Assistant Teacher</th><th style="width:20%;">&nbsp;</th><th style="width:15%;">Documentary Evidence under C.P. No.</th></tr></thead>
+                <tr><td>&nbsp;</td><td><em>(to be filled in by hand, if applicable)</em></td><td>&nbsp;</td><td>&nbsp;</td></tr>
                 <tr><td>i</td><td>Released on lien — From the post of: / To join as (Designation):</td><td>N/A</td><td id="de-is1">—</td></tr>
                 <tr><td>ii</td><td>Details of Order of lien</td><td>N/A</td><td id="de-is2">—</td></tr>
                 <tr><td>iii</td><td>Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td>N/A</td><td id="de-is3">—</td></tr>
@@ -889,6 +894,17 @@
                 <tr><td>xiv</td><td>Date of joining the post on reversion in which lien was allowed</td><td>N/A</td><td id="de-is14">—</td></tr>
                 <tr><td>xv</td><td>Joining order of the reversion</td><td>N/A</td><td id="de-is15">—</td></tr>
             </table>
+            <div style="font-size:10pt; line-height:1.3; margin-top:2mm;">
+                <div>Signature of the Applicant : ___________________________</div>
+                <div>Name of the Applicant : <span class="lbl-teacherName">[Teacher Name]</span></div>
+                <div>Present Designation : <span class="lbl-teacherDesg">[Designation]</span></div>
+                <div>Present Place of Posting : <span class="lbl-presentSchool">[Present School]</span></div>
+                <div>Mobile No. (Optional) : <span class="lbl-teacherMobile">[Mobile]</span></div>
+                <div style="display:flex; justify-content:space-between; margin-top:4mm;">
+                    <span>Signature of the Head of the Institution</span>
+                    <span>Signature of the Competent Authority of<br>the Administrative Department along with official [Seal]</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1532,16 +1548,19 @@
                 </div>
             `;
 
-            // PART-II: Technical Resignation applies where prior permission/NOC to join the next
-            // service was on record; otherwise it is treated as a Clear Resignation.
-            partIIRowsHTML += `
-                <tr>
-                    <td>${svcLabel}</td>
-                    <td>${de(channelApplied)}</td>
-                    <td>${de(!channelApplied)}</td>
-                </tr>
-            `;
         });
+
+        // PART-II is filled by the Finance Department / Pension Branch after submission, not by
+        // this tool — it is reproduced exactly as the blank Annexure 'P' proforma (fixed 1st/2nd/3rd
+        // rows, both decision columns left empty for hand entry) regardless of how many previous
+        // schools were actually entered above.
+        partIIRowsHTML = ['1st', '2nd', '3rd'].map(lbl => `
+                <tr>
+                    <td>${lbl}</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            `).join('');
 
         // Present School Table Entry
         tableRowsHTML += `
