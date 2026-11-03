@@ -2425,15 +2425,15 @@ function arr(o,al,depth=0){ if(!o||typeof o!=='object'||depth>3)return null; con
 const dmy=s=>{if(!s)return ''; s=String(s).trim(); let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m)return `${m[3]}.${m[2]}.${m[1]}`; m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/); return m?`${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}.${m[3]}`:s;};
 const NAMEK=['name','staffName','teacherName','nameOfTheStaff','employeeName','fullName'];
 async function refreshStaff(){
- const sel=$('sbTeacher'), st=$('sbStatus'); st.textContent='Loading staff…'; const s=source(); let got=null,used='';
- for(const n of s.names){ try{ const q=await s.db.collection(n).get(); if(!q.empty){got=q;used=n;break;} }catch(e){ st.textContent='Cannot read "'+n+'": '+e.message; } }
- if(!got){ if(!/Cannot/.test(st.textContent)) st.textContent='No staff found — click ⚙ and enter the SB collection name.'; return; }
+ const sel=$('sbTeacher'), st=$('sbStatus'); st.textContent='Loading staff…'; const s=source(); let got=null,used='',bad=[];
+ for(const n of s.names){ try{ const q=await s.db.collection(n).get(); if(!q.empty){got=q;used=n;break;} }catch(e){ bad.push(n); } }
+ if(!got){ st.textContent=bad.length?'Access denied / not found for: '+bad.join(', ')+' — this page cannot see the SB teachers. Click ⚙ and paste the SB app\'s Firebase config + collection name.':'No staff found — click ⚙ and enter the SB collection name.'; return; }
  db=s.db; cache=got.docs.map(d=>({id:d.id,d:d.data(),n:find(d.data(),NAMEK)||d.id})).sort((a,b)=>a.n.localeCompare(b.n));
  sel.innerHTML='<option value="">-- Select Saved Teacher --</option>'+cache.map(x=>`<option value="${x.id}">${x.n.replace(/</g,'&lt;')}</option>`).join('');
  st.textContent=cache.length+' staff from "'+used+'"'; const c=cfg(); if(!c.coll){c.coll=used; LS.setItem('sbCfg',JSON.stringify(c));}}
 window.sbSettings=function(){const c=cfg(); const n=prompt('Collection name that holds the teachers in the SB app:',c.coll||''); if(n===null)return; c.coll=n.trim();
  const j=prompt('Firebase config JSON of the SB app (leave BLANK if SB uses the same Firebase project as this page):',c.config?JSON.stringify(c.config):''); if(j===null)return;
- try{ c.config=j.trim()?JSON.parse(j):null; }catch(e){alert('Config is not valid JSON.');return;} LS.setItem('sbCfg',JSON.stringify(c)); location.reload();};
+ try{ let t=j.trim(); if(t){ const m=t.match(/\{[\s\S]*\}/); t=m?m[0]:t; t=t.replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g,'$1"$2":').replace(/'/g,'"').replace(/,\s*}/g,'}'); } c.config=t?JSON.parse(t):null; }catch(e){alert('Could not read the config. Paste the whole firebaseConfig = { ... } block from the SB page source.');return;} LS.setItem('sbCfg',JSON.stringify(c)); location.reload();};
 window.sbRefresh=refreshStaff;
 window.sbLoadTeacher=function(){
  const x=cache.find(c=>c.id===$('sbTeacher').value); if(!x){alert('Select a teacher first.');return;} const d=x.d, set=[];
