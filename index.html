@@ -408,26 +408,19 @@
     </div>
 </div>
 
-<div id="savedRecordsModal">
-    <div class="modal-inner">
-        <h2 style="margin-top:0;">Saved Records</h2>
-        <div id="savedRecordsList">Loading…</div>
-        <div style="text-align:right; margin-top:15px;">
-            <button type="button" class="btn" style="background:#718096; color:#fff;" onclick="closeSavedRecordsModal()">Close</button>
-        </div>
-    </div>
-</div>
-
 <div class="container no-print">
     <div class="card">
         <h1>WB SE Service Continuation & Form 'P' Generator</h1>
         <p style="margin-top:-8px; color:#718096;">Full Administrative Proposal & Finance Dept Annexure 'P' Proforma (G.O. No. 249-F(Pen) dated 27.05.2019)</p>
 
         <div style="background:#f0f4f8; border:1px solid #cbd5e0; border-radius:6px; padding:12px 15px; margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <label style="margin:0;">Record Name:</label>
-            <input type="text" id="cloudRecordName" placeholder="e.g., Kabita Mondal - Bankura" style="width:260px;">
-            <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save to Cloud</button>
-            <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="openSavedRecordsModal()">☁️ Load Saved Records</button>
+            <select id="sbTeacher" style="width:340px;max-width:100%"><option value="">-- Select Saved Teacher --</option></select>
+            <button type="button" class="btn" style="background:#1e3a8a;color:#fff" onclick="sbLoadTeacher()">📂 Load</button>
+            <button type="button" class="btn" style="background:#718096;color:#fff;padding:10px 12px" onclick="sbRefresh()" title="Refresh staff list">↻</button>
+            <button type="button" class="btn" style="background:#718096;color:#fff;padding:10px 12px" onclick="sbSettings()" title="Staff source settings">⚙</button>
+            <span id="sbStatus" style="font-size:.8rem;color:#718096"></span><br>
+            <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save (replaces last)</button>
+            <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="loadLastSaved()">☁️ Load Last Saved</button>
             <span id="cloudSaveMsg" style="font-size:0.85rem; color:#718096;"></span>
         </div>
 
@@ -2393,6 +2386,70 @@ window.relGenerate=function(){
  showTab('doc10',NAV.querySelector('[data-tab="doc10"]')); fitPages(); $('outputNavigation').scrollIntoView({behavior:'smooth'});};
 const ol=window.onload; window.onload=function(){ol&&ol(); dash();};
 fillSel(); dash();
+})();
+</script>
+
+<script>
+/* ===== ADD-ON: single "last saved" record + Staff dropdown fed from the SB (Unified ROPA) teacher database ===== */
+(function(){
+const $=id=>document.getElementById(id), LS=window.localStorage;
+const msg=(t,c)=>{const m=$('cloudSaveMsg'); m.style.color=c||'#718096'; m.textContent=t;};
+const lastId=u=>'last_'+u.uid;
+/* ---- save = overwrite ONE record ---- */
+window.saveFormToCloud=function(){
+ const u=fbAuth.currentUser; if(!u){msg('Please sign in first (top bar).','#c53030');return;}
+ const r=collectFormData(); msg('Saving…');
+ fbDb.collection(CLOUD_COLLECTION).doc(lastId(u)).set({label:($('teacherName').value||'Untitled').trim(),fields:r.fields,schoolCount:r.schoolCount,createdBy:u.uid,createdByEmail:u.email||null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
+  .then(()=>msg('Saved ✓ (replaces previous save)','#2f855a')).catch(e=>msg('Save failed: '+e.message,'#c53030'));};
+window.loadLastSaved=async function(quiet){
+ const u=fbAuth.currentUser; if(!u){if(!quiet)alert('Please sign in first (top bar).');return;}
+ try{ let d=await fbDb.collection(CLOUD_COLLECTION).doc(lastId(u)).get();
+  if(!d.exists){const q=await fbDb.collection(CLOUD_COLLECTION).where('createdBy','==',u.uid).orderBy('updatedAt','desc').limit(1).get(); d=q.empty?null:q.docs[0];}
+  if(!d||!d.exists){if(!quiet)msg('Nothing saved yet.');return;}
+  populateFormData(d.data()); msg('Loaded last saved: '+(d.data().label||''),'#2f855a'); $('teacherName').dispatchEvent(new Event('input',{bubbles:true}));
+ }catch(e){msg('Load failed: '+e.message,'#c53030');}};
+window.openSavedRecordsModal=()=>loadLastSaved(false);
+let first=true; fbAuth.onAuthStateChanged(u=>{ if(u&&first){first=false; loadLastSaved(true);} refreshStaff(); });
+
+/* ---- staff source (SB database) ---- */
+let db=fbDb, cache=[];
+function cfg(){try{return JSON.parse(LS.getItem('sbCfg')||'{}');}catch(e){return {};}}
+function source(){const c=cfg(); if(c.config&&!window.__sbApp){try{window.__sbApp=firebase.initializeApp(c.config,'sb');}catch(e){window.__sbApp=firebase.app('sb');}} return {db:c.config?window.__sbApp.firestore():fbDb,names:c.coll?[c.coll]:['teachers','staff','ropaTeachers','teacherRecords','sbTeachers','savedTeachers','ropa_teachers','staffList']};}
+const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+function find(o,al,depth=0){ if(!o||typeof o!=='object'||depth>4)return ''; const A=al.map(norm);
+ for(const k of Object.keys(o)){ if(A.includes(norm(k))&&o[k]!=null&&typeof o[k]!=='object'&&String(o[k]).trim()!=='')return String(o[k]).trim(); }
+ for(const k of Object.keys(o)){ if(o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k])){const v=find(o[k],al,depth+1); if(v)return v;} } return ''; }
+function arr(o,al,depth=0){ if(!o||typeof o!=='object'||depth>3)return null; const A=al.map(norm);
+ for(const k of Object.keys(o)){ if(A.includes(norm(k))&&Array.isArray(o[k]))return o[k]; }
+ for(const k of Object.keys(o)){ if(o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k])){const v=arr(o[k],al,depth+1); if(v)return v;} } return null; }
+const dmy=s=>{if(!s)return ''; s=String(s).trim(); let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m)return `${m[3]}.${m[2]}.${m[1]}`; m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/); return m?`${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}.${m[3]}`:s;};
+const NAMEK=['name','staffName','teacherName','nameOfTheStaff','employeeName','fullName'];
+async function refreshStaff(){
+ const sel=$('sbTeacher'), st=$('sbStatus'); st.textContent='Loading staff…'; const s=source(); let got=null,used='';
+ for(const n of s.names){ try{ const q=await s.db.collection(n).get(); if(!q.empty){got=q;used=n;break;} }catch(e){ st.textContent='Cannot read "'+n+'": '+e.message; } }
+ if(!got){ if(!/Cannot/.test(st.textContent)) st.textContent='No staff found — click ⚙ and enter the SB collection name.'; return; }
+ db=s.db; cache=got.docs.map(d=>({id:d.id,d:d.data(),n:find(d.data(),NAMEK)||d.id})).sort((a,b)=>a.n.localeCompare(b.n));
+ sel.innerHTML='<option value="">-- Select Saved Teacher --</option>'+cache.map(x=>`<option value="${x.id}">${x.n.replace(/</g,'&lt;')}</option>`).join('');
+ st.textContent=cache.length+' staff from "'+used+'"'; const c=cfg(); if(!c.coll){c.coll=used; LS.setItem('sbCfg',JSON.stringify(c));}}
+window.sbSettings=function(){const c=cfg(); const n=prompt('Collection name that holds the teachers in the SB app:',c.coll||''); if(n===null)return; c.coll=n.trim();
+ const j=prompt('Firebase config JSON of the SB app (leave BLANK if SB uses the same Firebase project as this page):',c.config?JSON.stringify(c.config):''); if(j===null)return;
+ try{ c.config=j.trim()?JSON.parse(j):null; }catch(e){alert('Config is not valid JSON.');return;} LS.setItem('sbCfg',JSON.stringify(c)); location.reload();};
+window.sbRefresh=refreshStaff;
+window.sbLoadTeacher=function(){
+ const x=cache.find(c=>c.id===$('sbTeacher').value); if(!x){alert('Select a teacher first.');return;} const d=x.d, set=[];
+ const put=(id,v)=>{ if(!v)return; const el=$(id); if(!el)return; if(el.tagName==='SELECT'){const o=[...el.options].find(o=>norm(o.text).includes(norm(v))||norm(o.value)===norm(v)); if(!o)return; el.value=o.value; el.dispatchEvent(new Event('change',{bubbles:true}));} else {el.value=v; el.dispatchEvent(new Event('input',{bubbles:true}));} set.push(id); };
+ const sex=find(d,['sex','gender']); const fem=/^f/i.test(sex)||/smt|mrs|miss/i.test(find(d,NAMEK)); const nm=x.n.replace(/^(smt|sri|shri|mrs|mr|miss)\.?\s+/i,'');
+ put('genderTitle',sex?(fem?'Smt':'Sri'):''); put('teacherName',(sex?(fem?'Smt. ':'Sri '):'')+nm);
+ put('dob',dmy(find(d,['dob','dateOfBirth','birthDate','dateofbirth']))); put('teacherDesg',find(d,['designation','desig','desg','post']));
+ put('subjectQual',find(d,['qualification','qual','subject','subjectGroup','subjectQual'])); put('presentSchool',find(d,['school','schoolName','nameOfTheSchool','institution']));
+ put('presentJoinDate',dmy(find(d,['dojThisSchool','dateOfJoiningCurrentSchool','currentSchoolJoining','joinThis','dojCurrent','doj','dateOfJoining','dateOfFirstJoining'])));
+ put('presentAppr',find(d,['approvalNo','approval','apprNo','approvalNoDate']));
+ const pr=arr(d,['priorSchools','prevSchools','priorSchoolHistory','priorHistory','previousSchools','priorSchoolServiceHistory']);
+ if(pr&&pr.length){ $('schoolsContainer').innerHTML=''; schoolCount=0; pr.forEach(p=>{ const f=dmy(find(p,['from','fromDate','joiningDate','doj','start'])), t=dmy(find(p,['to','toDate','releaseDate','end','dor']));
+   addSchoolField({name:find(p,['school','name','schoolName','institution']),post:find(p,['post','designation'])||'Assistant Teacher',agency:find(p,['agency','authority'])||'Managing Committee',period:(f||t)?(f+' to '+t):'',joinScale:find(p,['joinScale','scale','payScale']),lastScale:find(p,['lastScale']),appr:find(p,['approval','approvalNo','appr']),joinOrder:'',confirm:'',noc:find(p,['noc']),relMemo:'',acceptResign:'',relDate:t}); }); set.push('previous schools ('+pr.length+')'); }
+ $('sbStatus').textContent='Filled: '+(set.join(', ')||'nothing matched'); console.log('SB record keys:',Object.keys(d),d);
+ if(!set.length)alert('No fields matched. Open the browser console (F12) to see this record\'s field names, and tell me them so I can map them.');};
+fbAuth.currentUser||0; setTimeout(refreshStaff,800);
 })();
 </script>
 
