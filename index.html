@@ -422,6 +422,8 @@
             <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save (replaces last)</button>
             <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="loadLastSaved()">☁️ Load Last Saved</button>
             <span id="cloudSaveMsg" style="font-size:0.85rem; color:#718096;"></span>
+            <button type="button" class="btn" style="background:#6b46c1;color:#fff;" onclick="exportFormJSON()" title="Download all form fields as a .json file">⬇ Export JSON</button>
+            <button type="button" class="btn" style="background:#b7791f;color:#fff;" onclick="importFormJSON()" title="Load a .json file into the form">⬆ Import JSON</button>
         </div>
 
         <h2>1. Teacher & Governance Setup</h2>
@@ -2441,5 +2443,50 @@ setTimeout(refreshStaff,800);
 })();
 </script>
 
+
+<script>
+/* ===== ADD-ON: Export / Import form as JSON file (works offline, no sign-in needed) ===== */
+(function(){
+const $=id=>document.getElementById(id);
+const msg=(t,c)=>{const m=$('cloudSaveMsg'); if(m){m.style.color=c||'#718096'; m.textContent=t;}};
+const SKIP=['sbTeacher','relSchool','authEmail','authPassword'];
+window.exportFormJSON=function(){
+  const r=collectFormData(); SKIP.forEach(k=>delete r.fields[k]);
+  const name=($('teacherName').value||'Untitled').trim();
+  const obj={app:'TFHS-PSuite',version:1,label:name,exportedAt:new Date().toISOString(),schoolCount:r.schoolCount,fields:r.fields};
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));
+  a.download='TFHS_'+name.replace(/[^\w\u0980-\u09FF]+/g,'_')+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  msg('Exported ✓ ('+Object.keys(obj.fields).length+' fields)','#2f855a');
+};
+let fi=null;
+window.importFormJSON=function(){
+  if(!fi){ fi=document.createElement('input'); fi.type='file'; fi.accept='.json,application/json'; fi.style.display='none';
+    fi.addEventListener('change',()=>{ const f=fi.files[0]; if(!f)return; const fr=new FileReader();
+      fr.onload=()=>{ try{ applyImport(JSON.parse(fr.result)); }catch(e){ msg('Import failed: '+e.message,'#c53030'); alert('Invalid JSON file: '+e.message); } fi.value=''; };
+      fr.readAsText(f,'utf-8'); });
+    document.body.appendChild(fi); }
+  fi.click();
+};
+function applyImport(rec){
+  if(!rec||typeof rec!=='object') throw new Error('not a form record');
+  if(!rec.fields) rec={fields:rec};
+  const f=rec.fields;
+  let n=rec.schoolCount;
+  if(typeof n!=='number'){ n=0; Object.keys(f).forEach(k=>{const m=k.match(/^prevName_(\d+)$/); if(m) n=Math.max(n,+m[1]);}); }
+  n=Math.max(0,Math.min(3,n));
+  populateFormData({fields:f,schoolCount:n});
+  /* changing Administration Type resets the committee selects, so re-apply them in order */
+  ['adminType','presidentStatus','secyStatus','hoiStatus','gpfStatus','vacancyType'].forEach(k=>{
+    const el=$(k); if(el&&f[k]!==undefined&&[...el.options].some(o=>o.value===f[k])){ el.value=f[k]; el.dispatchEvent(new Event('change',{bubbles:true})); } });
+  const grp={presidentStatus:'customPresGroup',secyStatus:'customSecyGroup',hoiStatus:'customHoiGroup',gpfStatus:'customGpfGroup'};
+  Object.keys(grp).forEach(k=>toggleCustom(k,grp[k]));
+  toggleVacancyFields($('vacancyType').value);
+  setTimeout(()=>{ if(window.fillSel){ fillSel(); const s=$('relSchool'); if(s&&s.options.length) s.value=s.options[0].value; } if(window.dash) dash(); },60);
+  msg('Imported ✓ '+(rec.label?('"'+rec.label+'" '):'')+'('+Object.keys(f).length+' fields). Press Generate to build the documents.','#2f855a');
+}
+})();
+</script>
 </body>
 </html>
