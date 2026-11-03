@@ -380,7 +380,17 @@
             .pgbreak { border: 0 !important; margin: 0 !important; }
             .pgbreak::after { display: none !important; }
         }
-    </style>
+    
+.lh-space{resize:none!important}
+#wordBar.wb-hidden{display:none!important}
+#wordBar .wtabs{display:flex;gap:4px;align-items:center;border-bottom:1px solid #c9d3e3;padding-bottom:3px;margin-bottom:3px}
+#wordBar .wtabs button{border:1px solid #bbb;background:#f4f6fa;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.78rem;font-weight:600}
+#wordBar .wtabs button.on{background:#2b579a;color:#fff;border-color:#2b579a}
+#wbFab{display:none;position:fixed;right:16px;bottom:16px;z-index:70;background:#2b579a;color:#fff;border:0;border-radius:20px;padding:9px 16px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+#relDash{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;background:#fffaf0;border:1px solid #f6ad55;border-radius:6px;padding:12px;margin:10px 0}
+#relDash .rd span{display:block;font-size:.72rem;color:#718096;font-weight:600}#relDash .rd b{font-size:.88rem;color:#1a202c;word-break:break-word}
+@media print{#wbFab{display:none!important}}
+</style>
 </head>
 <body>
 
@@ -676,6 +686,7 @@
             </div>
         </div>
 
+        <div id="relSection"><h2>5. Release Workflow — Exam Permission → Release (4 documents: Docs 10–13)</h2><p style="font-size:.85rem;color:#4a5568;margin-top:0">Uses the previous-school card selected below (post, period, subject, approval, pay scale are fetched). If the old school is under an <b>Administrator</b>, resolutions become HOI Report + Administrator Order in English only; if <b>M.C.</b>, resolutions are in Bengali.</p><button type="button" class="btn btn-add" onclick="loadKabitaSample()">Load Kabita Mondal sample (Manbazar)</button><div id="relDash"></div><div class="grid-3"><div class="form-group"><label>Previous school (source data)</label><select id="relSchool"><option value="">—</option></select></div><div class="form-group"><label>Exam No. (dashboard)</label><input type="text" id="relExamNo" placeholder="e.g. 2nd SLST-2025 Roll / Reg. No."></div><div class="form-group"><label>Exam name</label><input type="text" id="relExamName" placeholder=""></div><div class="form-group"><label>Exam date (optional)</label><input type="text" id="relExamDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Old school controlled by</label><select id="relOldCtl"><option value="MC">Managing Committee (Bengali resolutions)</option><option value="ADMIN">Administrator (HOI Report + Order, English)</option></select></div><div class="form-group"><label>Old school HOI title</label><select id="relOldHoi"><option value="Headmaster">Headmaster</option><option value="Headmistress">Headmistress</option><option value="Teacher-in-Charge">Teacher-in-Charge</option></select></div><div class="form-group"><label>Old school P.O. / District</label><input type="text" id="relOldPlace" placeholder=""></div><div class="form-group"><label>Teacher name in Bengali (optional)</label><input type="text" id="relNameBn" placeholder=""></div><div class="form-group"><label>Post in Bengali (optional)</label><input type="text" id="relPostBn" placeholder=""></div><div class="form-group"><label>Old school name in Bengali (optional)</label><input type="text" id="relOldBn" placeholder=""></div><div class="form-group"><label>Permission resolution: retain in service?</label><select id="relRetain"><option value="YES">Allow exam, do NOT release now</option><option value="NO">Allow exam only</option></select></div><div class="form-group"><label>Application 1 date (exam permission)</label><input type="text" id="relApp1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting/Report No. – Permission</label><input type="text" id="relM1No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Permission</label><input type="text" id="relM1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Permission</label><input type="text" id="relRes1No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Permission (Admin)</label><input type="text" id="relRep1No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Permission</label><input type="text" id="relOrd1No" placeholder=""></div><div class="form-group"><label>Exam result / rank (after passing)</label><input type="text" id="relResult" placeholder=""></div><div class="form-group"><label>Joining</label><select id="relNewMode"><option value="NEXT">Next school</option><option value="CURRENT">Current school</option></select></div><div class="form-group"><label>School to join</label><input type="text" id="relNewSchool" placeholder=""></div><div class="form-group"><label>Appointment / recommendation ref.</label><input type="text" id="relNewOffer" placeholder=""></div><div class="form-group"><label>Application 2 date (release)</label><input type="text" id="relApp2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Release date (A.N.)</label><input type="text" id="relRelDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting No. – Release</label><input type="text" id="relM2No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Release</label><input type="text" id="relM2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Release</label><input type="text" id="relRes2No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Release (Admin)</label><input type="text" id="relRep2No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Release</label><input type="text" id="relOrd2No" placeholder=""></div></div><button type="button" class="btn btn-generate" style="background:#b7791f" onclick="relGenerate()">Generate Release Set (Docs 10–13)</button></div>
         <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All Documents (Cover + Form P + Proposals + Experience Certificate + Single NOC)</button>
     </div>
 </div>
@@ -719,7 +730,7 @@
             <option value="">Size…</option>
             <option>8</option><option>9</option><option>10</option><option>10.5</option><option>11</option><option>12</option><option>13</option><option>14</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>36</option><option>48</option>
         </select>
-        <select onchange="cmd('formatBlock',this.value);this.selectedIndex=0" title="Style">
+        <select onchange="if(this.value)cmd('formatBlock','<'+this.value+'>');this.selectedIndex=0" title="Style">
             <option value="">Style…</option>
             <option value="p">Normal</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option><option value="blockquote">Quote</option>
         </select>
@@ -783,7 +794,7 @@
     </div>
     <div class="wrow">
         <span class="tag">Letter-pad blank space:</span>
-        <input type="number" id="lhH" value="59" min="0" max="200" step="1" oninput="setLH(this.value)"> <span class="tag">mm (+12 mm margin ≈ 71 mm from paper top)</span>
+        <select id="lhH" onchange="setLH(this.value)" title="Blank space for school letter pad"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59" selected>59</option><option value="60">60</option><option value="61">61</option><option value="62">62</option><option value="63">63</option><option value="64">64</option><option value="65">65</option><option value="66">66</option><option value="67">67</option><option value="68">68</option><option value="69">69</option><option value="70">70</option><option value="71">71</option><option value="72">72</option><option value="73">73</option><option value="74">74</option><option value="75">75</option><option value="76">76</option><option value="77">77</option><option value="78">78</option><option value="79">79</option><option value="80">80</option><option value="81">81</option><option value="82">82</option><option value="83">83</option><option value="84">84</option><option value="85">85</option><option value="86">86</option><option value="87">87</option><option value="88">88</option><option value="89">89</option><option value="90">90</option><option value="91">91</option><option value="92">92</option><option value="93">93</option><option value="94">94</option><option value="95">95</option><option value="96">96</option><option value="97">97</option><option value="98">98</option><option value="99">99</option><option value="100">100</option><option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option><option value="105">105</option><option value="106">106</option><option value="107">107</option><option value="108">108</option><option value="109">109</option><option value="110">110</option><option value="111">111</option><option value="112">112</option><option value="113">113</option><option value="114">114</option><option value="115">115</option><option value="116">116</option><option value="117">117</option><option value="118">118</option><option value="119">119</option><option value="120">120</option><option value="121">121</option><option value="122">122</option><option value="123">123</option><option value="124">124</option><option value="125">125</option><option value="126">126</option><option value="127">127</option><option value="128">128</option><option value="129">129</option><option value="130">130</option><option value="131">131</option><option value="132">132</option><option value="133">133</option><option value="134">134</option><option value="135">135</option><option value="136">136</option><option value="137">137</option><option value="138">138</option><option value="139">139</option><option value="140">140</option><option value="141">141</option><option value="142">142</option><option value="143">143</option><option value="144">144</option><option value="145">145</option><option value="146">146</option><option value="147">147</option><option value="148">148</option><option value="149">149</option><option value="150">150</option></select><button onclick="stepLH(-1)" title="Decrease 1 mm">−</button><button onclick="stepLH(1)" title="Increase 1 mm">+</button> <span class="tag">mm (drop-down or −/+ ; 12 mm page margin is added)</span>
         <span class="tag">On:</span>
         <label><input type="checkbox" data-lh="doc1" onchange="toggleLH(this)">1</label>
         <label><input type="checkbox" data-lh="doc2" checked onchange="toggleLH(this)">2</label>
@@ -2022,7 +2033,7 @@
   const $ = id => document.getElementById(id);
   const inBody = n => n && (n.nodeType === 1 ? n : n.parentElement) && (n.nodeType === 1 ? n : n.parentElement).closest('.page-body[contenteditable="true"]');
   document.addEventListener('selectionchange', () => { const s = getSelection(); if (s.rangeCount && inBody(s.getRangeAt(0).commonAncestorContainer)) sel = s.getRangeAt(0).cloneRange(); });
-  const rs = () => { if (sel) { const s = getSelection(); s.removeAllRanges(); s.addRange(sel); } };
+  const rs = () => { if (sel) { const b = inBody(sel.commonAncestorContainer); if (b && document.activeElement !== b) b.focus({preventScroll:true}); const s = getSelection(); s.removeAllRanges(); s.addRange(sel); } };
   const fitSoon = () => { clearTimeout(ft); ft = setTimeout(() => { fitPages(); counts(); }, 250); };
   const mark = () => { dirty = true; fitSoon(); };
   window.cmd = (c, v = null) => { rs(); document.execCommand('styleWithCSS', false, true); document.execCommand(c, false, v); mark(); };
@@ -2068,7 +2079,7 @@
   /* letter-pad blank space */
   const LH_DEFAULT_ON = ['doc2', 'doc3', 'doc7', 'doc8', 'doc9'], LH_ALL = ['doc1', 'doc2', 'doc3', 'doc4', 'doc7', 'doc8', 'doc9'];
   function initLH() { LH_ALL.forEach(id => { const p = $(id); if (!p || p.querySelector(':scope > .lh-space')) return; const d = document.createElement('div'); d.className = 'lh-space'; d.contentEditable = 'false';
-    d.dataset.label = 'Blank space for school letter pad (not printed) — drag the bottom edge to change height'; d.style.height = ($('lhH').value || 59) + 'mm'; if (!LH_DEFAULT_ON.includes(id)) d.style.display = 'none'; p.insertBefore(d, p.firstChild); }); }
+    d.dataset.label = 'Blank space for school letter pad (not printed) — set height in Page setup'; d.style.height = ($('lhH').value || 59) + 'mm'; if (!LH_DEFAULT_ON.includes(id)) d.style.display = 'none'; p.insertBefore(d, p.firstChild); }); }
   window.setLH = v => { document.querySelectorAll('.lh-space').forEach(d => d.style.height = (parseFloat(v) || 0) + 'mm'); fitPages(); };
   window.toggleLH = cb => { const d = $(cb.dataset.lh).querySelector(':scope > .lh-space'); if (d) d.style.display = cb.checked ? '' : 'none'; fitPages(); };
   /* editable + counters */
@@ -2274,6 +2285,113 @@ table.doc-table{border-collapse:collapse;width:100%} table.doc-table td,table.do
             .then(() => openSavedRecordsModal())
             .catch(err => alert('Delete failed: ' + err.message));
     }
+</script>
+
+<script>
+/* ===== ADD-ON: Ribbon toolbar (hideable) + Page setup + Release workflow (4 documents) ===== */
+(function(){
+const $=id=>document.getElementById(id), V=id=>($(id)?$(id).value:'').trim();
+const E=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const D=x=>x?E(x):'__________';
+
+/* ---------- Ribbon: tabs show one group of tools; hide fully / bring back ---------- */
+const bar=$('wordBar'), rows=[...bar.querySelectorAll(':scope > .wrow')];
+const GROUPS={home:[0],para:[1],table:[2],page:[3,4]};
+const tabs=document.createElement('div'); tabs.className='wtabs';
+tabs.innerHTML='<button data-g="home">Home</button><button data-g="para">Paragraph / Insert</button><button data-g="table">Table / Find</button><button data-g="page">Page setup &amp; Export</button><button data-g="" title="Collapse">▲ Collapse</button><button id="wbHide" title="Hide toolbar completely">✕ Hide toolbar</button><span class="tag" style="margin-left:auto">A4 · Portrait · 1 page</span>';
+bar.insertBefore(tabs,bar.firstChild);
+const fab=document.createElement('button'); fab.id='wbFab'; fab.className='no-print'; fab.textContent='✏ Word tools'; document.body.appendChild(fab);
+window.ribbonShow=g=>{rows.forEach((r,i)=>r.style.display=(g&&GROUPS[g].includes(i))?'flex':'none');
+ tabs.querySelectorAll('button[data-g]').forEach(b=>b.classList.toggle('on',b.dataset.g===g&&g!==''));};
+tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-g]'); if(b) ribbonShow(b.dataset.g);});
+$('wbHide').onclick=()=>{bar.classList.add('wb-hidden'); fab.style.display='block';};
+fab.onclick=()=>{bar.classList.remove('wb-hidden'); fab.style.display='none'; bar.style.display='block';};
+ribbonShow('home');
+
+/* ---------- Page setup: letter-pad space as drop-down + stepper ---------- */
+window.stepLH=n=>{const s=$('lhH'); s.value=Math.max(0,Math.min(150,(parseInt(s.value)||0)+n)); setLH(s.value);};
+
+/* ---------- Release workflow ---------- */
+const SEC=$('relSection');
+function schools(){return [...document.querySelectorAll('[id^="prevName_"]')].map(e=>({n:e.id.split('_')[1],name:e.value}));}
+function fillSel(){const s=$('relSchool'), cur=s.value; s.innerHTML=schools().map(o=>`<option value="${o.n}">${E(o.name||('Previous school '+o.n))}</option>`).join('')||'<option value="">— add a previous school above —</option>'; if(cur&&[...s.options].some(o=>o.value===cur)) s.value=cur;}
+function sd(){const n=V('relSchool'), g=k=>V(k+'_'+n); const per=g('prevPeriod'), pp=per.split(/\s+to\s+/i);
+ return {name:g('prevName'),post:g('prevPost'),agency:g('prevAgency'),from:(pp[0]||'').trim(),to:(pp[1]||'').trim(),per,js:g('prevJoinScale'),ls:g('prevLastScale'),appr:g('prevAppr'),noc:g('prevNOC'),rel:g('prevRelease')};}
+function dash(){fillSel(); const s=sd(), box=$('relDash'); const it=(k,v)=>`<div class="rd"><span>${k}</span><b>${v?E(v):'—'}</b></div>`;
+ box.innerHTML=it('Exam No.',V('relExamNo'))+it('Exam',V('relExamName'))+it('Post served',s.post)+it('Served from',s.from)+it('Served to',s.to||'(continuing)')+it('Subject / Qualification',V('subjectQual'))+it('Approval',s.appr)+it('Pay scale (joining)',s.js)+it('Pay scale (last)',s.ls)+it('Previous school',s.name);}
+SEC.addEventListener('input',dash); SEC.addEventListener('change',dash); document.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(dash,50);});
+window.loadKabitaSample=()=>{
+ if(!schools().length || !schools().some(o=>/manbazar/i.test(o.name))) addSchoolField({name:"Manbazar Girls' High School (H.S.), P.O. Manbazar, Dist. Purulia",post:'Assistant Teacher (History)',agency:'Managing Committee',period:'12.12.1994 to 19.09.2007',joinScale:'',lastScale:'',appr:'Memo No. 3391(4)/1 dated 12.12.1994 (D.I. of Schools (S.E.), Purulia)',joinOrder:'',confirm:'',noc:'Res. dated 28.10.2005 / Ref. mghs/nos/01/06 dated 14.07.2006',relMemo:'Ref. mghs/rls/01/07 dated 19.09.2007',acceptResign:'Resignation dated 14.09.2007 accepted by M.C. on 19.09.2007',relDate:'19.09.2007 (A.N.)'});
+ fillSel(); const m=[...$('relSchool').options].find(o=>/manbazar/i.test(o.text)); if(m)$('relSchool').value=m.value;
+ const set=(k,v)=>{$(k).value=v;};
+ set('relOldCtl','MC'); set('relOldHoi','Headmistress'); set('relOldPlace','P.O. Manbazar, Dist. Purulia'); set('relNameBn','শ্রীমতী কবিতা মণ্ডল'); set('relPostBn','সহকারী শিক্ষিকা (ইতিহাস)'); set('relOldBn','মানবাজার গার্লস হাই স্কুল (উচ্চমাধ্যমিক)');
+ set('relExamName','2nd SLST-2025 (Secondary & Higher Secondary)'); set('relNewMode','NEXT'); set('relNewSchool',"Mission Girls' High School (H.S.), Bankura"); set('relRelDate','19.09.2007'); dash();};
+function pron(){const f=/smt|mrs|miss|ms\b|kumari/i.test(V('genderTitle')+' '+V('teacherName')); return f?{b:'শিক্ষিকা',e:'she',h:'her',H:'Her',S:'Madam'}:{b:'শিক্ষক',e:'he',h:'his',H:'His',S:'Sir'};}
+
+/* page factory */
+const WRAP=$('paperWrapper'), NAV=document.querySelector('#outputNavigation .tab-nav'), ALLBTN=NAV.querySelector('[data-tab="all"]');
+const PG=[['doc10','10. Appl. – Exam Permission',0],['doc11','11. MC Res / HOI Rep – Permission',1],['doc11b','11b. Admin Order – Permission',1],['doc12','12. Appl. – Release',0],['doc13','13. MC Res / HOI Rep – Release',1],['doc13b','13b. Admin Order – Release',1]];
+PG.forEach(([id,label,lh])=>{
+ const p=document.createElement('div'); p.className='paper doc-page'; p.id=id; p.dataset.empty='1'; p.style.display='none';
+ const sp=document.createElement('div'); sp.className='lh-space'; sp.contentEditable='false'; sp.dataset.label='Blank space for school letter pad (not printed) — set height in Page setup'; sp.style.height=(V('lhH')||59)+'mm'; if(!lh) sp.style.display='none'; p.appendChild(sp);
+ const f=document.createElement('div'); f.className='page-fit'; const b=document.createElement('div'); b.className='page-body'; f.appendChild(b); p.appendChild(f); WRAP.appendChild(p);
+ const t=document.createElement('button'); t.className='tab-btn'; t.dataset.tab=id; t.textContent=label; t.style.cssText='background:#b7791f;color:#fff'; t.onclick=function(){showTab(id,this)}; NAV.insertBefore(t,ALLBTN);
+ const lab=document.createElement('label'); lab.innerHTML=`<input type="checkbox" ${lh?'checked':''} data-lh="${id}" onchange="toggleLH(this)">${id.replace('doc','')}`; const r=rows[3]; r.insertBefore(lab,[...r.querySelectorAll('.sep')][0]);
+});
+
+const sig=(t1,t2)=>`<div style="text-align:right;margin-top:30px">___________________________<br><strong>${t1}</strong><br>${t2}</div>`;
+const tbl=(o)=>`<table class="doc-table" style="width:100%;border-collapse:collapse;margin:8px 0">${o.map(r=>`<tr><td style="border:1px solid #000;padding:3px 6px;width:34%"><strong>${r[0]}</strong></td><td style="border:1px solid #000;padding:3px 6px">${r[1]}</td></tr>`).join('')}</table>`;
+
+function build(){
+ const s=sd(), P=pron(), nm=E(V('teacherName')||'[Teacher]'), subj=D(V('subjectQual')), exam=D(V('relExamName')), eno=D(V('relExamNo')), edt=D(V('relExamDate'));
+ const old=D(s.name), place=D(V('relOldPlace')), hoi=V('relOldHoi')||'Head of Institution', adm=V('relOldCtl')==='ADMIN', keep=V('relRetain')!=='NO';
+ const post=D(s.post), from=D(s.from), appr=D(s.appr), scale=D([s.js,s.ls].filter(Boolean).join(' → ')), nw=D(V('relNewSchool')), nwTxt=V('relNewMode')==='CURRENT'?'my present school':'the next school';
+ const a1=D(V('relApp1Date')), a2=D(V('relApp2Date')), rd=D(V('relRelDate')||s.rel), res=D(V('relResult')), offer=D(V('relNewOffer'));
+ const data=[['Name',nm],['Post served',post],['Served from',from+' (continuing)'],['Subject / Qualification',subj],['Approval (D.I. / Competent Authority)',appr],['Pay scale',scale],['Exam / Exam No.',exam+' / '+eno]];
+ const out={};
+ out.doc10=`<p>To<br><strong>The ${adm?'Administrator':'President / Secretary, Managing Committee'}</strong>,<br>${old}, ${place}.</p>
+<p><strong>Through:</strong> The ${hoi}, ${old}.</p><p style="text-align:right">Date: ${a1}</p>
+<p><strong>Sub:</strong> Prayer for permission to appear in the <strong>${exam}</strong> (Exam No. ${eno}), without being released from service.</p><p>Respected ${P.S},</p>
+<p>With due respect I beg to state that I am serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}. My service particulars are as follows:</p>${tbl(data)}
+<p>I have applied for the above examination (Exam No. ${eno}${V('relExamDate')?', scheduled on '+edt:''}) to improve my prospects. I therefore request that I may kindly be permitted to appear in the said examination. I assure you that the teaching and routine work of the school shall not suffer, and that I do not seek release from my present post at this stage; any such prayer will be made separately after the result.</p>
+<p>I shall be grateful for your kind permission.</p><p>Yours faithfully,</p>${sig(nm,post+', '+old)}<p><strong>Enclosures:</strong> 1. Copy of exam application / admit card. 2. Copy of approval memo.</p>`;
+ out.doc12=`<p>To<br><strong>The ${adm?'Administrator':'President / Secretary, Managing Committee'}</strong>,<br>${old}, ${place}.</p>
+<p><strong>Through:</strong> The ${hoi}, ${old}.</p><p style="text-align:right">Date: ${a2}</p>
+<p><strong>Sub:</strong> Prayer for acceptance of resignation and release from service w.e.f. <strong>${rd}</strong> (A.N.) to join ${nw}, and issue of Release Certificate and service papers.</p><p>Respected ${P.S},</p>
+<p>With due respect I beg to state that I have been serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}, and that I appeared in the <strong>${exam}</strong> (Exam No. ${eno}) with the permission of your authority.</p>
+<p>I am glad to inform you that I have qualified in the said examination (${res}) and have been recommended / offered appointment as ${post} at <strong>${nw}</strong> vide ${offer}. I have decided to accept the offer and have to join ${nwTxt} within the time allowed.</p>
+<p>I therefore beg to tender my resignation from my post in your school and pray that it may kindly be accepted. ${P.H} release may please be ordered w.e.f. <strong>${rd}</strong> (afternoon), so that I can join the new place of service at an early date.</p>
+<p>I further request that the following papers may kindly be issued to me: <strong>(1)</strong> Release Certificate; <strong>(2)</strong> Last Pay Certificate; <strong>(3)</strong> Leave Statement; <strong>(4)</strong> Service Book / attested service particulars; <strong>(5)</strong> G.P.F. / Pension particulars, if any; <strong>(6)</strong> Certificate of approval and period of service (${from} to ${rd}) for continuation of past service and pay protection, as per rules.</p>
+<p>I take this opportunity to express my sincere gratitude to the school authority for giving me the opportunity to serve here and to enrich myself in my subject of teaching.</p>
+<p>Thanking you,<br>Yours faithfully,</p>${sig(nm,post+', '+old)}`;
+ const kind=k=>{ // k=1 permission, k=2 release
+  const subjE=k==1?`Permission to ${nm} to appear in ${exam} (Exam No. ${eno}) — ${keep?'not to be released from service':''}`:`Release of ${nm} from service w.e.f. ${rd} (A.N.) on selection through ${exam}`;
+  const body=k==1?`${nm}, an approved ${post} (${subj}) of this school since ${from} (approval ${appr}), has applied on ${a1} for permission to appear in the ${exam} (Exam No. ${eno}). ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has assured that school work will not suffer.`:`${nm}, approved ${post} (${subj}) of this school since ${from} (approval ${appr}), appeared in ${exam} (Exam No. ${eno}) with the permission of the authority and has qualified (${res}). ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has been recommended / offered appointment at ${nw} (${offer}) and, by application dated ${a2}, has prayed for release w.e.f. ${rd} (A.N.).`;
+  const rec=k==1?`It is recommended that permission may be granted${keep?', and that '+P.e+' may not be released from service at this stage':''}.`:`It is recommended that the resignation may be accepted and ${P.e} may be released w.e.f. ${rd} (A.N.), with Release Certificate, Last Pay Certificate, Leave Statement and Service Book issued.`;
+  return {subjE,body,rec};};
+ const rep=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">REPORT OF THE ${hoi.toUpperCase()}</p><div class="meta-line"><div><strong>Report No.:</strong> ${D(V(k==1?'relRep1No':'relRep2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p>To<br><strong>The Administrator</strong>,<br>${old}, ${place}.</p><p><strong>Sub:</strong> ${x.subjE}.</p><p>Sir/Madam,</p><p>${x.body}</p><p>${x.rec}</p><p>The matter is placed before you for kind consideration and necessary order.</p>${sig('The '+hoi,old)}`;};
+ const ord=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">ORDER OF THE ADMINISTRATOR</p><div class="meta-line"><div><strong>Order No.:</strong> ${D(V(k==1?'relOrd1No':'relOrd2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p><strong>Sub:</strong> ${x.subjE}.</p><p>Perused the Report of the ${hoi} (No. ${D(V(k==1?'relRep1No':'relRep2No'))}) and the application of ${nm}. After due consideration, the undersigned is pleased to order as follows:</p><p>${k==1?`1. ${nm} is permitted to appear in the ${exam} (Exam No. ${eno}).${keep?`<br>2. ${P.H} shall not be released from service at this stage and shall continue to discharge ${P.h} duties.`:''}`:`1. The resignation of ${nm} is accepted and ${P.e} is released from service w.e.f. ${rd} (A.N.).<br>2. The ${hoi} shall issue Release Certificate, Last Pay Certificate, Leave Statement and Service Book / service particulars.`}</p>${sig('Administrator',old)}`;};
+ const mc=k=>{const nb=E(V('relNameBn')||V('teacherName')), pb=E(V('relPostBn')||V('prevPost_'+V('relSchool'))||''), ob=E(V('relOldBn')||s.name), ex=exam, mn=D(V(k==1?'relM1No':'relM2No')), md=D(V(k==1?'relM1Date':'relM2Date')), rn=D(V(k==1?'relRes1No':'relRes2No'));
+  const sub=k==1?`${pb} ${nb} মহাশয়/মহাশয়ার ${ex} পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান প্রসঙ্গে।`:`${pb} ${nb} মহাশয়/মহাশয়ার পরীক্ষায় উত্তীর্ণ হওয়ায় বিদ্যালয় হইতে অবমুক্তি (Release) প্রসঙ্গে।`;
+  const dec=k==1?`<p>(ক) ${nb}-কে উক্ত ${ex} (পরীক্ষা নং ${eno}) পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান করা হইল।</p>${keep?`<p>(খ) বর্তমান পদ হইতে তাঁহাকে এখন অবমুক্ত (Release) করা হইল না; তিনি পূর্ববৎ বিদ্যালয়ে কর্মরত থাকিবেন এবং পাঠদানের ক্ষতি না হয় তাহা নিশ্চিত করিবেন।</p><p>(গ) পরীক্ষার ফল প্রকাশের পর অবমুক্তির প্রয়োজন হইলে তাঁহার পৃথক আবেদনের ভিত্তিতে ম্যানেজিং কমিটি বিষয়টি পুনরায় বিবেচনা করিবে।</p>`:''}<p>${keep?'(ঘ)':'(খ)'} প্রধান শিক্ষক/শিক্ষিকাকে প্রয়োজনীয় ব্যবস্থা গ্রহণের অনুরোধ করা হইল।</p>`
+   :`<p>(ক) ${nb}-এর ${D(V('relApp2Date'))} তারিখের ইস্তফা/অবমুক্তির আবেদন সর্বসম্মতিক্রমে গৃহীত হইল।</p><p>(খ) তাঁহাকে ${rd} তারিখ (অপরাহ্ন) হইতে বিদ্যালয়ের চাকুরী হইতে অবমুক্ত (Release) করা হইল।</p><p>(গ) প্রধান শিক্ষক/শিক্ষিকাকে Release Certificate, Last Pay Certificate, Leave Statement ও Service Book (প্রযোজ্য) যথাসম্ভব শীঘ্র প্রদানের জন্য অনুরোধ করা হইল।</p>`;
+  const body=k==1?`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${from} তারিখ হইতে এই বিদ্যালয়ে কর্মরত আছেন (অনুমোদন: ${appr})। তিনি ${ex} পরীক্ষায় (পরীক্ষা নং ${eno}) অংশগ্রহণের জন্য ${a1} তারিখে অনুমতি প্রার্থনা করিয়া আবেদন করিয়াছেন। বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`:`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${ex} পরীক্ষায় উত্তীর্ণ হইয়া ${nw} বিদ্যালয়ে যোগদানের জন্য ${D(V('relApp2Date'))} তারিখে অবমুক্তির আবেদন করিয়াছেন। বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`;
+  const mem=Array.from({length:7},(_,i)=>`<div style="display:inline-block;width:48%;margin:4px 0">${i+1}. Sd/ ____________________</div>`).join('');
+  return `<div class="bengali-text" style="font-family:'Nirmala UI','Kalpurush',sans-serif"><div class="meta-line"><div><strong>সভা নং:</strong> ${mn}</div><div><strong>রেজোলিউশন নং:</strong> ${rn}</div><div><strong>তারিখ:</strong> ${md}</div></div>
+<p style="text-align:center;font-weight:bold;text-decoration:underline">ম্যানেজিং কমিটির সভার রেজোলিউশনের অনুলিপি</p><p style="text-align:center">${ob} &nbsp;|&nbsp; স্থান: বিদ্যালয় &nbsp;|&nbsp; সময়: অপরাহ্ন</p>
+<p><strong>উপস্থিত সদস্যগণের স্বাক্ষর:</strong></p>${mem}<p style="margin-top:8px"><strong>আলোচ্য বিষয়:</strong> ${sub}</p><p>${body}</p>${dec}
+<div style="display:flex;justify-content:space-between;margin-top:30px"><div>প্রত্যয়িত অনুলিপি<br>_______________<br>প্রধান শিক্ষক/শিক্ষিকা</div><div style="text-align:right">স্বাক্ষর: _______________<br>সভাপতি / সম্পাদক<br>ম্যানেজিং কমিটি, ${ob}</div></div></div>`;};
+ out.doc11=adm?rep(1):mc(1); out.doc11b=adm?ord(1):''; out.doc13=adm?rep(2):mc(2); out.doc13b=adm?ord(2):'';
+ return out;}
+window.relGenerate=function(){
+ if(!V('relSchool')){alert('Add / select a previous school first (or press "Load Kabita sample").');return;}
+ const o=build();
+ PG.forEach(([id])=>{const p=$(id), b=p.querySelector('.page-body'); b.innerHTML=o[id]||''; b.contentEditable=o[id]?'true':'false'; p.dataset.empty=o[id]?'':'1';});
+ WRAP.style.display='block'; $('outputNavigation').style.display='block'; bar.style.display='block'; bar.classList.remove('wb-hidden'); fab.style.display='none';
+ showTab('doc10',NAV.querySelector('[data-tab="doc10"]')); fitPages(); $('outputNavigation').scrollIntoView({behavior:'smooth'});};
+const ol=window.onload; window.onload=function(){ol&&ol(); dash();};
+fillSel(); dash();
+})();
 </script>
 
 </body>
