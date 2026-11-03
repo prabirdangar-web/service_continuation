@@ -422,6 +422,7 @@
             <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save (replaces last)</button>
             <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="loadLastSaved()">☁️ Load Last Saved</button>
             <span id="cloudSaveMsg" style="font-size:0.85rem; color:#718096;"></span>
+            <button type="button" class="btn" style="background:#718096;color:#fff;" onclick="if(confirm('Clear all fields?'))clearFormFields()" title="Blank every text field">🧹 Clear form</button>
             <button type="button" class="btn" style="background:#6b46c1;color:#fff;" onclick="exportFormJSON()" title="Download all form fields as a .json file">⬇ Export JSON</button>
             <button type="button" class="btn" style="background:#b7791f;color:#fff;" onclick="importFormJSON()" title="Load a .json file into the form">⬆ Import JSON</button>
         </div>
@@ -2427,7 +2428,7 @@ async function refreshStaff(){
 window.sbSettings=()=>alert('Staff list is read from the SB database (tfhs / ropaPayFixation) of this Firebase project. Sign in with the admin account, then press ↻.');
 window.sbRefresh=refreshStaff;
 window.sbLoadTeacher=function(){
- const x=cache.find(c=>c.id===$('sbTeacher').value); if(!x){alert('Select a teacher first.');return;} const r=x.d, f=r.fields||{}, set=[];
+ const x=cache.find(c=>c.id===$('sbTeacher').value); if(!x){alert('Select a teacher first.');return;} const r=x.d, f=r.fields||{}, set=[]; window.clearFormFields(true);
  const put=(id,v)=>{ if(v===undefined||v===null||v==='')return; const el=$(id); if(!el)return; if(el.tagName==='SELECT'){const o=[...el.options].find(o=>o.value===v||norm(o.text).includes(norm(v))); if(!o)return; el.value=o.value; el.dispatchEvent(new Event('change',{bubbles:true}));} else {el.value=v; el.dispatchEvent(new Event('input',{bubbles:true}));} set.push(id); };
  const fem=f.casSex==='F'; const nm=tc(r.staffName||f.staffName);
  put('genderTitle',f.casSex?(fem?'Smt':'Sri'):''); put('teacherName',(f.casSex?(fem?'Smt. ':'Sri '):'')+nm); put('dob',dmy(f.dob)); put('teacherDesg',f.designation);
@@ -2487,6 +2488,23 @@ function applyImport(rec){
   msg('Imported ✓ '+(rec.label?('"'+rec.label+'" '):'')+'('+Object.keys(f).length+' fields). Press Generate to build the documents.','#2f855a');
 }
 })();
+</script>
+
+<script>
+/* ===== ADD-ON: clear every text field (so nothing from a previous staff / default sample stays behind) ===== */
+window.clearFormFields=function(quiet){
+  const $=id=>document.getElementById(id);
+  document.querySelectorAll('.container.no-print input[id]').forEach(el=>{
+    if(el.type==='file'||el.type==='button'||el.type==='checkbox') return;
+    if(['authEmail','authPassword'].includes(el.id)) return;
+    el.value='';
+  });
+  const reset=(id,val)=>{const el=$(id); if(el&&[...el.options].some(o=>o.value===val)){el.value=val; el.dispatchEvent(new Event('change',{bubbles:true}));}};
+  reset('vacancyType','NONE'); reset('secyStatus','NONE');
+  document.getElementById('schoolsContainer').innerHTML=''; schoolCount=0;
+  if(window.fillSel) fillSel(); if(window.dash) dash();
+  const m=$('cloudSaveMsg'); if(m&&!quiet){m.style.color='#718096'; m.textContent='Form cleared.';}
+};
 </script>
 </body>
 </html>
