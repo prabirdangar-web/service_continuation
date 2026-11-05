@@ -1172,7 +1172,7 @@
 
 <script>
     let schoolCount = 0;
-    const maxSchools = 3;
+    let maxSchools = 2;
 
     function toggleCustom(selectId, groupid) {
         const val = document.getElementById(selectId).value;
@@ -1309,6 +1309,8 @@
             </div>
         `;
         container.appendChild(card);
+        card.querySelectorAll('.form-group').forEach(g=>{const i=g.querySelector('input'); if(!i)return; const k=i.id.split('_')[0]; g.classList.add(['prevNOC','prevRelMemo','prevAcceptResign','prevRelease'].includes(k)?'trf':'emp');});
+        const hh=card.querySelector('h3'); if(hh)hh.insertAdjacentHTML('afterend','<div class="card-nm"></div>');
     }
 
     function removeSchoolField(id) {
@@ -2552,6 +2554,15 @@ window.clearFormFields=function(quiet){
 .wz-total{display:flex;align-items:center;gap:12px;background:#ebf8ff;border:1px solid #90cdf4;border-radius:8px;padding:10px 14px;font-weight:600}
 .wz-total .wz-bar{flex:1;height:8px;border-radius:4px;overflow:hidden}
 </style>
+
+<style>
+#schoolsContainer.m-emp .form-group.trf{display:none}
+#schoolsContainer.m-trf .form-group.emp{display:none}
+#schoolsContainer.m-trf .btn-remove{display:none}
+#schoolsContainer.m-emp .card-nm{display:none}
+.card-nm{font-weight:600;color:#4a5568;margin:-6px 0 10px}
+#addSchoolBtn:disabled{opacity:.5;cursor:not-allowed}
+</style>
 <script>
 (function(){
 const $=id=>document.getElementById(id);
@@ -2561,6 +2572,7 @@ if(!card||$('wzStepper'))return;
 const mk=(cls,html)=>{const d=document.createElement('div');d.className=cls;if(html)d.innerHTML=html;return d;};
 const v=id=>{const e=$(id);return e?String(e.value||'').trim():'';};
 const setV=(id,val)=>{const e=$(id);if(!e)return;if(e.tagName==='SELECT'){if(![...e.options].some(o=>o.value===val))return;e.value=val;e.dispatchEvent(new Event('change',{bubbles:true}));}else{e.value=val;e.dispatchEvent(new Event('input',{bubbles:true}));}};
+const fillIf=(id,val)=>{const e=$(id);if(e&&!e.value.trim()&&val)e.value=val;};
 
 /* ---------- grab the existing pieces BEFORE moving them ---------- */
 const h2s=[...card.querySelectorAll(':scope > h2')];
@@ -2570,78 +2582,100 @@ const sc=$('schoolsContainer'), addBtn=$('addSchoolBtn'), g4=h2s[3].nextElementS
 const genBtn=card.querySelector(':scope > button.btn-generate');
 const rs=$('relSection');
 h2s[0].textContent='1A · Teacher & Governance Setup';
-h2s[1].textContent='1B · Current School — details & official metadata (used in every document)';
-h2s[2].textContent='4A · Previous School Details (earlier service — add / edit cards)';
-h2s[3].textContent='4B · Single NOC — Permission for the Teacher to Appear in an Exam (optional)';
+h2s[1].textContent='1B · Current school — employment details & official metadata (the school he serves in now)';
+h2s[2].textContent='2 · Previous schools 1 and 2 (if any) — employment details of each';
+h2s[3].textContent='3E · Exam NOC for the current school (optional — Docs 8–9)';
+addBtn.textContent='+ Add Previous School (max 2)';
 const box=(color,...nodes)=>{const b=mk('wz-box');if(color)b.style.borderTopColor=color;nodes.forEach(n=>n&&b.appendChild(n));return b;};
-
 const opts=(id,skip)=>[...$(id).options].filter(o=>o.value!==skip).map(o=>`<option value="${E(o.value)}">${E(o.text)}</option>`).join('');
-const ADM_OPTS=opts('adminType'), HOI_OPTS=opts('hoiStatus','CUSTOM'); /* read now, while the selects are still attached to the page */
+const ADM_OPTS=opts('adminType'), HOI_OPTS=opts('hoiStatus','CUSTOM');
+
 /* ---------- Part 1: current school ---------- */
 const step1=mk('wz-step');
-const hint1=document.createElement('p');hint1.className='wz-hint';
-hint1.innerHTML='<b>Part 1 — Current school.</b> Enter the teacher and the school where he/she serves <i>now</i>, once. These details (joining date, scale, approval, codes …) flow into the cover, Annexure P, certificates, NOC and the release set.';
+const hint1=mk('wz-hint');
+hint1.innerHTML='<b>Part 1 — Current school.</b> The school where the teacher serves <i>now</i> (the school he is leaving). Enter every employment detail of this school once — joining, scale, approval, confirmation, codes. Previous schools come in Part 2; the move to the new school in Part 3.';
 step1.append(hint1,box('#2b6cb0',h2s[0],g1),box('#0f294a',h2s[1],g2,h3,g2b));
 
-/* ---------- Part 2: transfer question + 2nd school ---------- */
-const NS_MAIN=[['ns_name','2nd School Name',"e.g., Mission Girls' High School [H.S.]"],['ns_desg','Designation & Subject at 2nd school (blank = same)',''],['ns_po','Post Office (P.O.)',''],['ns_blockPs','Block & P.S.',''],['ns_subDiv','Sub Division',''],['ns_district','District',''],['ns_pin','PIN Code',''],['ns_join','Joining Date at 2nd School','DD.MM.YYYY'],['ns_scale','Pay Scale on Joining','e.g., Rs. 6000-12000/-'],['ns_agency','Recruitment Agency / Mode',''],['ns_appr','Approval Memo & Date',''],['ns_confirm','Confirmation Memo & Date',''],['ns_appt','WBBSE / WBBPE Appointment Letter No. & Date',''],['ns_cssc','CSSC Recommendation Letter No. & Date','']];
+/* ---------- Part 2: previous schools 1 and 2 (employment fields of the cards) ---------- */
+const step2=mk('wz-step');
+const hint2=mk('wz-hint');
+hint2.innerHTML='<b>Part 2 — Previous schools.</b> Schools where he served <i>before</i> the current school (previous school 1, then 2). Employment details only; how he left each school is entered in Part 4.';
+const box2=box('#1a5693',h2s[2],sc,addBtn);
+step2.append(hint2,box2);
+
+/* ---------- Part 3: transfer (current school -> new school), every field ---------- */
+const NS_MAIN=[['ns_name','New School Name',"e.g., Mission Girls' High School [H.S.]"],['ns_desg','Designation & Subject at new school (blank = same)',''],['ns_po','Post Office (P.O.)',''],['ns_blockPs','Block & P.S.',''],['ns_subDiv','Sub Division',''],['ns_district','District',''],['ns_pin','PIN Code',''],['ns_join','Joining Date at New School','DD.MM.YYYY'],['ns_scale','Pay Scale on Joining','e.g., Rs. 6000-12000/-'],['ns_agency','Recruitment Agency / Mode',''],['ns_appr','Approval Memo & Date',''],['ns_confirm','Confirmation Memo & Date',''],['ns_appt','WBBSE / WBBPE Appointment Letter No. & Date',''],['ns_cssc','CSSC Recommendation Letter No. & Date','']];
 const NS_CODES=[['ns_index','School Index No.'],['ns_hs','H.S. Code'],['ns_vtc','VTC Code'],['ns_phone','Office Phone No.'],['ns_mobile','H.M. Mobile No(s)'],['ns_email','School Email ID'],['ns_dise','DISE Code'],['ns_iosms','IOSMS Code']];
 const inp=([id,l,p])=>`<div class="form-group"><label>${E(l)}:</label><input type="text" id="${id}" placeholder="${E(p||'')}"></div>`;
-const step2=mk('wz-step');
-step2.innerHTML=`
-<p class="wz-hint"><b>Part 2 — Transfer question.</b> If the teacher is moving to a new (2nd) school, open it here and fill it exactly like the current school. <b>Apply transfer</b> makes the 2nd school the <i>current</i> school everywhere and moves the old school into previous service.</p>
-<div class="wz-box" style="border-top-color:#b7791f">
-  <h2>Is the teacher being transferred / moving to a new (2nd) school?</h2>
-  <div class="grid-3"><div class="form-group"><label>Transfer to new school:</label>
-  <select id="wzTransfer"><option value="">— choose —</option><option value="YES">Yes — open 2nd school</option><option value="NO">No — stays in current school</option></select></div></div>
-  <input type="hidden" id="wzApplied"><input type="hidden" id="wzCardNo"><input type="hidden" id="wzOldJoin">
-  <div id="wzNoMsg" class="wz-warn" style="display:none">No transfer — Part 3 (permission → release) is skipped. Continue to <b>Part 4</b>.</div>
-</div>
-<div id="wzNsBox" style="display:none">
-  <div class="wz-box" style="border-top-color:#2f855a"><h2>2A · 2nd (New) School — as current</h2><div class="grid-3">${NS_MAIN.map(inp).join('')}
-    <div class="form-group"><label>Administration Type at 2nd school:</label><select id="ns_admin"><option value="">— same as now —</option>${ADM_OPTS}</select></div>
-    <div class="form-group"><label>HOI Designation at 2nd school:</label><select id="ns_hoi"><option value="">— same as now —</option>${HOI_OPTS}</select></div>
-  </div></div>
-  <div class="wz-box" style="border-top-color:#2c7a7b"><h2>2B · 2nd School Codes & Phone / Email</h2><div class="grid-4">${NS_CODES.map(inp).join('')}</div></div>
-  <div class="wz-box" style="border-top-color:#b7791f"><button type="button" class="btn btn-add" id="wzApplyBtn" onclick="wzApply()">✔ Apply transfer (2nd school becomes current)</button>
-  <button type="button" class="btn" id="wzUndoBtn" style="background:#718096;color:#fff;display:none;margin-left:8px" onclick="wzUndo()">↶ Undo transfer</button>
-  <span id="wzApplyStat" style="font-size:.85rem;margin-left:10px;color:#2f855a"></span></div>
-</div>`;
+const ESS=[0,7,10,8];
 
-/* ---------- Part 3: transfer particulars (existing release workflow, regrouped into column boxes) ---------- */
 rs.classList.add('wz-step');
-const rh2=rs.querySelector(':scope > h2'); if(rh2) rh2.textContent='Part 3 · Transfer Particulars — Exam Permission → Result & New School → Release (Docs 10–13)';
+const rh2=rs.querySelector(':scope > h2'); if(rh2) rh2.textContent='Part 3 · Transfer — current school → new school (application, resolutions, result, release)';
+const oldP=rs.querySelector(':scope > p');
+if(oldP) oldP.innerHTML='<b>Sequence:</b> (1) Advt published → teacher applies for <i>permission</i> to appear (Doc 10, no roll no.) → MC resolution / HOI report + Administrator order (Doc 11). (2) After permission he applies to the exam and receives a <b>Roll / Exam No.</b> → enter it in 3C. (3) If he passes → application for release (Doc 12) → release resolution / order (Doc 13), quoting the roll no., the permission order and the new school. The <b>source school is the current school of Part 1</b>; if the old school is under an Administrator the resolutions become HOI Report + Administrator Order (English), if M.C. they are in Bengali.';
+const sample=rs.querySelector(':scope > button.btn-add'); if(sample)sample.remove();
+const rd=$('relDash'); if(rd)rd.style.display='none';
+const hid=mk('wz-hidden'); hid.style.display='none';
+['relSchool','relNewMode','relNewSchool','relJoinDate'].forEach(id=>{const g=$(id)&&$(id).closest('.form-group'); if(g)hid.appendChild(g);});
 const grp=(title,color,ids)=>{const b=mk('wz-box');b.style.borderTopColor=color;b.innerHTML=`<h3 style="color:${color}">${title}</h3>`;const f=mk('wz-fields');ids.forEach(id=>{const el=$(id),g=el&&el.closest('.form-group');if(g)f.appendChild(g);});b.appendChild(f);return b;};
+const nsBox=mk('wz-box'); nsBox.style.borderTopColor='#2f855a';
+nsBox.innerHTML=`<h3 style="color:#2f855a">3A · New school — where he will go</h3>
+<div class="wz-fields">${ESS.map(i=>inp(NS_MAIN[i])).join('')}</div>
+<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600;color:#2b6cb0">More details about the new school (optional)</summary>
+ <div class="grid-3" style="margin-top:10px">${NS_MAIN.filter((_,i)=>!ESS.includes(i)).map(inp).join('')}
+  <div class="form-group"><label>Administration Type at new school:</label><select id="ns_admin"><option value="">— same as now —</option>${ADM_OPTS}</select></div>
+  <div class="form-group"><label>HOI Designation at new school:</label><select id="ns_hoi"><option value="">— same as now —</option>${HOI_OPTS}</select></div>
+ </div>
+ <h3 style="margin:14px 0 8px;font-size:1rem">Codes, phone &amp; e-mail</h3>
+ <div class="grid-4">${NS_CODES.map(inp).join('')}</div>
+</details>`;
 const cols=mk('wz-cols');
 cols.append(
- grp('3·0 Source school & exam','#2b6cb0',['relSchool','relExamName','relExamDate','relOldCtl','relOldHoi','relOldPlace','relNameBn','relPostBn','relOldBn']),
- grp('3A · Application → Permission to appear','#805ad5',['relReason','relReasonCustom','relAdvt','relApp1Date','relRetain','relM1No','relM1Date','relRes1No','relRep1No','relOrd1No','relMtgTime','relMtgPlace','relPresBn']),
- grp('3B · Result & appointment at new school','#2f855a',['relExamNo','relResult','relNewMode','relNewSchool','relNewOffer','relRecMemo','relJoinDate','relLpc']),
- grp('3C · Application → Release','#b7791f',['relApp2Date','relRelDate','relHoiAccept','relReleaseOrderRef','relM2No','relM2Date','relRes2No','relRep2No','relOrd2No'])
+ grp('3B · Application → Permission to appear','#805ad5',['relExamName','relExamDate','relReason','relReasonCustom','relAdvt','relApp1Date','relRetain','relM1No','relM1Date','relRes1No','relRep1No','relOrd1No','relMtgTime','relMtgPlace','relPresBn']),
+ grp('3C · Result, roll no. & appointment','#2f855a',['relExamNo','relResult','relNewOffer','relRecMemo']),
+ grp('3D · Application → Release','#b7791f',['relApp2Date','relRelDate','relLpc','relHoiAccept','relReleaseOrderRef','relM2No','relM2Date','relRes2No','relRep2No','relOrd2No'])
 );
+const det=document.createElement('details'); det.style.margin='14px 0';
+det.innerHTML='<summary style="cursor:pointer;font-weight:600;color:#2b6cb0">Source school — auto-filled from Part 1 (change only if needed)</summary>';
+det.appendChild(grp('Old (current) school particulars','#2b6cb0',['relOldCtl','relOldHoi','relOldPlace','relNameBn','relPostBn','relOldBn']));
+const nocBox=box('#805ad5',h2s[3],g4);
 const rgrid=rs.querySelector(':scope > .grid-3');
-rs.insertBefore(cols,rgrid); rgrid.remove();
-const warn3=mk('wz-warn','Tip: press <b>Apply transfer</b> in Part 2 first — it adds the old school as the source school for these documents (or pick any previous school in 3·0). <button type="button" class="btn" style="padding:3px 10px;background:#b7791f;color:#fff" onclick="wzGo(2)">Go to Part 2</button>');
-warn3.id='wzWarn3'; rs.insertBefore(warn3,rs.querySelector(':scope > button'));
+const gbtn=rs.querySelector(':scope > button.btn-generate');
+[nsBox,cols,det,nocBox,hid].forEach(n=>rs.insertBefore(n,gbtn));
+if(rgrid)rgrid.remove();
 
-/* ---------- Part 4 & 5 ---------- */
+/* ---------- Part 4: previous schools — transfer process (same cards, other fields) ---------- */
 const step4=mk('wz-step');
-const hint4=document.createElement('p');hint4.className='wz-hint';hint4.innerHTML='<b>Part 4 — Previous service & exam NOC.</b> Earlier schools (max 3). When a transfer is applied, the old school is added here automatically.';
-step4.append(hint4,box('#1a5693',h2s[2],sc,addBtn),box('#805ad5',h2s[3],g4));
+const hint4=mk('wz-hint');
+hint4.innerHTML='<b>Part 4 — Previous schools: transfer process.</b> For each previous school (1 and 2): the NOC / prior permission, release order, acceptance of resignation and release date — how he left that school.';
+const host4=mk('wz-host'), none4=mk('wz-warn','No previous school entered in Part 2 — nothing to fill here. Press <b>Next</b>.');
+const box4=box('#6b46c1'); box4.innerHTML='<h2>4 · Previous schools — transfer process (NOC, release, resignation)</h2>'; box4.append(host4,none4);
+step4.append(hint4,box4);
+
+/* ---------- Part 5 ---------- */
 const step5=mk('wz-step');
-step5.innerHTML='<p class="wz-hint"><b>Part 5 — Dashboard.</b> Every part in its own box. Red “not filled” rows are missing; press <b>Edit ›</b> to jump to that part.</p><div id="wzDash"></div>';
+step5.innerHTML='<p class="wz-hint"><b>Part 5 — Dashboard.</b> Red “not filled” rows are missing; press <b>Edit ›</b> to jump to that part. If a new school is entered in Part 3, the documents are made for the new school and the current school is added to previous service automatically.</p><div id="wzDash"></div>';
 const gwrap=mk('wz-box');gwrap.style.borderTopColor='#0f294a';if(genBtn)gwrap.appendChild(genBtn);step5.appendChild(gwrap);
 
 /* ---------- stepper + nav ---------- */
-const PILLS=[['Part 1','Current School'],['Part 2','Transfer? · 2nd School'],['Part 3','Transfer Particulars'],['Part 4','Previous Service & NOC'],['Part 5','Dashboard & Generate']];
+const PILLS=[['Part 1','Current School'],['Part 2','Previous Schools 1 & 2'],['Part 3','Transfer → New School'],['Part 4','Previous Schools — Transfer'],['Part 5','Dashboard & Generate']];
 const stepper=mk('wz-stepper');stepper.id='wzStepper';
 PILLS.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='wz-pill';b.innerHTML=`<b>${p[0]}</b><span>${p[1]}</span>`;b.onclick=()=>go(i+1);stepper.appendChild(b);});
 const nav=mk('wz-nav','<button type="button" class="btn" id="wzBack" style="background:#718096;color:#fff">◀ Back</button><span id="wzPos" style="font-weight:600;color:#4a5568"></span><button type="button" class="btn btn-add" id="wzNext">Next ▶</button>');
 const steps=[step1,step2,rs,step4,step5], pills=[...stepper.children];
 card.append(stepper,step1,step2,rs,step4,step5,nav);
+sc.classList.add('m-emp');
 
 let cur=1;
-const skip3=()=>v('wzTransfer')==='NO';
+const cardCount=()=>document.querySelectorAll('.school-card').length;
+function syncAdd(){ addBtn.disabled=cardCount()>=2; }
+function placeCards(n){
+  if(n===4){host4.appendChild(sc);sc.classList.remove('m-emp');sc.classList.add('m-trf');}
+  else{box2.insertBefore(sc,addBtn);sc.classList.remove('m-trf');sc.classList.add('m-emp');}
+  sc.querySelectorAll('.school-card').forEach(c=>{const nm=c.querySelector('.card-nm'),i=c.querySelector('[id^="prevName_"]');if(nm&&i)nm.textContent=i.value||'(school name not entered in Part 2)';});
+  none4.style.display=(n===4&&!cardCount())?'':'none';
+  syncAdd();
+}
 function go(n,quiet){
   n=Math.max(1,Math.min(5,n));cur=n;
   steps.forEach((s,i)=>s.classList.toggle('on',i+1===n));
@@ -2649,107 +2683,109 @@ function go(n,quiet){
   $('wzBack').style.visibility=n>1?'visible':'hidden';
   $('wzNext').style.visibility=n<5?'visible':'hidden';
   $('wzPos').textContent='Part '+n+' of 5';
+  if(n===2||n===4)placeCards(n);
   if(n===3)autofill();
-  refresh();
+  if(n===5)renderDash();
   if(!quiet)stepper.scrollIntoView({behavior:'smooth',block:'start'});
 }
 window.wzGo=go;
-$('wzNext').onclick=()=>go(cur+1===3&&skip3()?4:cur+1);
-$('wzBack').onclick=()=>go(cur-1===3&&skip3()?2:cur-1);
+$('wzNext').onclick=()=>go(cur+1);
+$('wzBack').onclick=()=>go(cur-1);
 
-function refresh(){
-  const t=v('wzTransfer'), ap=v('wzApplied')==='1';
-  $('wzNsBox').style.display=t==='YES'?'':'none';
-  $('wzNoMsg').style.display=t==='NO'?'':'none';
-  pills[2].classList.toggle('skip',t==='NO');
-  $('wzApplyBtn').disabled=ap;
-  $('wzUndoBtn').style.display=ap?'':'none';
-  $('wzApplyStat').textContent=ap?'✓ Applied — 2nd school is now the current school; the old school was added to previous service.':'';
-  $('wzWarn3').style.display=(t!=='NO'&&!ap)?'':'none';
-  if(cur===5)renderDash();
+/* ---------- source school = current school of Part 1 ---------- */
+function autoSource(){
+  const ctl=$('adminType').value==='ADMIN'?'ADMIN':'MC'; if($('relOldCtl'))$('relOldCtl').value=ctl;
+  const h=$('hoiStatus').value; if($('relOldHoi')&&[...$('relOldHoi').options].some(o=>o.value===h))$('relOldHoi').value=h;
+  const place=[v('poName')&&('P.O. '+v('poName')),v('district')&&('Dist. '+v('district'))].filter(Boolean).join(', ');
+  if($('relOldPlace'))$('relOldPlace').value=place;
 }
+function syncNew(){
+  if($('relNewMode'))$('relNewMode').value='NEXT';
+  if(v('ns_name'))$('relNewSchool').value=v('ns_name');
+  if(v('ns_join'))$('relJoinDate').value=v('ns_join');
+  fillIf('relNewOffer',v('ns_appr'));
+}
+function autofill(){ autoSource(); fillIf('relExamName',v('selfNocExamRef')); syncNew(); }
 
-/* ---------- apply / undo transfer ---------- */
-window.wzApply=function(){
-  if(v('wzApplied')==='1'){alert('Transfer already applied. Press Undo first to redo it.');return;}
-  if(!v('ns_name')){alert('Enter the 2nd (new) school name first.');return;}
-  if(schoolCount>=3){alert('Already 3 previous schools — no room to add the old school. Remove one in Part 4 first.');return;}
-  if(!confirm('Apply transfer?\n\n• Current school → added as a previous school\n• 2nd school → becomes the current school everywhere'))return;
-  window.__wzSnap=JSON.parse(JSON.stringify(collectFormData()));
-  const O={school:v('presentSchool'),po:v('poName'),dist:v('district'),post:v('teacherDesg'),agency:v('presentAgency'),join:v('presentJoinDate'),scale:v('presentPayScale'),appr:v('presentAppr'),conf:v('presentConfirm'),ctl:$('adminType').value==='ADMIN'?'ADMIN':'MC',hoi:$('hoiStatus').value};
-  const place=[O.po&&('P.O. '+O.po),O.dist&&('Dist. '+O.dist)].filter(Boolean).join(', ');
-  const oldName=[O.school,place].filter(Boolean).join(', ');
+/* ---------- the move is applied automatically at generation time (form values are put back afterwards) ---------- */
+const SWAP=[['presentSchool','ns_name'],['poName','ns_po'],['blockPs','ns_blockPs'],['subDiv','ns_subDiv'],['district','ns_district'],['pinCode','ns_pin'],['presentJoinDate','ns_join'],['presentPayScale','ns_scale'],['presentAgency','ns_agency'],['presentAppr','ns_appr'],['presentConfirm','ns_confirm'],['apptLetter','ns_appt'],['csscLetter','ns_cssc'],['indexNo','ns_index'],['hsCode','ns_hs'],['vtcCode','ns_vtc'],['phoneNo','ns_phone'],['mobileNo','ns_mobile'],['emailId','ns_email'],['diseCode','ns_dise'],['iosmsCode','ns_iosms']];
+function oldCardData(){
   const q=s=>String(s||'').replace(/"/g,'&quot;');
-  addSchoolField({name:q(oldName),post:q(O.post||'Assistant Teacher'),agency:q(O.agency),period:q((O.join||'____')+' to ____'),joinScale:q(O.scale),lastScale:q(O.scale),appr:q(O.appr),confirm:q(O.conf),noc:'',relMemo:'',relDate:''});
-  const n=schoolCount;
-  $('wzCardNo').value=n; $('wzOldJoin').value=O.join; $('wzApplied').value='1';
-  const M=[['presentSchool','ns_name'],['poName','ns_po'],['blockPs','ns_blockPs'],['subDiv','ns_subDiv'],['district','ns_district'],['pinCode','ns_pin'],['presentJoinDate','ns_join'],['presentPayScale','ns_scale'],['presentAgency','ns_agency'],['presentAppr','ns_appr'],['presentConfirm','ns_confirm'],['apptLetter','ns_appt'],['csscLetter','ns_cssc'],['indexNo','ns_index'],['hsCode','ns_hs'],['vtcCode','ns_vtc'],['phoneNo','ns_phone'],['mobileNo','ns_mobile'],['emailId','ns_email'],['diseCode','ns_dise'],['iosmsCode','ns_iosms']];
-  M.forEach(([a,b])=>setV(a,v(b)));
-  if(v('ns_desg'))setV('teacherDesg',v('ns_desg'));
+  const place=[v('poName')&&('P.O. '+v('poName')),v('district')&&('Dist. '+v('district'))].filter(Boolean).join(', ');
+  const adm=v('relOldCtl')==='ADMIN', rdt=v('relRelDate'), d1=v('relM1Date'), d2=v('relM2Date');
+  const perm=adm?(v('relOrd1No')?"Administrator's Order No. "+v('relOrd1No'):''):(v('relRes1No')?'Res. No. '+v('relRes1No')+(v('relM1No')?' (Meeting No. '+v('relM1No')+')':''):'');
+  const relr=v('relReleaseOrderRef')||(adm?(v('relOrd2No')?"Administrator's Order No. "+v('relOrd2No'):''):(v('relRes2No')?'Res. No. '+v('relRes2No'):''));
+  return {name:q([v('presentSchool'),place].filter(Boolean).join(', ')),post:q(v('teacherDesg')||'Assistant Teacher'),agency:q(v('presentAgency')),
+    period:q((v('presentJoinDate')||'____')+' to '+(rdt||'____')),joinScale:q(v('presentPayScale')),
+    lastScale:q(v('presentPayScale')+(v('relLpc')?' (last pay / increments: '+v('relLpc')+')':'')),
+    appr:q(v('presentAppr')),joinOrder:'',confirm:q(v('presentConfirm')),
+    noc:q(perm?perm+(d1?' dated '+d1:''):''),relMemo:q(relr?relr+(!v('relReleaseOrderRef')&&d2?' dated '+d2:''):''),
+    acceptResign:q(v('relHoiAccept')),relDate:q(rdt?rdt+' (A.N.)':'')};
+}
+function addOldCard(){
+  const pm=maxSchools; maxSchools=3; const before=schoolCount; addSchoolField(oldCardData()); maxSchools=pm;
+  return schoolCount>before?schoolCount:0;
+}
+function dropCard(id){ const el=id&&$('schoolCard_'+id); if(el){el.remove(); schoolCount--;} }
+function swapIn(){
+  autoSource(); syncNew();
+  const ids=[...SWAP.map(x=>x[0]),'teacherDesg','adminType','hoiStatus','presidentStatus','secyStatus'];
+  const saved={}; ids.forEach(id=>{const e=$(id); if(e)saved[id]=e.value;});
+  const tmp=addOldCard();
+  SWAP.forEach(([a,b])=>{const e=$(a); if(e)e.value=v(b);});
+  if(v('ns_desg'))$('teacherDesg').value=v('ns_desg');
   if(v('ns_admin'))setV('adminType',v('ns_admin'));
-  if(v('ns_hoi'))setV('hoiStatus',v('ns_hoi'));
-  /* preset the release workflow: source = old school, new = 2nd school */
-  setV('relOldCtl',O.ctl); setV('relOldHoi',O.hoi); setV('relOldPlace',place);
-  setV('relNewSchool',v('ns_name')); setV('relJoinDate',v('ns_join')); setV('relNewOffer',v('ns_appr'));
-  if(window.fillSel)fillSel(); setV('relSchool',String(n));
-  if(window.dash)dash();
-  refresh(); go(3);
-};
-window.wzUndo=function(){
-  const s=window.__wzSnap;
-  if(!s){alert('Nothing to undo in this session. Re-load your saved record / JSON instead.');return;}
-  if(!confirm('Undo the transfer and restore the form as it was before?'))return;
-  populateFormData(s); window.__wzSnap=null;
-  setTimeout(()=>{if(window.fillSel)fillSel();if(window.dash)dash();refresh();},80);
-};
-
-/* ---------- autofill Part 3 + keep the transferred card in step with the release particulars ---------- */
-const fillIf=(id,val)=>{const e=$(id);if(e&&!e.value.trim()&&val)e.value=val;};
-function autofill(){
-  fillIf('relExamName',v('selfNocExamRef'));
-  if(v('wzApplied')!=='1'&&v('wzTransfer')==='YES'){fillIf('relNewSchool',v('ns_name'));fillIf('relJoinDate',v('ns_join'));fillIf('relNewOffer',v('ns_appr'));}
-  if(window.dash)dash();
+  if(v('ns_hoi'))$('hoiStatus').value=v('ns_hoi');
+  return ()=>{
+    dropCard(tmp);
+    if(saved.adminType!==undefined&&$('adminType').value!==saved.adminType)setV('adminType',saved.adminType);
+    ids.forEach(id=>{const e=$(id); if(e&&saved[id]!==undefined)e.value=saved[id];});
+    if(window.fillSel)fillSel(); if(window.dash)dash(); placeCards(cur===4?4:2);
+  };
 }
-const SYNC=['relRelDate','relRes1No','relM1No','relM1Date','relOrd1No','relRes2No','relM2No','relM2Date','relOrd2No','relReleaseOrderRef','relOldCtl','relHoiAccept'];
-function syncCard(){
-  if(v('wzApplied')!=='1')return; const n=v('wzCardNo'); if(!n)return;
-  const set=(k,val)=>{const e=$(k+'_'+n);if(e&&val)e.value=val;};
-  const adm=v('relOldCtl')==='ADMIN', rd=v('relRelDate');
-  set('prevPeriod',(v('wzOldJoin')||'____')+' to '+(rd||'____'));
-  set('prevRelease',rd?rd+' (A.N.)':'');
-  const d1=v('relM1Date'), perm=adm?(v('relOrd1No')?"Administrator's Order No. "+v('relOrd1No'):''):(v('relRes1No')?'Res. No. '+v('relRes1No')+(v('relM1No')?' (Meeting No. '+v('relM1No')+')':''):'');
-  set('prevNOC',perm?perm+(d1?' dated '+d1:''):'');
-  const d2=v('relM2Date'), relr=v('relReleaseOrderRef')||(adm?(v('relOrd2No')?"Administrator's Order No. "+v('relOrd2No'):''):(v('relRes2No')?'Res. No. '+v('relRes2No'):''));
-  set('prevRelMemo',relr?relr+(!v('relReleaseOrderRef')&&d2?' dated '+d2:''):'');
-  set('prevAcceptResign',v('relHoiAccept'));
-}
+const _gen=window.generateAllDocuments;
+window.generateAllDocuments=function(){
+  if(!v('ns_name'))return _gen.apply(this,arguments);
+  const back=swapIn();
+  try{return _gen.apply(this,arguments);}finally{back();}
+};
+const _rel=window.relGenerate;
+window.relGenerate=function(){
+  if(!v('ns_name')){alert('Enter the new school name in Part 3A first.');return;}
+  autoSource(); syncNew();
+  const tmp=addOldCard();
+  try{
+    if(window.fillSel)fillSel(); const s=$('relSchool'); s.value=String(tmp); s.dataset.manual='1';
+    return _rel.apply(this,arguments);
+  }finally{ dropCard(tmp); s_reset(); if(window.fillSel)fillSel(); if(window.dash)dash(); placeCards(cur===4?4:2); }
+};
+function s_reset(){ const s=$('relSchool'); if(s)delete s.dataset.manual; }
 
-/* ---------- Dashboard: separate boxes in columns ---------- */
+/* ---------- Dashboard ---------- */
 const val=id=>{const e=$(id);if(!e)return '';
   if(e.tagName==='SELECT'){
     if(e.value==='CUSTOM'){const m={hoiStatus:'customHoiVal',presidentStatus:'customPresVal',secyStatus:'customSecyVal',gpfStatus:'customGpfVal'};return m[id]?v(m[id]):'';}
     return e.value===''?'':(e.options[e.selectedIndex]?e.options[e.selectedIndex].text:e.value);
   }
   return String(e.value||'').trim();};
-const NSROWS=NS_MAIN.map(a=>[a[1].replace(/ \(blank = same\)/,''),a[0],a[0]==='ns_desg'||a[0]==='ns_confirm'||a[0]==='ns_appt'||a[0]==='ns_cssc']);
+const prevRows=(fields)=>()=>{const out=[];document.querySelectorAll('[id^="prevName_"]').forEach((e,i)=>{const n=e.id.split('_')[1];fields.forEach(([l,k,opt],j)=>out.push([(j===0?'#'+(i+1)+' ':'   ')+l,k+'_'+n,opt]));});if(!out.length)out.push(['Previous schools',()=>'None entered',1]);return out;};
 const SPEC=[
  {t:'Teacher',s:1,c:'#2b6cb0',r:[['Name','teacherName'],['Date of birth','dob'],['Designation','teacherDesg'],['Qualification','subjectQual'],['Mobile','teacherMobile',1]]},
  {t:'Governance',s:1,c:'#553c9a',r:[['Administration','adminType'],['HOI title','hoiStatus'],['Authority','presidentStatus'],['Secretary','secyStatus',1]]},
  {t:'Current School',s:1,c:'#0f294a',r:[['School','presentSchool'],['P.O.','poName'],['Block & P.S.','blockPs'],['Sub-division','subDiv'],['District','district'],['PIN','pinCode'],['Joined here','presentJoinDate'],['Pay scale','presentPayScale'],['Agency','presentAgency'],['Approval','presentAppr'],['Confirmation','presentConfirm',1],['GPF / CPF','gpfStatus'],['C.P. No.','cpNo']]},
  {t:'School Codes',s:1,c:'#2c7a7b',r:[['Index No.','indexNo',1],['H.S. Code','hsCode',1],['VTC Code','vtcCode',1],['Office phone','phoneNo',1],['HM mobile','mobileNo',1],['E-mail','emailId',1],['DISE','diseCode',1],['IOSMS','iosmsCode',1]]},
- {t:'Transfer',s:2,c:'#b7791f',r:[['Moving to new school?','wzTransfer'],['Transfer applied',()=>v('wzApplied')==='1'?'Yes':'Not yet',1]]},
- {t:'2nd (New) School',s:2,c:'#2f855a',only:'T',r:NSROWS},
- {t:'3A · Permission to appear',s:3,c:'#805ad5',only:'T',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Old school','relSchool'],['Exam','relExamName'],['Advertisement','relAdvt'],['Reason','relReason'],['Application date','relApp1Date'],...(adm?[['HOI report no.','relRep1No'],['Admin order no.','relOrd1No']]:[['Meeting no.','relM1No'],['Resolution no.','relRes1No']]),['Meeting / report date','relM1Date']];}},
- {t:'3B · Result & new school',s:3,c:'#38a169',only:'T',r:[['Roll / Exam No.','relExamNo'],['Result / rank','relResult'],['Joining','relNewMode'],['School to join','relNewSchool'],['Appointment ref.','relNewOffer'],['Commission memo','relRecMemo',1],['Joining date','relJoinDate'],['LPC / last pay','relLpc',1]]},
- {t:'3C · Release',s:3,c:'#dd6b20',only:'T',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Application date','relApp2Date'],['Release date (A.N.)','relRelDate'],['HOI acceptance','relHoiAccept',1],['Release order ref.','relReleaseOrderRef',1],...(adm?[['HOI report no.','relRep2No'],['Admin order no.','relOrd2No']]:[['Meeting no.','relM2No'],['Resolution no.','relRes2No']]),['Meeting / report date','relM2Date']];}},
- {t:'Previous Service',s:4,c:'#1a5693',r:()=>{const out=[];document.querySelectorAll('[id^="prevName_"]').forEach((e,i)=>{const n=e.id.split('_')[1];out.push(['#'+(i+1)+' School','prevName_'+n],['   Period','prevPeriod_'+n],['   Approval','prevAppr_'+n],['   Released','prevRelease_'+n]);});if(!out.length)out.push(['Previous service',()=>'None entered',1]);return out;}},
- {t:'Exam NOC (present school)',s:4,c:'#6b46c1',r:[['Exam / SLST','selfNocExamRef',1],['HOI report no.','selfNocReportNo',1],['Order / resolution no.','selfNocOrderNo',1],['Permission for','selfNocPostCategory',1],['Application date','selfNocAppDate',1]]}
+ {t:'Previous schools 1 & 2 — employment',s:2,c:'#1a5693',r:prevRows([['School','prevName'],['Post','prevPost',1],['Period','prevPeriod'],['Approval','prevAppr'],['Pay scale (joining)','prevJoinScale',1],['Confirmation','prevConfirm',1]])},
+ {t:'3A · New school',s:3,c:'#2f855a',r:[['New school','ns_name'],['Joining date','ns_join'],['Approval memo','ns_appr',1],['Pay scale','ns_scale',1],['Designation','ns_desg',1]]},
+ {t:'3B · Permission to appear',s:3,c:'#805ad5',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Exam','relExamName'],['Advertisement','relAdvt'],['Reason','relReason'],['Application date','relApp1Date'],...(adm?[['HOI report no.','relRep1No'],['Admin order no.','relOrd1No']]:[['Meeting no.','relM1No'],['Resolution no.','relRes1No']]),['Meeting / report date','relM1Date']];}},
+ {t:'3C · Roll no. & result',s:3,c:'#38a169',r:[['Roll / Exam No. (after applying)','relExamNo',1],['Result / rank','relResult',1],['Appointment ref.','relNewOffer',1],['Commission memo','relRecMemo',1]]},
+ {t:'3D · Release',s:3,c:'#dd6b20',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Application date','relApp2Date'],['Release date (A.N.)','relRelDate'],['LPC / last pay','relLpc',1],['HOI acceptance','relHoiAccept',1],['Release order ref.','relReleaseOrderRef',1],...(adm?[['HOI report no.','relRep2No'],['Admin order no.','relOrd2No']]:[['Meeting no.','relM2No'],['Resolution no.','relRes2No']]),['Meeting / report date','relM2Date']];}},
+ {t:'Exam NOC (current school)',s:3,c:'#6b46c1',r:[['Exam / SLST','selfNocExamRef',1],['HOI report no.','selfNocReportNo',1],['Order / resolution no.','selfNocOrderNo',1],['Permission for','selfNocPostCategory',1],['Application date','selfNocAppDate',1]]},
+ {t:'Previous schools — transfer process',s:4,c:'#805ad5',r:prevRows([['School','prevName'],['NOC / permission','prevNOC'],['Release order','prevRelMemo'],['Acceptance of resignation','prevAcceptResign',1],['Release date','prevRelease']])}
 ];
 function renderDash(){
-  const host=$('wzDash'); if(!host)return;
-  const t=v('wzTransfer'); let tf=0,tt=0,html='';
+  const host=$('wzDash'); if(!host)return; autoSource();
+  let tf=0,tt=0,html='';
   SPEC.forEach(b=>{
-    if(b.only==='T'&&t==='NO')return;
     const rows=typeof b.r==='function'?b.r():b.r; let f=0,n=0;
     const rh=rows.map(([l,src,opt])=>{
       const x=typeof src==='function'?src():val(src), has=String(x).trim()!=='';
@@ -2760,31 +2796,21 @@ function renderDash(){
     html+=`<div class="wz-d"><div class="wz-dh" style="background:${b.c}"><span>${E(b.t)}</span><span><small>${f}/${n}</small><button type="button" onclick="wzGo(${b.s})">Edit ›</button></span></div><div class="wz-bar"><i style="width:${n?Math.round(f*100/n):100}%"></i></div>${rh}</div>`;
   });
   const pct=tt?Math.round(tf*100/tt):100;
-  host.innerHTML=`<div class="wz-total"><span>Overall: ${tf} / ${tt} required fields filled (${pct}%)</span><div class="wz-bar"><i style="width:${pct}%"></i></div></div>`+
-    (t==='NO'?'<div class="wz-warn">No transfer — 2nd school and transfer particulars (Part 2–3) are not applicable.</div>':'')+
-    `<div class="wz-dash">${html}</div>`;
+  host.innerHTML=`<div class="wz-total"><span>Overall: ${tf} / ${tt} required fields filled (${pct}%)</span><div class="wz-bar"><i style="width:${pct}%"></i></div></div><div class="wz-dash">${html}</div>`;
 }
 
 /* ---------- events ---------- */
-function onChange(e){
-  const id=e.target&&e.target.id||'';
-  if(id==='wzTransfer')refresh();
-  if(SYNC.includes(id))syncCard();
-  if(cur===5)renderDash();
-}
-card.addEventListener('input',onChange);
-card.addEventListener('change',onChange);
-card.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(()=>{if(cur===5)renderDash();},60);});
-
-/* keep wizard state right after a record is loaded / cleared */
+card.addEventListener('input',()=>{if(cur===5)renderDash();});
+card.addEventListener('change',()=>{if(cur===5)renderDash();});
+card.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(()=>{syncAdd();if(cur===5)renderDash();},60);});
 const _pf=window.populateFormData;
-if(typeof _pf==='function')window.populateFormData=function(){const r=_pf.apply(this,arguments);setTimeout(refresh,0);return r;};
+if(typeof _pf==='function')window.populateFormData=function(){const r=_pf.apply(this,arguments);setTimeout(()=>{placeCards(cur===4?4:2);if(cur===5)renderDash();},0);return r;};
 const _cf=window.clearFormFields;
-if(typeof _cf==='function')window.clearFormFields=function(){const r=_cf.apply(this,arguments);if($('wzTransfer'))$('wzTransfer').value='';setTimeout(refresh,0);return r;};
-
+if(typeof _cf==='function')window.clearFormFields=function(){const r=_cf.apply(this,arguments);setTimeout(()=>{placeCards(cur===4?4:2);},0);return r;};
 go(1,true);
 })();
 </script>
+
 
 
 <script>
@@ -2882,7 +2908,7 @@ function collectMode(){
   if(h.nextElementSibling) h.nextElementSibling.textContent='Fill in your details and press Submit at the bottom. The school office will prepare the documents.';
   clearFormFields(true);
   const s1=$('teacherName').closest('.wz-step'), s4=$('schoolsContainer').closest('.wz-step');
-  s1.classList.add('on'); s4.classList.add('on');
+  s1.classList.add('on'); s4.classList.add('on'); const hh2=s4.querySelector('.wz-hint'); if(hh2)hh2.innerHTML='Schools where you served <b>before</b> your present school (previous school 1, then 2). One card per school.';
   $('wzStepper').style.display='none'; document.querySelector('.wz-nav').style.display='none';
   const noc=$('selfNocExamRef'); if(noc&&noc.closest('.wz-box'))noc.closest('.wz-box').style.display='none';
   document.getElementById('addSchoolBtn').addEventListener('click',()=>setTimeout(()=>{
