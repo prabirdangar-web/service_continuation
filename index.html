@@ -430,7 +430,7 @@
             <button type="button" class="btn" style="background:#2c7a7b;color:#fff;" onclick="makeShareLink()">🔗 Create share link</button>
             <button type="button" class="btn" style="background:#2b6cb0;color:#fff;" onclick="fetchSubmissions()">⇩ Fetch submissions</button>
             <div id="shareBox" style="display:none;flex-basis:100%;background:#fff;border:1px solid #cbd5e0;border-radius:6px;padding:10px;font-size:.85rem">
-              <div style="margin-bottom:8px"><label style="font-size:.8rem">Hosted address of this file (portal: tfhs-portal.web.app) — change if you upload it under another name:</label><input type="text" id="shareBase" placeholder="https://tfhs-portal.web.app/annexure_p.html" oninput="makeShareLink()"></div><div style="margin-bottom:6px;color:#4a5568">Send this link to staff. They fill the form and press Submit; you see it under <b>Fetch submissions</b>.</div>
+              <div style="margin-bottom:8px"><label style="font-size:.8rem">Hosted address of this form (GitHub Pages) — change only if you move it:</label><input type="text" id="shareBase" placeholder="https://prabirdangar-web.github.io/service_continuation/" oninput="makeShareLink()"></div><div style="margin-bottom:6px;color:#4a5568">Send this link to staff. They fill the form and press Submit; you see it under <b>Fetch submissions</b>.</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap"><input type="text" id="shareUrl" readonly style="flex:1;min-width:220px">
               <button type="button" class="btn" style="background:#2b6cb0;color:#fff;padding:7px 12px" onclick="copyShareLink()">📋 Copy message + link</button>
               <button type="button" class="btn" style="background:#25d366;color:#fff;padding:7px 12px" onclick="waShareLink()">WhatsApp</button></div>
@@ -2556,15 +2556,15 @@ window.sbLoadTeacher=async function(){
 };
 
 /* ---- share link for staff data collection ---- */
-const DEF_BASE='https://tfhs-portal.web.app/annexure_p.html';
+const DEF_BASE='https://prabirdangar-web.github.io/service_continuation/';
 const hosted=/^https?:$/.test(location.protocol)&&!/^(localhost|127\.)/.test(location.hostname);
 const baseUrl=()=>{const e=$('shareBase'); let v=(e&&e.value.trim())||''; if(!v) v=hosted?location.origin+location.pathname:DEF_BASE; try{localStorage.setItem('pSuiteBase',v);}catch(x){} return v.split('?')[0].split('#')[0];};
 const link=()=>baseUrl()+'?collect=1';
-const shareText=()=>'Please fill in your service details in this form and press Submit: '+link();
+const shareText=()=>"সকল শিক্ষক-শিক্ষাকর্মীকে অনুরোধ: Annexure 'P'-এর জন্য আপনার সার্ভিস সংক্রান্ত তথ্য নিচের লিঙ্কে গিয়ে পূরণ করুন (নিজের তথ্য, বর্তমান স্কুল ও আগের স্কুলের তথ্য)। প্রতিটি ঘরের পাশে 🔔 চিহ্নে ছুঁলে কী লিখতে হবে দেখা যাবে। “Annexure P দেখুন” চেপে মিলিয়ে নিয়ে শেষে “অ্যাডমিনের কাছে জমা দিন” চাপুন এবং রেফারেন্স নম্বরটি লিখে রাখুন। মেমো/আদেশের কপি হাতের কাছে রাখুন।\nলিঙ্ক: "+link();
 window.makeShareLink=function(){
   $('shareBox').style.display='block'; $('shareUrl').value=link();
   if(!$('shareBase').dataset.init){$('shareBase').dataset.init='1'; let s=''; try{s=localStorage.getItem('pSuiteBase')||'';}catch(x){} $('shareBase').value=s||(hosted?location.origin+location.pathname:DEF_BASE); $('shareUrl').value=link();}
-  if(!hosted)msg('Upload this file to the portal hosting as the name shown above (e.g. annexure_p.html) and deploy — then the link will open for staff.','#b7791f');
+  if(!hosted)msg('Upload this file to GitHub Pages (service_continuation/index.html) and deploy — then the link will open for staff.','#b7791f');
 };
 window.copyShareLink=function(){ makeShareLink(); const t=shareText();
   (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>msg('Message + link copied ✓','#2f855a')).catch(()=>{$('shareUrl').select(); msg('Copy the link from the box.','#718096');}); };
@@ -2604,13 +2604,18 @@ function collectMode(){
   box.innerHTML='<button type="button" class="btn btn-generate" id="subBtn" style="margin-top:0">📤 Submit to School Office</button><div id="subMsg" style="margin-top:10px;font-weight:600"></div>';
   $('addSchoolBtn').insertAdjacentElement('afterend',box);
   $('subBtn').onclick=async()=>{
-    const name=$('teacherName').value.trim(); const sm=$('subMsg');
-    if(!name){alert('Please enter your name.');return;}
-    if(!confirm('Submit these details to the school office?'))return;
-    const r=clean(collectFormData()); sm.style.color='#718096'; sm.textContent='Submitting…';
+    const sm=$('subMsg'), btn=$('subBtn'); const name=$('teacherName').value.trim();
+    if(!name){alert('অনুগ্রহ করে আপনার নাম লিখুন।');$('teacherName').focus();return;}
+    if(!$('presentSchool').value.trim()){alert('অনুগ্রহ করে বর্তমান বিদ্যালয়ের নাম লিখুন।');$('presentSchool').focus();return;}
+    if(!confirm('তথ্যগুলি স্কুল অফিসে জমা দেবেন?'))return;
+    const r=clean(collectFormData());
+    /* hidden office-only fields that staff never see: do not send blanks, so they cannot overwrite the admin's own values later */
+    Object.keys(r.fields).forEach(k=>{const el=$(k); if(el&&r.fields[k]===''&&el.offsetParent===null)delete r.fields[k];});
+    btn.disabled=true; sm.style.color='#718096'; sm.textContent='জমা হচ্ছে…';
     try{ const ref=await fbDb.collection(SUBS).add({label:name,fields:r.fields,schoolCount:r.schoolCount,status:'new',submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
-      sm.style.color='#2f855a'; sm.innerHTML='✓ Submitted. Reference No.: <b>'+E(ref.id.slice(0,8).toUpperCase())+'</b> — please note it.';
-    }catch(e){ sm.style.color='#c53030'; sm.textContent='Could not submit: '+e.message; }
+      sm.style.color='#2f855a'; sm.innerHTML='✓ জমা হয়েছে। রেফারেন্স নম্বর: <b>'+E(ref.id.slice(0,8).toUpperCase())+'</b> — অনুগ্রহ করে লিখে রাখুন।'; btn.textContent='✓ জমা হয়েছে';
+    }catch(e){ btn.disabled=false; sm.style.color='#c53030';
+      sm.textContent=(e&&e.code==='permission-denied')?'জমা দেওয়া যায়নি (অনুমতি নেই)। স্কুল অফিসে জানান।':'জমা দেওয়া যায়নি, ইন্টারনেট দেখে আবার চেষ্টা করুন। ('+(e&&e.message||e)+')'; }
   };
 }
 if(COLLECT) window.addEventListener('load',()=>setTimeout(collectMode,500));
@@ -2659,7 +2664,7 @@ function collectUI(){
  /* section 2: show only what the employee knows; admin-only fields locked with a comment */
  const KEEP=['presentSchool','presentJoinDate','presentPayScale','presentAgency','csscLetter','apptLetter'].concat(PENDING);
  let e=$('sec2'); while(e&&e.id!=='sec3'){e.style.display=''; e=e.nextElementSibling;}
- $('sec2').querySelectorAll;document.querySelectorAll('#sec2 ~ .grid-3 .form-group, #sec2 ~ .grid-4 .form-group').forEach(fg=>{const i=fg.querySelector('input,select'); if(!i||!KEEP.includes(i.id))fg.style.display='none';});
+ document.querySelectorAll('#sec2 ~ .grid-3 .form-group, #sec2 ~ .grid-4 .form-group').forEach(fg=>{const i=fg.querySelector('input,select'); if(!i||!KEEP.includes(i.id))fg.style.display='none';});
  $('sec2b').style.display='none';
  $('sec2').textContent='2. বর্তমান বিদ্যালয়';
  $('sec1').textContent='1. আপনার তথ্য'; $('sec3').textContent='3. আগের বিদ্যালয়(সমূহ) — যেখানে এই স্কুলে আসার আগে চাকরি করেছেন';
