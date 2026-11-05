@@ -430,7 +430,7 @@
             <button type="button" class="btn" style="background:#2c7a7b;color:#fff;" onclick="makeShareLink()">🔗 Create share link</button>
             <button type="button" class="btn" style="background:#2b6cb0;color:#fff;" onclick="fetchSubmissions()">⇩ Fetch submissions</button>
             <div id="shareBox" style="display:none;flex-basis:100%;background:#fff;border:1px solid #cbd5e0;border-radius:6px;padding:10px;font-size:.85rem">
-              <div style="margin-bottom:6px;color:#4a5568">Send this link to staff. They fill the form and press Submit; you see it under <b>Fetch submissions</b>.</div>
+              <div style="margin-bottom:8px"><label style="font-size:.8rem">Hosted address of this file (portal: tfhs-portal.web.app) — change if you upload it under another name:</label><input type="text" id="shareBase" placeholder="https://tfhs-portal.web.app/annexure_p.html" oninput="makeShareLink()"></div><div style="margin-bottom:6px;color:#4a5568">Send this link to staff. They fill the form and press Submit; you see it under <b>Fetch submissions</b>.</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap"><input type="text" id="shareUrl" readonly style="flex:1;min-width:220px">
               <button type="button" class="btn" style="background:#2b6cb0;color:#fff;padding:7px 12px" onclick="copyShareLink()">📋 Copy message + link</button>
               <button type="button" class="btn" style="background:#25d366;color:#fff;padding:7px 12px" onclick="waShareLink()">WhatsApp</button></div>
@@ -2556,11 +2556,15 @@ window.sbLoadTeacher=async function(){
 };
 
 /* ---- share link for staff data collection ---- */
-const link=()=>location.origin+location.pathname+'?collect=1';
+const DEF_BASE='https://tfhs-portal.web.app/annexure_p.html';
+const hosted=/^https?:$/.test(location.protocol)&&!/^(localhost|127\.)/.test(location.hostname);
+const baseUrl=()=>{const e=$('shareBase'); let v=(e&&e.value.trim())||''; if(!v) v=hosted?location.origin+location.pathname:DEF_BASE; try{localStorage.setItem('pSuiteBase',v);}catch(x){} return v.split('?')[0].split('#')[0];};
+const link=()=>baseUrl()+'?collect=1';
 const shareText=()=>'Please fill in your service details in this form and press Submit: '+link();
 window.makeShareLink=function(){
   $('shareBox').style.display='block'; $('shareUrl').value=link();
-  if(location.protocol==='file:')msg('This file is opened from your computer — host it online (e.g. GitHub Pages) first, otherwise the link will not open for staff.','#c53030');
+  if(!$('shareBase').dataset.init){$('shareBase').dataset.init='1'; let s=''; try{s=localStorage.getItem('pSuiteBase')||'';}catch(x){} $('shareBase').value=s||(hosted?location.origin+location.pathname:DEF_BASE); $('shareUrl').value=link();}
+  if(!hosted)msg('Upload this file to the portal hosting as the name shown above (e.g. annexure_p.html) and deploy — then the link will open for staff.','#b7791f');
 };
 window.copyShareLink=function(){ makeShareLink(); const t=shareText();
   (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>msg('Message + link copied ✓','#2f855a')).catch(()=>{$('shareUrl').select(); msg('Copy the link from the box.','#718096');}); };
