@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WB SE Department Service Continuation & Form P Suite</title>
+    <title>Annexure P & Service Approval Suite</title>
     <style>
         :root {
             --primary: #0f294a;
@@ -62,6 +62,7 @@
             box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
         }
 
+        .pc-h{margin:12px 0 6px;font-size:.9rem;color:#1a5693;border-bottom:1px dashed #cbd5e0;padding-bottom:3px}
         .school-card {
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -388,7 +389,6 @@
 #wordBar .wtabs button.on{background:#2b579a;color:#fff;border-color:#2b579a}
 #wbFab{display:none;position:fixed;right:16px;bottom:16px;z-index:70;background:#2b579a;color:#fff;border:0;border-radius:20px;padding:9px 16px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 #relDash{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;background:#fffaf0;border:1px solid #f6ad55;border-radius:6px;padding:12px;margin:10px 0}
-#relDash .rd span{display:block;font-size:.72rem;color:#718096;font-weight:600}#relDash .rd b{font-size:.88rem;color:#1a202c;word-break:break-word}
 @media print{#wbFab{display:none!important}}
 </style>
 </head>
@@ -410,7 +410,7 @@
 
 <div class="container no-print">
     <div class="card">
-        <h1>WB SE Service Continuation & Form 'P' Generator</h1>
+        <h1>Annexure 'P' &amp; Service Approval Generator</h1>
         <p style="margin-top:-8px; color:#718096;">Full Administrative Proposal & Finance Dept Annexure 'P' Proforma (G.O. No. 249-F(Pen) dated 27.05.2019)</p>
 
         <div style="background:#f0f4f8; border:1px solid #cbd5e0; border-radius:6px; padding:12px 15px; margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
@@ -435,7 +435,7 @@
             <div id="subList" style="display:none;flex-basis:100%;background:#fff;border:1px solid #cbd5e0;border-radius:6px;padding:6px 10px;max-height:320px;overflow-y:auto"></div>
         </div>
 
-        <h2>1. Teacher & Governance Setup</h2>
+        <h2 id="sec1">1. Teacher & Governance Setup</h2>
         <div class="grid-3">
             <div class="form-group">
                 <label>Gender / Salutation:</label>
@@ -514,7 +514,7 @@
             </div>
         </div>
 
-        <h2>2. Present School Context & Official Metadata (For Cover & Letterheads)</h2>
+        <h2 id="sec2">2. Present (Current) School — the teacher has already been transferred here</h2>
         <div class="grid-3">
             <div class="form-group">
                 <label>Present School Name:</label>
@@ -619,7 +619,7 @@
             </div>
         </div>
 
-        <h3 style="margin-top:15px; font-size:1.05rem; color:#1a5693;">School Codes & Phone / Email Particulars (For File Cover)</h3>
+        <h3 id="sec2b" style="margin-top:15px; font-size:1.05rem; color:#1a5693;">School Codes & Phone / Email Particulars (For File Cover)</h3>
         <div class="grid-4">
             <div class="form-group">
                 <label>School Index No.:</label>
@@ -655,14 +655,14 @@
             </div>
         </div>
 
-        <h2>3. Previous School Details (Exhaustive Annexure 'P' Entry — leave empty / remove all cards if there is NO previous service)</h2>
+        <h2 id="sec3">3. Past Schools (service before this school)</h2><p style="font-size:.85rem;color:#4a5568;margin:-6px 0 12px">The teacher is already working here, so <b>no release / transfer is processed from this school</b>. Enter each past school once, with every particular in its own card (up to 2). Leave empty if there is no previous service.</p>
         <div id="schoolsContainer">
             <!-- Dynamic Cards Inserted Here -->
         </div>
 
-        <button type="button" class="btn btn-add" id="addSchoolBtn" onclick="addSchoolField()">+ Add Another Previous School</button>
+        <button type="button" class="btn btn-add" id="addSchoolBtn" onclick="addSchoolField()">+ Add Past School</button>
 
-        <h2>4. Single NOC — Permission for the Above Teacher to Appear in an Exam (Optional — leave Exam Reference blank to skip)</h2>
+        <h2 id="sec4">4. Single NOC — Permission for the Above Teacher to Appear in an Exam (Optional — leave Exam Reference blank to skip)</h2>
         <div class="grid-3">
             <div class="form-group">
                 <label>Exam / SLST Reference:</label>
@@ -690,8 +690,7 @@
             </div>
         </div>
 
-        <div id="relSection"><h2>5. Release Workflow — Exam Permission → Release (4 documents: Docs 10–13)</h2><p style="font-size:.85rem;color:#4a5568;margin-top:0"><b>Sequence:</b> (1) Advt published → teacher applies for <i>permission</i> to appear (Doc 10, no roll no.) → MC resolution / HOI report + Administrator order (Doc 11). (2) After permission he applies to the exam and receives a <b>Roll / Exam No.</b> → store it in 3B. (3) If he passes → application for release (Doc 12) → release resolution / order (Doc 13), which quote the Roll No., the permission resolution/order no. and the school he will join. <b>Source school defaults to the latest previous school</b> (1 school → #1, 2 → #2, 3 → #3); change it in 3·0 if different. Uses the previous-school card selected below (post, period, subject, approval, pay scale are fetched). If the old school is under an <b>Administrator</b>, resolutions become HOI Report + Administrator Order in English only; if <b>M.C.</b>, resolutions are in Bengali.</p><button type="button" class="btn btn-add" onclick="loadKabitaSample()">Load Kabita Mondal sample (Manbazar)</button><div id="relDash"></div><div class="grid-3"><div class="form-group"><label>Previous school (source data)</label><select id="relSchool"><option value="">—</option></select></div><div class="form-group"><label>Roll / Exam No. (received AFTER applying — used only in Docs 12–13)</label><input type="text" id="relExamNo" placeholder="leave blank until the roll no. is received"></div><div class="form-group"><label>Exam name</label><input type="text" id="relExamName" placeholder=""></div><div class="form-group"><label>Exam date (optional)</label><input type="text" id="relExamDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Old school controlled by</label><select id="relOldCtl"><option value="MC">Managing Committee (Bengali resolutions)</option><option value="ADMIN">Administrator (HOI Report + Order, English)</option></select></div><div class="form-group"><label>Old school HOI title</label><select id="relOldHoi"><option value="Headmaster">Headmaster</option><option value="Headmistress">Headmistress</option><option value="Teacher-in-Charge">Teacher-in-Charge</option></select></div><div class="form-group"><label>Old school P.O. / District</label><input type="text" id="relOldPlace" placeholder=""></div><div class="form-group"><label>Teacher name in Bengali (optional)</label><input type="text" id="relNameBn" placeholder=""></div><div class="form-group"><label>Post in Bengali (optional)</label><input type="text" id="relPostBn" placeholder=""></div><div class="form-group"><label>Old school name in Bengali (optional)</label><input type="text" id="relOldBn" placeholder=""></div><div class="form-group"><label>Permission resolution: no objection to release after passing?</label><select id="relRetain"><option value="YES">Allow exam + no objection to release if he/she passes</option><option value="NO">Allow exam only</option></select></div><div class="form-group"><label>Reason for appearing (Doc 10)</label><select id="relReason"><option value="CHANCE">Better chance of selection</option><option value="SCALE">Higher scale of pay</option><option value="ELIG">Better use of my eligibility / qualification</option><option value="PLACE">Better placement / posting</option><option value="ALL">All of the above</option><option value="CUSTOM">Other (type below)</option></select></div><div class="form-group"><label>Reason – other (if "Other")</label><input type="text" id="relReasonCustom" placeholder=""></div><div class="form-group"><label>Published advertisement (No. / date / authority)</label><input type="text" id="relAdvt" placeholder="e.g. WBSSC Advt. No. 01/2025 dated 10.07.2025"></div><div class="form-group"><label>Application 1 date (exam permission)</label><input type="text" id="relApp1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting/Report No. – Permission</label><input type="text" id="relM1No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Permission</label><input type="text" id="relM1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Permission</label><input type="text" id="relRes1No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Permission (Admin)</label><input type="text" id="relRep1No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Permission</label><input type="text" id="relOrd1No" placeholder=""></div><div class="form-group"><label>Exam result / rank (after passing)</label><input type="text" id="relResult" placeholder=""></div><div class="form-group"><label>Joining</label><select id="relNewMode"><option value="NEXT">Next school</option><option value="CURRENT">Current school</option></select></div><div class="form-group"><label>School to join</label><input type="text" id="relNewSchool" placeholder=""></div><div class="form-group"><label>Appointment / recommendation ref.</label><input type="text" id="relNewOffer" placeholder=""></div><div class="form-group"><label>Commission recommendation memo & date</label><input type="text" id="relRecMemo" placeholder="e.g. 328/Recom(AT)/RSSC(WR) dated 29.08.2008"></div><div class="form-group"><label>Joining date at new school</label><input type="text" id="relJoinDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Last pay drawn / last & next increment (LPC)</label><input type="text" id="relLpc" placeholder="Rs. 5625 / 01.09.2008 / 01.09.2009"></div><div class="form-group"><label>HOI acceptance letter ref & date</label><input type="text" id="relHoiAccept" placeholder=""></div><div class="form-group"><label>HOI Release Order ref & date</label><input type="text" id="relReleaseOrderRef" placeholder=""></div><div class="form-group"><label>Meeting time (Bengali/English)</label><input type="text" id="relMtgTime" placeholder="2 P.M."></div><div class="form-group"><label>Meeting place</label><input type="text" id="relMtgPlace" placeholder="বিদ্যালয়"></div><div class="form-group"><label>President / Secretary name (Bengali)</label><input type="text" id="relPresBn" placeholder=""></div><div class="form-group"><label>Application 2 date (release)</label><input type="text" id="relApp2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Release date (A.N.)</label><input type="text" id="relRelDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting No. – Release</label><input type="text" id="relM2No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Release</label><input type="text" id="relM2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Release</label><input type="text" id="relRes2No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Release (Admin)</label><input type="text" id="relRep2No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Release</label><input type="text" id="relOrd2No" placeholder=""></div></div><button type="button" class="btn btn-generate" style="background:#b7791f" onclick="relGenerate()">Generate Release Set (Docs 10–13)</button></div>
-        <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All Documents (Cover + Form P + Proposals + Experience Certificate + Single NOC)</button>
+        <button type="button" class="btn btn-generate" id="genBtn" onclick="generateAllDocuments()">Generate Annexure P + Approval Documents</button>
     </div>
 </div>
 
@@ -1252,65 +1251,31 @@
 
         card.innerHTML = `
             <button type="button" class="btn btn-remove" onclick="removeSchoolField(${schoolCount})">Remove</button>
-            <h3>Previous School #${schoolCount}</h3>
+            <h3>Past School #${schoolCount}</h3>
+            <h4 class="pc-h">A. Service there</h4>
             <div class="grid-3">
-                <div class="form-group">
-                    <label>School Name:</label>
-                    <input type="text" id="prevName_${schoolCount}" value="${schoolName}" placeholder="e.g., Jhilimili High School">
-                </div>
-                <div class="form-group">
-                    <label>Designation & Subject:</label>
-                    <input type="text" id="prevPost_${schoolCount}" value="${post}" placeholder="e.g., Assistant Teacher">
-                </div>
-                <div class="form-group">
-                    <label>Recruitment Agency:</label>
-                    <input type="text" id="prevAgency_${schoolCount}" value="${agency}" placeholder="e.g., WBRSSC (Western Region)">
-                </div>
-                <div class="form-group">
-                    <label>Service Period (From - To):</label>
-                    <input type="text" id="prevPeriod_${schoolCount}" value="${period}" placeholder="e.g., 06.10.1997 to 20.04.2005">
-                </div>
-                <div class="form-group">
-                    <label>Pay Scale in Post of Joining:</label>
-                    <input type="text" id="prevJoinScale_${schoolCount}" value="${joinScale}" placeholder="e.g., Rs. 4650-10175/-">
-                </div>
-                <div class="form-group">
-                    <label>Pay Scale in Post Held Last (LPC Scale):</label>
-                    <input type="text" id="prevLastScale_${schoolCount}" value="${lastScale}" placeholder="e.g., Rs. 7100-37600/- + GP 4100/-">
-                </div>
-                <div class="form-group">
-                    <label>Approval Memo & Date:</label>
-                    <input type="text" id="prevAppr_${schoolCount}" value="${appr}" placeholder="e.g., 785-S/G dated 15.11.1997">
-                </div>
-                <div class="form-group">
-                    <label>Joining Order No. & Date (Annexure P item vi — leave blank to reuse Approval Memo above):</label>
-                    <input type="text" id="prevJoinOrder_${schoolCount}" value="${joinOrder}" placeholder="e.g., School Order No. 12 dated 06.10.1997">
-                </div>
-                <div class="form-group">
-                    <label>Confirmation Memo & Date:</label>
-                    <input type="text" id="prevConfirm_${schoolCount}" value="${confirm}" placeholder="e.g., Conf/12/G dated 10.10.1999">
-                </div>
-                <div class="form-group">
-                    <label>Prior Permission / NOC Memo/Res. No. & Date:</label>
-                    <input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., NOC Memo No. 12/G dated 05.01.2005">
-                </div>
-                <div class="form-group">
-                    <label>Release Order Res. / Memo No. & Date:</label>
-                    <input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005">
-                </div>
-                <div class="form-group">
-                    <label>Acceptance of Resignation Order No. & Date (Annexure P item x — leave blank to reuse Release Order above):</label>
-                    <input type="text" id="prevAcceptResign_${schoolCount}" value="${acceptResign}" placeholder="e.g., Res. No. 04 dated 12.03.2005 (Acceptance)">
-                </div>
-                <div class="form-group">
-                    <label>Release Date & Time:</label>
-                    <input type="text" id="prevRelease_${schoolCount}" value="${relDate}" placeholder="e.g., 20.04.2005 (A.N.)">
-                </div>
+                <div class="form-group"><label>School Name</label><input type="text" id="prevName_${schoolCount}" value="${schoolName}" placeholder="e.g., Jhilimili High School"></div>
+                <div class="form-group"><label>Designation & Subject</label><input type="text" id="prevPost_${schoolCount}" value="${post}" placeholder="e.g., Assistant Teacher"></div>
+                <div class="form-group"><label>Recruitment Agency</label><input type="text" id="prevAgency_${schoolCount}" value="${agency}" placeholder="e.g., WBSSC / Managing Committee"></div>
+                <div class="form-group"><label>Service Period (From to To)</label><input type="text" id="prevPeriod_${schoolCount}" value="${period}" placeholder="e.g., 06.10.1997 to 20.04.2005"></div>
+                <div class="form-group"><label>Pay Scale at Joining</label><input type="text" id="prevJoinScale_${schoolCount}" value="${joinScale}" placeholder="e.g., Rs. 4650-10175/-"></div>
+                <div class="form-group"><label>Pay Scale Last Held (LPC)</label><input type="text" id="prevLastScale_${schoolCount}" value="${lastScale}" placeholder="e.g., Rs. 7100-37600/- + GP 4100/-"></div>
+            </div>
+            <h4 class="pc-h">B. Appointment papers</h4>
+            <div class="grid-3">
+                <div class="form-group"><label>Approval Memo & Date</label><input type="text" id="prevAppr_${schoolCount}" value="${appr}" placeholder="e.g., 785-S/G dated 15.11.1997"></div>
+                <div class="form-group"><label>Joining Order No. & Date (blank = same as Approval)</label><input type="text" id="prevJoinOrder_${schoolCount}" value="${joinOrder}" placeholder="e.g., Order No. 12 dated 06.10.1997"></div>
+                <div class="form-group"><label>Confirmation Memo & Date</label><input type="text" id="prevConfirm_${schoolCount}" value="${confirm}" placeholder="e.g., Conf/12/G dated 10.10.1999"></div>
+            </div>
+            <h4 class="pc-h">C. How service there ended</h4>
+            <div class="grid-3">
+                <div class="form-group"><label>Prior Permission / NOC No. & Date</label><input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., NOC Memo No. 12/G dated 05.01.2005"></div>
+                <div class="form-group"><label>Release / Resignation Order No. & Date</label><input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
+                <div class="form-group"><label>Acceptance of Resignation (blank = same as Release Order)</label><input type="text" id="prevAcceptResign_${schoolCount}" value="${acceptResign}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
+                <div class="form-group"><label>Release Date & Time</label><input type="text" id="prevRelease_${schoolCount}" value="${relDate}" placeholder="e.g., 20.04.2005 (A.N.)"></div>
             </div>
         `;
         container.appendChild(card);
-        card.querySelectorAll('.form-group').forEach(g=>{const i=g.querySelector('input'); if(!i)return; const k=i.id.split('_')[0]; g.classList.add(['prevNOC','prevRelMemo','prevAcceptResign','prevRelease'].includes(k)?'trf':'emp');});
-        const hh=card.querySelector('h3'); if(hh)hh.insertAdjacentHTML('afterend','<div class="card-nm"></div>');
     }
 
     function removeSchoolField(id) {
@@ -2317,91 +2282,6 @@ ribbonShow('home');
 /* ---------- Page setup: letter-pad space as drop-down + stepper ---------- */
 window.stepLH=n=>{const s=$('lhH'); s.value=Math.max(0,Math.min(150,(parseInt(s.value)||0)+n)); setLH(s.value);};
 
-/* ---------- Release workflow ---------- */
-const SEC=$('relSection');
-function schools(){return [...document.querySelectorAll('[id^="prevName_"]')].map(e=>({n:e.id.split('_')[1],name:e.value}));}
-function fillSel(){const s=$('relSchool'), cur=s.value; s.innerHTML=schools().map(o=>`<option value="${o.n}">${E(o.name||('Previous school '+o.n))}</option>`).join('')||'<option value="">— add a previous school above —</option>'; if(s.dataset.manual==='1'&&cur&&[...s.options].some(o=>o.value===cur)) s.value=cur; else if(s.options.length) s.selectedIndex=s.options.length-1;}
-function sd(){const n=V('relSchool'), g=k=>V(k+'_'+n); const per=g('prevPeriod'), pp=per.split(/\s+to\s+/i);
- return {name:g('prevName'),post:g('prevPost'),agency:g('prevAgency'),from:(pp[0]||'').trim(),to:(pp[1]||'').trim(),per,js:g('prevJoinScale'),ls:g('prevLastScale'),appr:g('prevAppr'),noc:g('prevNOC'),rel:g('prevRelease')};}
-function schoolList(){let dl=$('relSchoolList'); if(!dl){dl=document.createElement('datalist'); dl.id='relSchoolList'; document.body.appendChild(dl); const ni=$('relNewSchool'); if(ni) ni.setAttribute('list','relSchoolList');}
- const sel=V('relSchool'); const names=[V('presentSchool')]; schools().forEach(o=>{ if(o.n!==sel) names.push(o.name); }); names.push(V('ns_name'));
- dl.innerHTML=[...new Set(names.map(x=>(x||'').trim()).filter(Boolean))].map(n=>`<option value="${E(n).replace(/"/g,'&quot;')}">`).join('');}
-function dash(){fillSel(); schoolList(); const s=sd(), box=$('relDash'); const it=(k,v)=>`<div class="rd"><span>${k}</span><b>${v?E(v):'—'}</b></div>`;
- box.innerHTML=it('Exam No.',V('relExamNo'))+it('Exam',V('relExamName'))+it('Post served',s.post)+it('Served from',s.from)+it('Served to',s.to||'(continuing)')+it('Subject / Qualification',V('subjectQual'))+it('Approval',s.appr)+it('Pay scale (joining)',s.js)+it('Pay scale (last)',s.ls)+it('Previous school',s.name);}
-SEC.addEventListener('change',e=>{if(e.target&&e.target.id==='relSchool')e.target.dataset.manual='1';}); SEC.addEventListener('input',dash); SEC.addEventListener('change',dash); document.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(dash,50);});
-window.loadKabitaSample=()=>{
- if(!schools().length || !schools().some(o=>/manbazar/i.test(o.name))) addSchoolField({name:"Manbazar Girls' High School (H.S.), P.O. Manbazar, Dist. Purulia",post:'Assistant Teacher (History)',agency:'Managing Committee',period:'12.12.1994 to 19.09.2007',joinScale:'',lastScale:'',appr:'Memo No. 3391(4)/1 dated 12.12.1994 (D.I. of Schools (S.E.), Purulia)',joinOrder:'',confirm:'',noc:'Res. dated 28.10.2005 / Ref. mghs/nos/01/06 dated 14.07.2006',relMemo:'Ref. mghs/rls/01/07 dated 19.09.2007',acceptResign:'Resignation dated 14.09.2007 accepted by M.C. on 19.09.2007',relDate:'19.09.2007 (A.N.)'});
- fillSel(); const m=[...$('relSchool').options].find(o=>/manbazar/i.test(o.text)); if(m){$('relSchool').value=m.value;$('relSchool').dataset.manual='1';}
- const set=(k,v)=>{$(k).value=v;};
- set('relOldCtl','MC'); set('relOldHoi','Headmistress'); set('relOldPlace','P.O. Manbazar, Dist. Purulia'); set('relNameBn','শ্রীমতী কবিতা মণ্ডল'); set('relPostBn','সহকারী শিক্ষিকা (ইতিহাস)'); set('relOldBn','মানবাজার গার্লস হাই স্কুল (উচ্চমাধ্যমিক)');
- set('relExamName','2nd SLST-2025 (Secondary & Higher Secondary)'); set('relNewMode','NEXT'); set('relNewSchool',"Mission Girls' High School (H.S.), Bankura"); set('relRelDate','19.09.2007'); dash();};
-function pron(){const f=/smt|mrs|miss|ms\b|kumari/i.test(V('genderTitle')+' '+V('teacherName')); return f?{b:'শিক্ষিকা',e:'she',h:'her',H:'Her',S:'Madam'}:{b:'শিক্ষক',e:'he',h:'his',H:'His',S:'Sir'};}
-
-/* page factory */
-const WRAP=$('paperWrapper'), NAV=document.querySelector('#outputNavigation .tab-nav'), ALLBTN=NAV.querySelector('[data-tab="all"]');
-const PG=[['doc10','10. Appl. – Exam Permission',0],['doc11','11. MC Res / HOI Rep – Permission',1],['doc11b','11b. Admin Order – Permission',1],['doc12','12. Appl. – Release',0],['doc13','13. MC Res / HOI Rep – Release',1],['doc13b','13b. Admin Order – Release',1]];
-PG.forEach(([id,label,lh])=>{
- const p=document.createElement('div'); p.className='paper doc-page'; p.id=id; p.dataset.empty='1'; p.style.display='none';
- const sp=document.createElement('div'); sp.className='lh-space'; sp.contentEditable='false'; sp.dataset.label='Blank space for school letter pad (not printed) — set height in Page setup'; sp.style.height=(V('lhH')||59)+'mm'; if(!lh) sp.style.display='none'; p.appendChild(sp);
- const f=document.createElement('div'); f.className='page-fit'; const b=document.createElement('div'); b.className='page-body'; f.appendChild(b); p.appendChild(f); WRAP.appendChild(p);
- const t=document.createElement('button'); t.className='tab-btn'; t.dataset.tab=id; t.textContent=label; t.style.cssText='background:#b7791f;color:#fff'; t.onclick=function(){showTab(id,this)}; NAV.insertBefore(t,ALLBTN);
- const lab=document.createElement('label'); lab.innerHTML=`<input type="checkbox" ${lh?'checked':''} data-lh="${id}" onchange="toggleLH(this)">${id.replace('doc','')}`; const r=rows[3]; r.insertBefore(lab,[...r.querySelectorAll('.sep')][0]);
-});
-
-const sig=(t1,t2)=>`<div style="text-align:right;margin-top:30px">___________________________<br><strong>${t1}</strong><br>${t2}</div>`;
-const tbl=(o)=>`<table class="doc-table" style="width:100%;border-collapse:collapse;margin:8px 0">${o.map(r=>`<tr><td style="border:1px solid #000;padding:3px 6px;width:34%"><strong>${r[0]}</strong></td><td style="border:1px solid #000;padding:3px 6px">${r[1]}</td></tr>`).join('')}</table>`;
-
-function build(){
- const s=sd(), P=pron(), nm=E(V('teacherName')||'[Teacher]'), subj=D(V('subjectQual')), exam=D(V('relExamName')), eno=D(V('relExamNo')), edt=D(V('relExamDate'));
- const old=D(s.name), place=D(V('relOldPlace')), hoi=V('relOldHoi')||'Head of Institution', adm=V('relOldCtl')==='ADMIN', keep=V('relRetain')!=='NO';
- const post=D(s.post), from=D(s.from), appr=D(s.appr), scale=D([s.js,s.ls].filter(Boolean).join(' → ')), nw=D(V('relNewSchool')), nwTxt=V('relNewMode')==='CURRENT'?'my present school':'the next school';
- const a1=D(V('relApp1Date')), a2=D(V('relApp2Date')), rd=D(V('relRelDate')||s.rel), res=D(V('relResult')), offer=D(V('relNewOffer'));
- const advt=D(V('relAdvt')), RS={CHANCE:'a better chance of selection',SCALE:'a higher scale of pay',ELIG:'the better use of my eligibility and qualification',PLACE:'better placement / posting',ALL:'a better chance of selection, a higher scale of pay, better use of my eligibility and better placement'}, reasonTxt=V('relReason')==='CUSTOM'?D(V('relReasonCustom')):RS[V('relReason')||'CHANCE'];
- const pr1=V('relM1Date'), permRef=adm?"Administrator's Order No. "+D(V('relOrd1No'))+' dated '+D(pr1)+' (on HOI Report No. '+D(V('relRep1No'))+')':'Resolution No. '+D(V('relRes1No'))+' (Meeting No. '+D(V('relM1No'))+') dated '+D(pr1), permRefBn='রেজোলিউশন নং '+D(V('relRes1No'))+' (সভা নং '+D(V('relM1No'))+'), তারিখ '+D(pr1);
- const data=[['Name',nm],['Post served',post],['Served from',from+' (continuing)'],['Subject / Qualification',subj],['Approval (D.I. / Competent Authority)',appr],['Pay scale',scale],['Examination',exam]];
- const out={};
- out.doc10=`<p>To<br><strong>The ${adm?'Administrator':'President / Secretary, Managing Committee'}</strong>,<br>${old}, ${place}.</p>
-<p><strong>Through:</strong> The ${hoi}, ${old}.</p><p style="text-align:right">Date: ${a1}</p>
-<p><strong>Sub:</strong> Prayer for permission to appear in the <strong>${exam}</strong>.</p><p>Respected ${P.S},</p>
-<p>With due respect I beg to state that I am serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}. My service particulars are as follows:</p>${tbl(data)}
-<p>In response to the advertisement published vide ${advt}, I am willing to appear in the above examination${V('relExamDate')?' (scheduled on '+edt+')':''} for ${reasonTxt}. I therefore request that I may kindly be permitted to appear in the said examination.</p><p>I assure you that the teaching and routine work of the school shall not suffer. I do not seek release from my present post at this stage; if I qualify, I shall apply separately for release, and I shall be bound by the orders of the authority.</p>
-<p>I shall be grateful for your kind permission.</p><p>Yours faithfully,</p>${sig(nm,post+', '+old)}<p><strong>Enclosures:</strong> 1. Copy of the published advertisement. 2. Copy of approval memo.</p>`;
- out.doc12=`<p>To<br><strong>The ${adm?'Administrator':'President / Secretary, Managing Committee'}</strong>,<br>${old}, ${place}.</p>
-<p><strong>Through:</strong> The ${hoi}, ${old}.</p><p style="text-align:right">Date: ${a2}</p>
-<p><strong>Sub:</strong> Prayer for acceptance of resignation and release from service w.e.f. <strong>${rd}</strong> (A.N.) to join ${nw}, on selection through ${exam} (Roll No. ${eno}), and issue of Release Certificate and service papers.</p><p>Respected ${P.S},</p>
-<p>With due respect I beg to state that I have been serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}, and that, with the permission granted vide ${permRef}, I applied for and appeared in the <strong>${exam}</strong> (Roll / Exam No. <strong>${eno}</strong>).</p>
-<p>I am glad to inform you that I have qualified in the said examination (${res}) and have been recommended${V('relRecMemo')?' by the Commission vide '+D(V('relRecMemo')):''} and offered appointment as ${post} at <strong>${nw}</strong> vide ${offer}${V('relJoinDate')?', and I am to join on '+D(V('relJoinDate')):''}. I have decided to accept the offer and have to join ${nwTxt} within the time allowed.</p>
-<p>I therefore beg to tender my resignation from my post in your school and pray that it may kindly be accepted. ${P.H} release may please be ordered w.e.f. <strong>${rd}</strong> (afternoon), so that I can join the new place of service at an early date.</p>
-<p>I further request that the following papers may kindly be issued to me: <strong>(1)</strong> Release Certificate; <strong>(2)</strong> Last Pay Certificate${V('relLpc')?' (last pay / increments: '+D(V('relLpc'))+')':''}; <strong>(3)</strong> Leave Statement; <strong>(4)</strong> Service Book / attested service particulars; <strong>(5)</strong> G.P.F. / Pension particulars, if any; <strong>(6)</strong> Certificate of approval and period of service (${from} to ${rd}) for continuation of past service and pay protection, as per rules.</p>
-<p>I take this opportunity to express my sincere gratitude to the school authority for giving me the opportunity to serve here and to enrich myself in my subject of teaching.</p>
-<p>Thanking you,<br>Yours faithfully,</p>${sig(nm,post+', '+old)}`;
- const kind=k=>{ // k=1 permission, k=2 release
-  const subjE=k==1?`Permission to ${nm} to appear in ${exam}${keep?' and no objection to release on passing the examination':''}`:`Release of ${nm} from service w.e.f. ${rd} (A.N.) on selection through ${exam} (Roll No. ${eno})`;
-  const body=k==1?`${nm}, an approved ${post} (${subj}) of this school since ${from} (approval ${appr}), has applied on ${a1} for permission to appear in the ${exam}. ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has assured that school work will not suffer.`:`${nm}, approved ${post} (${subj}) of this school since ${from} (approval ${appr}), with the permission granted vide ${permRef}, appeared in ${exam} (Roll No. ${eno}) and has qualified (${res}). ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has been recommended / offered appointment at ${nw} (${offer}) and, by application dated ${a2}, has prayed for release w.e.f. ${rd} (A.N.) so as to join ${nw}.`;
-  const rec=k==1?`It is recommended that permission may be granted${keep?', with no objection to '+P.h+' release from service if '+P.e+' appears in the examination and qualifies':''}.`:`It is recommended that the resignation may be accepted and ${P.e} may be released w.e.f. ${rd} (A.N.) so as to join ${nw}, with Release Certificate, Last Pay Certificate, Leave Statement and Service Book issued.`;
-  return {subjE,body,rec};};
- const rep=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">REPORT OF THE ${hoi.toUpperCase()}</p><div class="meta-line"><div><strong>Report No.:</strong> ${D(V(k==1?'relRep1No':'relRep2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p>To<br><strong>The Administrator</strong>,<br>${old}, ${place}.</p><p><strong>Sub:</strong> ${x.subjE}.</p><p>Sir/Madam,</p><p>${x.body}</p><p>${x.rec}</p><p>The matter is placed before you for kind consideration and necessary order.</p>${sig('The '+hoi,old)}`;};
- const ord=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">ORDER OF THE ADMINISTRATOR</p><div class="meta-line"><div><strong>Order No.:</strong> ${D(V(k==1?'relOrd1No':'relOrd2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p><strong>Sub:</strong> ${x.subjE}.</p><p>Perused the Report of the ${hoi} (No. ${D(V(k==1?'relRep1No':'relRep2No'))}) and the application of ${nm}. After due consideration, the undersigned is pleased to order as follows:</p><p>${k==1?`1. ${nm} is permitted to appear in the ${exam}.${keep?`<br>2. There is no objection to ${P.h} release from service if ${P.e} appears in the examination and qualifies, on ${P.h} separate application.`:''}`:`1. The resignation of ${nm} is accepted and ${P.e} is released from service w.e.f. ${rd} (A.N.), in terms of the permission granted vide ${permRef}, so as to join ${nw}.<br>2. The ${hoi} shall issue Release Certificate, Last Pay Certificate, Leave Statement and Service Book / service particulars.`}</p>${sig('Administrator',old)}`;};
- const mc=k=>{const nb=E(V('relNameBn')||V('teacherName')), pb=E(V('relPostBn')||V('prevPost_'+V('relSchool'))||''), ob=E(V('relOldBn')||s.name), ex=exam, mn=D(V(k==1?'relM1No':'relM2No')), md=D(V(k==1?'relM1Date':'relM2Date')), rn=D(V(k==1?'relRes1No':'relRes2No'));
-  const sub=k==1?`${pb} ${nb} মহাশয়/মহাশয়ার ${ex} পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান প্রসঙ্গে।`:`${pb} ${nb} মহাশয়/মহাশয়ার পরীক্ষায় উত্তীর্ণ হওয়ায় বিদ্যালয় হইতে অবমুক্তি (Release) প্রসঙ্গে।`;
-  const dec=k==1?`<p>(ক) ${nb}-কে উক্ত ${ex} পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান করা হইল।</p>${keep?`<p>(খ) উক্ত পরীক্ষায় অংশগ্রহণ করিয়া উত্তীর্ণ হইলে তাঁহাকে বিদ্যালয়ের চাকুরী হইতে অবমুক্ত (Release) করিতে কমিটির কোনো আপত্তি নাই; সেক্ষেত্রে তাঁহার পৃথক আবেদনের ভিত্তিতে চূড়ান্ত সিদ্ধান্ত গৃহীত হইবে।</p>`:''}<p>${keep?'(গ)':'(খ)'} প্রধান শিক্ষক/শিক্ষিকাকে প্রয়োজনীয় ব্যবস্থা গ্রহণের অনুরোধ করা হইল।</p>`
-   :`<p>(ক) ${nb}-এর ${D(V('relApp2Date'))} তারিখের ইস্তফা/অবমুক্তির আবেদন সর্বসম্মতিক্রমে গৃহীত হইল।</p><p>(খ) তাঁহাকে ${rd} তারিখ (অপরাহ্ন) হইতে বিদ্যালয়ের চাকুরী হইতে অবমুক্ত (Release) করা হইল, যাহাতে তিনি ${nw} বিদ্যালয়ে যোগদান করিতে পারেন।</p><p>(গ) প্রধান শিক্ষক/শিক্ষিকাকে Release Certificate, Last Pay Certificate, Leave Statement ও Service Book (প্রযোজ্য) যথাসম্ভব শীঘ্র প্রদানের জন্য অনুরোধ করা হইল।</p>`;
-  const body=k==1?`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${from} তারিখ হইতে এই বিদ্যালয়ে কর্মরত আছেন (অনুমোদন: ${appr})। তিনি ${ex} পরীক্ষায় অংশগ্রহণের জন্য ${a1} তারিখে অনুমতি প্রার্থনা করিয়া আবেদন করিয়াছেন। বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`:`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${permRefBn} অনুযায়ী ${ex} পরীক্ষায় অংশগ্রহণের অনুমতিপ্রাপ্ত হইয়া (রোল / পরীক্ষা নং ${eno}) উক্ত পরীক্ষায় উত্তীর্ণ হইয়া ${nw} বিদ্যালয়ে যোগদানের জন্য ${D(V('relApp2Date'))} তারিখে অবমুক্তির আবেদন করিয়াছেন।${V('relRecMemo')?' (কমিশনের সুপারিশ: '+E(V('relRecMemo'))+')':''}${V('relHoiAccept')?' প্রধান শিক্ষক/শিক্ষিকা '+E(V('relHoiAccept'))+' স্মারকে অবমুক্তিতে আপত্তি নাই জানাইয়াছেন।':''} বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`;
-  const mem=Array.from({length:7},(_,i)=>`<div style="display:inline-block;width:48%;margin:4px 0">${i+1}. Sd/ ____________________</div>`).join('');
-  return `<div class="bengali-text" style="font-family:'Nirmala UI','Kalpurush',sans-serif"><div class="meta-line"><div><strong>সভা নং:</strong> ${mn}</div><div><strong>রেজোলিউশন নং:</strong> ${rn}</div><div><strong>তারিখ:</strong> ${md}</div></div>
-<p style="text-align:center;font-weight:bold;text-decoration:underline">ম্যানেজিং কমিটির সভার রেজোলিউশনের অনুলিপি</p><p style="text-align:center">${ob} &nbsp;|&nbsp; স্থান: ${E(V('relMtgPlace')||'বিদ্যালয়')} &nbsp;|&nbsp; সময়: ${E(V('relMtgTime')||'অপরাহ্ন')}</p>
-<p><strong>উপস্থিত সদস্যগণের স্বাক্ষর:</strong></p>${mem}<p style="margin-top:8px"><strong>আলোচ্য বিষয়:</strong> ${sub}</p><p>${body}</p>${dec}
-<div style="display:flex;justify-content:space-between;margin-top:30px"><div>প্রত্যয়িত অনুলিপি<br>_______________<br>প্রধান শিক্ষক/শিক্ষিকা</div><div style="text-align:right">স্বাক্ষর: _______________<br>সভাপতি / সম্পাদক ${E(V('relPresBn'))}<br>ম্যানেজিং কমিটি, ${ob}</div></div></div>`;};
- out.doc11=adm?rep(1):mc(1); out.doc11b=adm?ord(1):''; out.doc13=adm?rep(2):mc(2); out.doc13b=adm?ord(2):'';
- return out;}
-window.relGenerate=function(){
- if(!V('relSchool')){alert('Add / select a previous school first (or press "Load Kabita sample").');return;}
- const o=build();
- PG.forEach(([id])=>{const p=$(id), b=p.querySelector('.page-body'); b.innerHTML=o[id]||''; b.contentEditable=o[id]?'true':'false'; p.dataset.empty=o[id]?'':'1';});
- WRAP.style.display='block'; $('outputNavigation').style.display='block'; bar.style.display='block'; bar.classList.remove('wb-hidden'); fab.style.display='none';
- showTab('doc10',NAV.querySelector('[data-tab="doc10"]')); fitPages(); $('outputNavigation').scrollIntoView({behavior:'smooth'});};
-window.fillSel=fillSel; window.dash=dash; const ol=window.onload; window.onload=function(){ol&&ol(); dash();};
-fillSel(); dash();
 })();
 </script>
 
@@ -2451,7 +2331,6 @@ window.sbLoadTeacher=function(){
  if(pr.length||ps.length){ $('schoolsContainer').innerHTML=''; schoolCount=0; (pr.length?pr:ps).forEach((p,i)=>{ const q=ps[i]||{};
    addSchoolField({name:q.name||p.name||'',post:q.post||'Assistant Teacher',agency:q.agency||'Managing Committee',period:q.period||((p.doj||p.dol)?(dmy(p.doj)+' to '+dmy(p.dol)):''),joinScale:q.joinScale||'',lastScale:q.lastScale||'',appr:q.appr||'',joinOrder:q.joinOrder||'',confirm:q.confirm||'',noc:q.noc||'',relMemo:q.relMemo||'',acceptResign:q.acceptResign||'',relDate:q.relDate||dmy(p.dol)}); }); set.push('previous schools ('+(pr.length||ps.length)+')'); }
  Object.keys(rel.form||{}).forEach(k=>put(k,rel.form[k]));
- setTimeout(()=>{ fillSel(); const os=$('relSchool').options; if(os.length)$('relSchool').value=os[os.length-1].value; dash(); },60);
  $('sbStatus').textContent='Filled: '+(set.join(', ')||'nothing matched');};
 setTimeout(refreshStaff,800);
 })();
@@ -2519,300 +2398,6 @@ window.clearFormFields=function(quiet){
   const m=$('cloudSaveMsg'); if(m&&!quiet){m.style.color='#718096'; m.textContent='Form cleared.';}
 };
 </script>
-<!-- ================= ADD-ON: PART-WISE WIZARD (Current school -> Transfer? -> 2nd school -> Transfer particulars -> Dashboard) ================= -->
-<style>
-.wz-stepper{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
-.wz-pill{flex:1 1 170px;min-width:150px;padding:10px 12px;border:2px solid #cbd5e0;border-radius:10px;background:#fff;cursor:pointer;text-align:left;font-family:inherit;color:#2d3748;line-height:1.25}
-.wz-pill b{display:block;font-size:.7rem;letter-spacing:.6px;color:#718096;text-transform:uppercase}
-.wz-pill span{font-size:.9rem;font-weight:700}
-.wz-pill.on{background:#0f294a;border-color:#0f294a;color:#fff}
-.wz-pill.on b{color:#f6ad55}
-.wz-pill.skip{opacity:.45;border-style:dashed}
-.wz-step{display:none}
-.wz-step.on{display:block}
-.wz-box{background:#f8fafc;border:1px solid #d5dde8;border-top:4px solid var(--secondary);border-radius:8px;padding:14px 16px;margin:14px 0}
-.wz-box>h2:first-child,.wz-box>h3:first-child{margin-top:0}
-.wz-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:14px;align-items:start}
-.wz-cols .wz-box{margin:0}
-@media(max-width:560px){.wz-cols{grid-template-columns:1fr}}
-.wz-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
-.wz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:12px;border-top:2px solid #e2e8f0}
-.wz-nav .btn{min-width:110px}
-.wz-hint{font-size:.85rem;color:#4a5568;margin:0 0 10px}
-.wz-warn{background:#fffaf0;border:1px solid #f6ad55;border-radius:6px;padding:9px 12px;font-size:.85rem;margin:8px 0}
-.wz-dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:10px}
-.wz-d{background:#fff;border:1px solid #d5dde8;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.wz-dh{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;color:#fff;font-weight:700;font-size:.92rem}
-.wz-dh small{opacity:.9;font-weight:600;margin-right:6px}
-.wz-dh button{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:4px;padding:2px 8px;font-size:.72rem;cursor:pointer}
-.wz-bar{height:4px;background:#e2e8f0}
-.wz-bar i{display:block;height:100%;background:#48bb78}
-.wz-r{display:flex;justify-content:space-between;gap:10px;padding:6px 12px;border-bottom:1px solid #edf2f7;font-size:.82rem}
-.wz-r span{color:#718096;flex:0 0 42%;white-space:pre}
-.wz-r b{text-align:right;word-break:break-word}
-.wz-r b.miss{color:#c53030;font-weight:600}
-.wz-total{display:flex;align-items:center;gap:12px;background:#ebf8ff;border:1px solid #90cdf4;border-radius:8px;padding:10px 14px;font-weight:600}
-.wz-total .wz-bar{flex:1;height:8px;border-radius:4px;overflow:hidden}
-</style>
-
-<style>
-#schoolsContainer.m-emp .form-group.trf{display:none}
-#schoolsContainer.m-trf .form-group.emp{display:none}
-#schoolsContainer.m-trf .btn-remove{display:none}
-#schoolsContainer.m-emp .card-nm{display:none}
-.card-nm{font-weight:600;color:#4a5568;margin:-6px 0 10px}
-#addSchoolBtn:disabled{opacity:.5;cursor:not-allowed}
-</style>
-<script>
-(function(){
-const $=id=>document.getElementById(id);
-const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const card=document.querySelector('.container.no-print .card');
-if(!card||$('wzStepper'))return;
-const mk=(cls,html)=>{const d=document.createElement('div');d.className=cls;if(html)d.innerHTML=html;return d;};
-const v=id=>{const e=$(id);return e?String(e.value||'').trim():'';};
-const setV=(id,val)=>{const e=$(id);if(!e)return;if(e.tagName==='SELECT'){if(![...e.options].some(o=>o.value===val))return;e.value=val;e.dispatchEvent(new Event('change',{bubbles:true}));}else{e.value=val;e.dispatchEvent(new Event('input',{bubbles:true}));}};
-const fillIf=(id,val)=>{const e=$(id);if(e&&!e.value.trim()&&val)e.value=val;};
-
-/* ---------- grab the existing pieces BEFORE moving them ---------- */
-const h2s=[...card.querySelectorAll(':scope > h2')];
-const g1=h2s[0].nextElementSibling;
-const g2=h2s[1].nextElementSibling, h3=g2.nextElementSibling, g2b=h3.nextElementSibling;
-const sc=$('schoolsContainer'), addBtn=$('addSchoolBtn'), g4=h2s[3].nextElementSibling;
-const genBtn=card.querySelector(':scope > button.btn-generate');
-const rs=$('relSection');
-h2s[0].textContent='1A · Teacher & Governance Setup';
-h2s[1].textContent='1B · Current school — employment details & official metadata (the school he serves in now)';
-h2s[2].textContent='2 · Previous schools 1 and 2 (if any) — employment details of each';
-h2s[3].textContent='3E · Exam NOC for the current school (optional — Docs 8–9)';
-addBtn.textContent='+ Add Previous School (max 2)';
-const box=(color,...nodes)=>{const b=mk('wz-box');if(color)b.style.borderTopColor=color;nodes.forEach(n=>n&&b.appendChild(n));return b;};
-const opts=(id,skip)=>[...$(id).options].filter(o=>o.value!==skip).map(o=>`<option value="${E(o.value)}">${E(o.text)}</option>`).join('');
-const ADM_OPTS=opts('adminType'), HOI_OPTS=opts('hoiStatus','CUSTOM');
-
-/* ---------- Part 1: current school ---------- */
-const step1=mk('wz-step');
-const hint1=mk('wz-hint');
-hint1.innerHTML='<b>Part 1 — Current school.</b> The school where the teacher serves <i>now</i> (the school he is leaving). Enter every employment detail of this school once — joining, scale, approval, confirmation, codes. Previous schools come in Part 2; the move to the new school in Part 3.';
-step1.append(hint1,box('#2b6cb0',h2s[0],g1),box('#0f294a',h2s[1],g2,h3,g2b));
-
-/* ---------- Part 2: previous schools 1 and 2 (employment fields of the cards) ---------- */
-const step2=mk('wz-step');
-const hint2=mk('wz-hint');
-hint2.innerHTML='<b>Part 2 — Previous schools.</b> Schools where he served <i>before</i> the current school (previous school 1, then 2). Employment details only; how he left each school is entered in Part 4.';
-const box2=box('#1a5693',h2s[2],sc,addBtn);
-step2.append(hint2,box2);
-
-/* ---------- Part 3: transfer (current school -> new school), every field ---------- */
-const NS_MAIN=[['ns_name','New School Name',"e.g., Mission Girls' High School [H.S.]"],['ns_desg','Designation & Subject at new school (blank = same)',''],['ns_po','Post Office (P.O.)',''],['ns_blockPs','Block & P.S.',''],['ns_subDiv','Sub Division',''],['ns_district','District',''],['ns_pin','PIN Code',''],['ns_join','Joining Date at New School','DD.MM.YYYY'],['ns_scale','Pay Scale on Joining','e.g., Rs. 6000-12000/-'],['ns_agency','Recruitment Agency / Mode',''],['ns_appr','Approval Memo & Date',''],['ns_confirm','Confirmation Memo & Date',''],['ns_appt','WBBSE / WBBPE Appointment Letter No. & Date',''],['ns_cssc','CSSC Recommendation Letter No. & Date','']];
-const NS_CODES=[['ns_index','School Index No.'],['ns_hs','H.S. Code'],['ns_vtc','VTC Code'],['ns_phone','Office Phone No.'],['ns_mobile','H.M. Mobile No(s)'],['ns_email','School Email ID'],['ns_dise','DISE Code'],['ns_iosms','IOSMS Code']];
-const inp=([id,l,p])=>`<div class="form-group"><label>${E(l)}:</label><input type="text" id="${id}" placeholder="${E(p||'')}"></div>`;
-const ESS=[0,7,10,8];
-
-rs.classList.add('wz-step');
-const rh2=rs.querySelector(':scope > h2'); if(rh2) rh2.textContent='Part 3 · Transfer — current school → new school (application, resolutions, result, release)';
-const oldP=rs.querySelector(':scope > p');
-if(oldP) oldP.innerHTML='<b>Sequence:</b> (1) Advt published → teacher applies for <i>permission</i> to appear (Doc 10, no roll no.) → MC resolution / HOI report + Administrator order (Doc 11). (2) After permission he applies to the exam and receives a <b>Roll / Exam No.</b> → enter it in 3C. (3) If he passes → application for release (Doc 12) → release resolution / order (Doc 13), quoting the roll no., the permission order and the new school. The <b>source school is the current school of Part 1</b>; if the old school is under an Administrator the resolutions become HOI Report + Administrator Order (English), if M.C. they are in Bengali.';
-const sample=rs.querySelector(':scope > button.btn-add'); if(sample)sample.remove();
-const rd=$('relDash'); if(rd)rd.style.display='none';
-const hid=mk('wz-hidden'); hid.style.display='none';
-['relSchool','relNewMode','relNewSchool','relJoinDate'].forEach(id=>{const g=$(id)&&$(id).closest('.form-group'); if(g)hid.appendChild(g);});
-const grp=(title,color,ids)=>{const b=mk('wz-box');b.style.borderTopColor=color;b.innerHTML=`<h3 style="color:${color}">${title}</h3>`;const f=mk('wz-fields');ids.forEach(id=>{const el=$(id),g=el&&el.closest('.form-group');if(g)f.appendChild(g);});b.appendChild(f);return b;};
-const nsBox=mk('wz-box'); nsBox.style.borderTopColor='#2f855a';
-nsBox.innerHTML=`<h3 style="color:#2f855a">3A · New school — where he will go</h3>
-<div class="wz-fields">${ESS.map(i=>inp(NS_MAIN[i])).join('')}</div>
-<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600;color:#2b6cb0">More details about the new school (optional)</summary>
- <div class="grid-3" style="margin-top:10px">${NS_MAIN.filter((_,i)=>!ESS.includes(i)).map(inp).join('')}
-  <div class="form-group"><label>Administration Type at new school:</label><select id="ns_admin"><option value="">— same as now —</option>${ADM_OPTS}</select></div>
-  <div class="form-group"><label>HOI Designation at new school:</label><select id="ns_hoi"><option value="">— same as now —</option>${HOI_OPTS}</select></div>
- </div>
- <h3 style="margin:14px 0 8px;font-size:1rem">Codes, phone &amp; e-mail</h3>
- <div class="grid-4">${NS_CODES.map(inp).join('')}</div>
-</details>`;
-const cols=mk('wz-cols');
-cols.append(
- grp('3B · Application → Permission to appear','#805ad5',['relExamName','relExamDate','relReason','relReasonCustom','relAdvt','relApp1Date','relRetain','relM1No','relM1Date','relRes1No','relRep1No','relOrd1No','relMtgTime','relMtgPlace','relPresBn']),
- grp('3C · Result, roll no. & appointment','#2f855a',['relExamNo','relResult','relNewOffer','relRecMemo']),
- grp('3D · Application → Release','#b7791f',['relApp2Date','relRelDate','relLpc','relHoiAccept','relReleaseOrderRef','relM2No','relM2Date','relRes2No','relRep2No','relOrd2No'])
-);
-const det=document.createElement('details'); det.style.margin='14px 0';
-det.innerHTML='<summary style="cursor:pointer;font-weight:600;color:#2b6cb0">Source school — auto-filled from Part 1 (change only if needed)</summary>';
-det.appendChild(grp('Old (current) school particulars','#2b6cb0',['relOldCtl','relOldHoi','relOldPlace','relNameBn','relPostBn','relOldBn']));
-const nocBox=box('#805ad5',h2s[3],g4);
-const rgrid=rs.querySelector(':scope > .grid-3');
-const gbtn=rs.querySelector(':scope > button.btn-generate');
-[nsBox,cols,det,nocBox,hid].forEach(n=>rs.insertBefore(n,gbtn));
-if(rgrid)rgrid.remove();
-
-/* ---------- Part 4: previous schools — transfer process (same cards, other fields) ---------- */
-const step4=mk('wz-step');
-const hint4=mk('wz-hint');
-hint4.innerHTML='<b>Part 4 — Previous schools: transfer process.</b> For each previous school (1 and 2): the NOC / prior permission, release order, acceptance of resignation and release date — how he left that school.';
-const host4=mk('wz-host'), none4=mk('wz-warn','No previous school entered in Part 2 — nothing to fill here. Press <b>Next</b>.');
-const box4=box('#6b46c1'); box4.innerHTML='<h2>4 · Previous schools — transfer process (NOC, release, resignation)</h2>'; box4.append(host4,none4);
-step4.append(hint4,box4);
-
-/* ---------- Part 5 ---------- */
-const step5=mk('wz-step');
-step5.innerHTML='<p class="wz-hint"><b>Part 5 — Dashboard.</b> Red “not filled” rows are missing; press <b>Edit ›</b> to jump to that part. If a new school is entered in Part 3, the documents are made for the new school and the current school is added to previous service automatically.</p><div id="wzDash"></div>';
-const gwrap=mk('wz-box');gwrap.style.borderTopColor='#0f294a';if(genBtn)gwrap.appendChild(genBtn);step5.appendChild(gwrap);
-
-/* ---------- stepper + nav ---------- */
-const PILLS=[['Part 1','Current School'],['Part 2','Previous Schools 1 & 2'],['Part 3','Transfer → New School'],['Part 4','Previous Schools — Transfer'],['Part 5','Dashboard & Generate']];
-const stepper=mk('wz-stepper');stepper.id='wzStepper';
-PILLS.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='wz-pill';b.innerHTML=`<b>${p[0]}</b><span>${p[1]}</span>`;b.onclick=()=>go(i+1);stepper.appendChild(b);});
-const nav=mk('wz-nav','<button type="button" class="btn" id="wzBack" style="background:#718096;color:#fff">◀ Back</button><span id="wzPos" style="font-weight:600;color:#4a5568"></span><button type="button" class="btn btn-add" id="wzNext">Next ▶</button>');
-const steps=[step1,step2,rs,step4,step5], pills=[...stepper.children];
-card.append(stepper,step1,step2,rs,step4,step5,nav);
-sc.classList.add('m-emp');
-
-let cur=1;
-const cardCount=()=>document.querySelectorAll('.school-card').length;
-function syncAdd(){ addBtn.disabled=cardCount()>=2; }
-function placeCards(n){
-  if(n===4){host4.appendChild(sc);sc.classList.remove('m-emp');sc.classList.add('m-trf');}
-  else{box2.insertBefore(sc,addBtn);sc.classList.remove('m-trf');sc.classList.add('m-emp');}
-  sc.querySelectorAll('.school-card').forEach(c=>{const nm=c.querySelector('.card-nm'),i=c.querySelector('[id^="prevName_"]');if(nm&&i)nm.textContent=i.value||'(school name not entered in Part 2)';});
-  none4.style.display=(n===4&&!cardCount())?'':'none';
-  syncAdd();
-}
-function go(n,quiet){
-  n=Math.max(1,Math.min(5,n));cur=n;
-  steps.forEach((s,i)=>s.classList.toggle('on',i+1===n));
-  pills.forEach((p,i)=>p.classList.toggle('on',i+1===n));
-  $('wzBack').style.visibility=n>1?'visible':'hidden';
-  $('wzNext').style.visibility=n<5?'visible':'hidden';
-  $('wzPos').textContent='Part '+n+' of 5';
-  if(n===2||n===4)placeCards(n);
-  if(n===3)autofill();
-  if(n===5)renderDash();
-  if(!quiet)stepper.scrollIntoView({behavior:'smooth',block:'start'});
-}
-window.wzGo=go;
-$('wzNext').onclick=()=>go(cur+1);
-$('wzBack').onclick=()=>go(cur-1);
-
-/* ---------- source school = current school of Part 1 ---------- */
-function autoSource(){
-  const ctl=$('adminType').value==='ADMIN'?'ADMIN':'MC'; if($('relOldCtl'))$('relOldCtl').value=ctl;
-  const h=$('hoiStatus').value; if($('relOldHoi')&&[...$('relOldHoi').options].some(o=>o.value===h))$('relOldHoi').value=h;
-  const place=[v('poName')&&('P.O. '+v('poName')),v('district')&&('Dist. '+v('district'))].filter(Boolean).join(', ');
-  if($('relOldPlace'))$('relOldPlace').value=place;
-}
-function syncNew(){
-  if($('relNewMode'))$('relNewMode').value='NEXT';
-  if(v('ns_name'))$('relNewSchool').value=v('ns_name');
-  if(v('ns_join'))$('relJoinDate').value=v('ns_join');
-  fillIf('relNewOffer',v('ns_appr'));
-}
-function autofill(){ autoSource(); fillIf('relExamName',v('selfNocExamRef')); syncNew(); }
-
-/* ---------- the move is applied automatically at generation time (form values are put back afterwards) ---------- */
-const SWAP=[['presentSchool','ns_name'],['poName','ns_po'],['blockPs','ns_blockPs'],['subDiv','ns_subDiv'],['district','ns_district'],['pinCode','ns_pin'],['presentJoinDate','ns_join'],['presentPayScale','ns_scale'],['presentAgency','ns_agency'],['presentAppr','ns_appr'],['presentConfirm','ns_confirm'],['apptLetter','ns_appt'],['csscLetter','ns_cssc'],['indexNo','ns_index'],['hsCode','ns_hs'],['vtcCode','ns_vtc'],['phoneNo','ns_phone'],['mobileNo','ns_mobile'],['emailId','ns_email'],['diseCode','ns_dise'],['iosmsCode','ns_iosms']];
-function oldCardData(){
-  const q=s=>String(s||'').replace(/"/g,'&quot;');
-  const place=[v('poName')&&('P.O. '+v('poName')),v('district')&&('Dist. '+v('district'))].filter(Boolean).join(', ');
-  const adm=v('relOldCtl')==='ADMIN', rdt=v('relRelDate'), d1=v('relM1Date'), d2=v('relM2Date');
-  const perm=adm?(v('relOrd1No')?"Administrator's Order No. "+v('relOrd1No'):''):(v('relRes1No')?'Res. No. '+v('relRes1No')+(v('relM1No')?' (Meeting No. '+v('relM1No')+')':''):'');
-  const relr=v('relReleaseOrderRef')||(adm?(v('relOrd2No')?"Administrator's Order No. "+v('relOrd2No'):''):(v('relRes2No')?'Res. No. '+v('relRes2No'):''));
-  return {name:q([v('presentSchool'),place].filter(Boolean).join(', ')),post:q(v('teacherDesg')||'Assistant Teacher'),agency:q(v('presentAgency')),
-    period:q((v('presentJoinDate')||'____')+' to '+(rdt||'____')),joinScale:q(v('presentPayScale')),
-    lastScale:q(v('presentPayScale')+(v('relLpc')?' (last pay / increments: '+v('relLpc')+')':'')),
-    appr:q(v('presentAppr')),joinOrder:'',confirm:q(v('presentConfirm')),
-    noc:q(perm?perm+(d1?' dated '+d1:''):''),relMemo:q(relr?relr+(!v('relReleaseOrderRef')&&d2?' dated '+d2:''):''),
-    acceptResign:q(v('relHoiAccept')),relDate:q(rdt?rdt+' (A.N.)':'')};
-}
-function addOldCard(){
-  const pm=maxSchools; maxSchools=3; const before=schoolCount; addSchoolField(oldCardData()); maxSchools=pm;
-  return schoolCount>before?schoolCount:0;
-}
-function dropCard(id){ const el=id&&$('schoolCard_'+id); if(el){el.remove(); schoolCount--;} }
-function swapIn(){
-  autoSource(); syncNew();
-  const ids=[...SWAP.map(x=>x[0]),'teacherDesg','adminType','hoiStatus','presidentStatus','secyStatus'];
-  const saved={}; ids.forEach(id=>{const e=$(id); if(e)saved[id]=e.value;});
-  const tmp=addOldCard();
-  SWAP.forEach(([a,b])=>{const e=$(a); if(e)e.value=v(b);});
-  if(v('ns_desg'))$('teacherDesg').value=v('ns_desg');
-  if(v('ns_admin'))setV('adminType',v('ns_admin'));
-  if(v('ns_hoi'))$('hoiStatus').value=v('ns_hoi');
-  return ()=>{
-    dropCard(tmp);
-    if(saved.adminType!==undefined&&$('adminType').value!==saved.adminType)setV('adminType',saved.adminType);
-    ids.forEach(id=>{const e=$(id); if(e&&saved[id]!==undefined)e.value=saved[id];});
-    if(window.fillSel)fillSel(); if(window.dash)dash(); placeCards(cur===4?4:2);
-  };
-}
-const _gen=window.generateAllDocuments;
-window.generateAllDocuments=function(){
-  if(!v('ns_name'))return _gen.apply(this,arguments);
-  const back=swapIn();
-  try{return _gen.apply(this,arguments);}finally{back();}
-};
-const _rel=window.relGenerate;
-window.relGenerate=function(){
-  if(!v('ns_name')){alert('Enter the new school name in Part 3A first.');return;}
-  autoSource(); syncNew();
-  const tmp=addOldCard();
-  try{
-    if(window.fillSel)fillSel(); const s=$('relSchool'); s.value=String(tmp); s.dataset.manual='1';
-    return _rel.apply(this,arguments);
-  }finally{ dropCard(tmp); s_reset(); if(window.fillSel)fillSel(); if(window.dash)dash(); placeCards(cur===4?4:2); }
-};
-function s_reset(){ const s=$('relSchool'); if(s)delete s.dataset.manual; }
-
-/* ---------- Dashboard ---------- */
-const val=id=>{const e=$(id);if(!e)return '';
-  if(e.tagName==='SELECT'){
-    if(e.value==='CUSTOM'){const m={hoiStatus:'customHoiVal',presidentStatus:'customPresVal',secyStatus:'customSecyVal',gpfStatus:'customGpfVal'};return m[id]?v(m[id]):'';}
-    return e.value===''?'':(e.options[e.selectedIndex]?e.options[e.selectedIndex].text:e.value);
-  }
-  return String(e.value||'').trim();};
-const prevRows=(fields)=>()=>{const out=[];document.querySelectorAll('[id^="prevName_"]').forEach((e,i)=>{const n=e.id.split('_')[1];fields.forEach(([l,k,opt],j)=>out.push([(j===0?'#'+(i+1)+' ':'   ')+l,k+'_'+n,opt]));});if(!out.length)out.push(['Previous schools',()=>'None entered',1]);return out;};
-const SPEC=[
- {t:'Teacher',s:1,c:'#2b6cb0',r:[['Name','teacherName'],['Date of birth','dob'],['Designation','teacherDesg'],['Qualification','subjectQual'],['Mobile','teacherMobile',1]]},
- {t:'Governance',s:1,c:'#553c9a',r:[['Administration','adminType'],['HOI title','hoiStatus'],['Authority','presidentStatus'],['Secretary','secyStatus',1]]},
- {t:'Current School',s:1,c:'#0f294a',r:[['School','presentSchool'],['P.O.','poName'],['Block & P.S.','blockPs'],['Sub-division','subDiv'],['District','district'],['PIN','pinCode'],['Joined here','presentJoinDate'],['Pay scale','presentPayScale'],['Agency','presentAgency'],['Approval','presentAppr'],['Confirmation','presentConfirm',1],['GPF / CPF','gpfStatus'],['C.P. No.','cpNo']]},
- {t:'School Codes',s:1,c:'#2c7a7b',r:[['Index No.','indexNo',1],['H.S. Code','hsCode',1],['VTC Code','vtcCode',1],['Office phone','phoneNo',1],['HM mobile','mobileNo',1],['E-mail','emailId',1],['DISE','diseCode',1],['IOSMS','iosmsCode',1]]},
- {t:'Previous schools 1 & 2 — employment',s:2,c:'#1a5693',r:prevRows([['School','prevName'],['Post','prevPost',1],['Period','prevPeriod'],['Approval','prevAppr'],['Pay scale (joining)','prevJoinScale',1],['Confirmation','prevConfirm',1]])},
- {t:'3A · New school',s:3,c:'#2f855a',r:[['New school','ns_name'],['Joining date','ns_join'],['Approval memo','ns_appr',1],['Pay scale','ns_scale',1],['Designation','ns_desg',1]]},
- {t:'3B · Permission to appear',s:3,c:'#805ad5',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Exam','relExamName'],['Advertisement','relAdvt'],['Reason','relReason'],['Application date','relApp1Date'],...(adm?[['HOI report no.','relRep1No'],['Admin order no.','relOrd1No']]:[['Meeting no.','relM1No'],['Resolution no.','relRes1No']]),['Meeting / report date','relM1Date']];}},
- {t:'3C · Roll no. & result',s:3,c:'#38a169',r:[['Roll / Exam No. (after applying)','relExamNo',1],['Result / rank','relResult',1],['Appointment ref.','relNewOffer',1],['Commission memo','relRecMemo',1]]},
- {t:'3D · Release',s:3,c:'#dd6b20',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Application date','relApp2Date'],['Release date (A.N.)','relRelDate'],['LPC / last pay','relLpc',1],['HOI acceptance','relHoiAccept',1],['Release order ref.','relReleaseOrderRef',1],...(adm?[['HOI report no.','relRep2No'],['Admin order no.','relOrd2No']]:[['Meeting no.','relM2No'],['Resolution no.','relRes2No']]),['Meeting / report date','relM2Date']];}},
- {t:'Exam NOC (current school)',s:3,c:'#6b46c1',r:[['Exam / SLST','selfNocExamRef',1],['HOI report no.','selfNocReportNo',1],['Order / resolution no.','selfNocOrderNo',1],['Permission for','selfNocPostCategory',1],['Application date','selfNocAppDate',1]]},
- {t:'Previous schools — transfer process',s:4,c:'#805ad5',r:prevRows([['School','prevName'],['NOC / permission','prevNOC'],['Release order','prevRelMemo'],['Acceptance of resignation','prevAcceptResign',1],['Release date','prevRelease']])}
-];
-function renderDash(){
-  const host=$('wzDash'); if(!host)return; autoSource();
-  let tf=0,tt=0,html='';
-  SPEC.forEach(b=>{
-    const rows=typeof b.r==='function'?b.r():b.r; let f=0,n=0;
-    const rh=rows.map(([l,src,opt])=>{
-      const x=typeof src==='function'?src():val(src), has=String(x).trim()!=='';
-      if(!opt){n++;if(has)f++;}
-      return `<div class="wz-r"><span>${E(l)}</span><b class="${has?'':'miss'}">${has?E(x):(opt?'—':'not filled')}</b></div>`;
-    }).join('');
-    tf+=f;tt+=n;
-    html+=`<div class="wz-d"><div class="wz-dh" style="background:${b.c}"><span>${E(b.t)}</span><span><small>${f}/${n}</small><button type="button" onclick="wzGo(${b.s})">Edit ›</button></span></div><div class="wz-bar"><i style="width:${n?Math.round(f*100/n):100}%"></i></div>${rh}</div>`;
-  });
-  const pct=tt?Math.round(tf*100/tt):100;
-  host.innerHTML=`<div class="wz-total"><span>Overall: ${tf} / ${tt} required fields filled (${pct}%)</span><div class="wz-bar"><i style="width:${pct}%"></i></div></div><div class="wz-dash">${html}</div>`;
-}
-
-/* ---------- events ---------- */
-card.addEventListener('input',()=>{if(cur===5)renderDash();});
-card.addEventListener('change',()=>{if(cur===5)renderDash();});
-card.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(()=>{syncAdd();if(cur===5)renderDash();},60);});
-const _pf=window.populateFormData;
-if(typeof _pf==='function')window.populateFormData=function(){const r=_pf.apply(this,arguments);setTimeout(()=>{placeCards(cur===4?4:2);if(cur===5)renderDash();},0);return r;};
-const _cf=window.clearFormFields;
-if(typeof _cf==='function')window.clearFormFields=function(){const r=_cf.apply(this,arguments);setTimeout(()=>{placeCards(cur===4?4:2);},0);return r;};
-go(1,true);
-})();
-</script>
-
-
-
 <script>
 /* ===== ADD-ON: simple Save (one record per teacher) + staff data-collection link + admin fetch ===== */
 (function(){
@@ -2907,15 +2492,15 @@ function collectMode(){
   const h=document.querySelector('.container.no-print .card h1'); h.textContent='Teacher Service Details Form';
   if(h.nextElementSibling) h.nextElementSibling.textContent='Fill in your details and press Submit at the bottom. The school office will prepare the documents.';
   clearFormFields(true);
-  const s1=$('teacherName').closest('.wz-step'), s4=$('schoolsContainer').closest('.wz-step');
-  s1.classList.add('on'); s4.classList.add('on'); const hh2=s4.querySelector('.wz-hint'); if(hh2)hh2.innerHTML='Schools where you served <b>before</b> your present school (previous school 1, then 2). One card per school.';
-  $('wzStepper').style.display='none'; document.querySelector('.wz-nav').style.display='none';
-  const noc=$('selfNocExamRef'); if(noc&&noc.closest('.wz-box'))noc.closest('.wz-box').style.display='none';
+  /* office-only parts: governance fields, present-school metadata, NOC, generate button */
+  ['hoiStatus','adminType','presidentStatus','secyStatus'].forEach(id=>{const g=$(id)&&$(id).closest('.form-group'); if(g)g.style.display='none';});
+  ['sec2','sec4'].forEach(id=>{let e=$(id); const end=$(id==='sec2'?'sec3':'genBtn'); while(e&&e!==end){const n=e.nextElementSibling; e.style.display='none'; e=n;}});
+  $('genBtn').style.display='none';
   document.getElementById('addSchoolBtn').addEventListener('click',()=>setTimeout(()=>{
     const n=document.querySelectorAll('.school-card').length; ['prevJoinScale_','prevLastScale_','prevAgency_'].forEach(k=>{const e=$(k+n); if(e)e.value='';}); },0));
-  const box=document.createElement('div'); box.className='wz-box'; box.style.borderTopColor='#2f855a';
+  const box=document.createElement('div'); box.style.marginTop='15px';
   box.innerHTML='<button type="button" class="btn btn-generate" id="subBtn" style="margin-top:0">📤 Submit to School Office</button><div id="subMsg" style="margin-top:10px;font-weight:600"></div>';
-  s4.appendChild(box);
+  $('addSchoolBtn').insertAdjacentElement('afterend',box);
   $('subBtn').onclick=async()=>{
     const name=$('teacherName').value.trim(); const sm=$('subMsg');
     if(!name){alert('Please enter your name.');return;}
