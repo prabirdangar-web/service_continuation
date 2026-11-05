@@ -416,15 +416,23 @@
         <div style="background:#f0f4f8; border:1px solid #cbd5e0; border-radius:6px; padding:12px 15px; margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
             <select id="sbTeacher" style="width:340px;max-width:100%"><option value="">-- Select Saved Teacher --</option></select>
             <button type="button" class="btn" style="background:#1e3a8a;color:#fff" onclick="sbLoadTeacher()">📂 Load</button>
-            <button type="button" class="btn" style="background:#718096;color:#fff;padding:10px 12px" onclick="sbRefresh()" title="Refresh staff list">↻</button>
-            <button type="button" class="btn" style="background:#718096;color:#fff;padding:10px 12px" onclick="sbSettings()" title="Staff source settings">⚙</button>
+            <button type="button" class="btn" style="background:#718096;color:#fff;padding:10px 12px" onclick="sbRefresh()" title="Refresh list">↻</button>
             <span id="sbStatus" style="font-size:.8rem;color:#718096"></span><br>
-            <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save (replaces last)</button>
-            <button type="button" class="btn" style="background:var(--accent); color:#fff;" onclick="loadLastSaved()">☁️ Load Last Saved</button>
-            <span id="cloudSaveMsg" style="font-size:0.85rem; color:#718096;"></span>
+            <button type="button" class="btn btn-cloud" onclick="saveFormToCloud()">💾 Save</button>
             <button type="button" class="btn" style="background:#718096;color:#fff;" onclick="if(confirm('Clear all fields?'))clearFormFields()" title="Blank every text field">🧹 Clear form</button>
             <button type="button" class="btn" style="background:#6b46c1;color:#fff;" onclick="exportFormJSON()" title="Download all form fields as a .json file">⬇ Export JSON</button>
             <button type="button" class="btn" style="background:#b7791f;color:#fff;" onclick="importFormJSON()" title="Load a .json file into the form">⬆ Import JSON</button>
+            <span id="cloudSaveMsg" style="font-size:0.85rem; color:#718096;"></span>
+            <div style="flex-basis:100%;height:0"></div>
+            <button type="button" class="btn" style="background:#2c7a7b;color:#fff;" onclick="makeShareLink()">🔗 Create share link</button>
+            <button type="button" class="btn" style="background:#2b6cb0;color:#fff;" onclick="fetchSubmissions()">⇩ Fetch submissions</button>
+            <div id="shareBox" style="display:none;flex-basis:100%;background:#fff;border:1px solid #cbd5e0;border-radius:6px;padding:10px;font-size:.85rem">
+              <div style="margin-bottom:6px;color:#4a5568">Send this link to staff. They fill the form and press Submit; you see it under <b>Fetch submissions</b>.</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><input type="text" id="shareUrl" readonly style="flex:1;min-width:220px">
+              <button type="button" class="btn" style="background:#2b6cb0;color:#fff;padding:7px 12px" onclick="copyShareLink()">📋 Copy message + link</button>
+              <button type="button" class="btn" style="background:#25d366;color:#fff;padding:7px 12px" onclick="waShareLink()">WhatsApp</button></div>
+            </div>
+            <div id="subList" style="display:none;flex-basis:100%;background:#fff;border:1px solid #cbd5e0;border-radius:6px;padding:6px 10px;max-height:320px;overflow-y:auto"></div>
         </div>
 
         <h2>1. Teacher & Governance Setup</h2>
@@ -682,7 +690,7 @@
             </div>
         </div>
 
-        <div id="relSection"><h2>5. Release Workflow — Exam Permission → Release (4 documents: Docs 10–13)</h2><p style="font-size:.85rem;color:#4a5568;margin-top:0">Uses the previous-school card selected below (post, period, subject, approval, pay scale are fetched). If the old school is under an <b>Administrator</b>, resolutions become HOI Report + Administrator Order in English only; if <b>M.C.</b>, resolutions are in Bengali.</p><button type="button" class="btn btn-add" onclick="loadKabitaSample()">Load Kabita Mondal sample (Manbazar)</button><div id="relDash"></div><div class="grid-3"><div class="form-group"><label>Previous school (source data)</label><select id="relSchool"><option value="">—</option></select></div><div class="form-group"><label>Exam No. (dashboard)</label><input type="text" id="relExamNo" placeholder="e.g. 2nd SLST-2025 Roll / Reg. No."></div><div class="form-group"><label>Exam name</label><input type="text" id="relExamName" placeholder=""></div><div class="form-group"><label>Exam date (optional)</label><input type="text" id="relExamDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Old school controlled by</label><select id="relOldCtl"><option value="MC">Managing Committee (Bengali resolutions)</option><option value="ADMIN">Administrator (HOI Report + Order, English)</option></select></div><div class="form-group"><label>Old school HOI title</label><select id="relOldHoi"><option value="Headmaster">Headmaster</option><option value="Headmistress">Headmistress</option><option value="Teacher-in-Charge">Teacher-in-Charge</option></select></div><div class="form-group"><label>Old school P.O. / District</label><input type="text" id="relOldPlace" placeholder=""></div><div class="form-group"><label>Teacher name in Bengali (optional)</label><input type="text" id="relNameBn" placeholder=""></div><div class="form-group"><label>Post in Bengali (optional)</label><input type="text" id="relPostBn" placeholder=""></div><div class="form-group"><label>Old school name in Bengali (optional)</label><input type="text" id="relOldBn" placeholder=""></div><div class="form-group"><label>Permission resolution: no objection to release after passing?</label><select id="relRetain"><option value="YES">Allow exam + no objection to release if he/she passes</option><option value="NO">Allow exam only</option></select></div><div class="form-group"><label>Reason for appearing (Doc 10)</label><select id="relReason"><option value="CHANCE">Better chance of selection</option><option value="SCALE">Higher scale of pay</option><option value="ELIG">Better use of my eligibility / qualification</option><option value="PLACE">Better placement / posting</option><option value="ALL">All of the above</option><option value="CUSTOM">Other (type below)</option></select></div><div class="form-group"><label>Reason – other (if "Other")</label><input type="text" id="relReasonCustom" placeholder=""></div><div class="form-group"><label>Published advertisement (No. / date / authority)</label><input type="text" id="relAdvt" placeholder="e.g. WBSSC Advt. No. 01/2025 dated 10.07.2025"></div><div class="form-group"><label>Application 1 date (exam permission)</label><input type="text" id="relApp1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting/Report No. – Permission</label><input type="text" id="relM1No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Permission</label><input type="text" id="relM1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Permission</label><input type="text" id="relRes1No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Permission (Admin)</label><input type="text" id="relRep1No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Permission</label><input type="text" id="relOrd1No" placeholder=""></div><div class="form-group"><label>Exam result / rank (after passing)</label><input type="text" id="relResult" placeholder=""></div><div class="form-group"><label>Joining</label><select id="relNewMode"><option value="NEXT">Next school</option><option value="CURRENT">Current school</option></select></div><div class="form-group"><label>School to join</label><input type="text" id="relNewSchool" placeholder=""></div><div class="form-group"><label>Appointment / recommendation ref.</label><input type="text" id="relNewOffer" placeholder=""></div><div class="form-group"><label>Commission recommendation memo & date</label><input type="text" id="relRecMemo" placeholder="e.g. 328/Recom(AT)/RSSC(WR) dated 29.08.2008"></div><div class="form-group"><label>Joining date at new school</label><input type="text" id="relJoinDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Last pay drawn / last & next increment (LPC)</label><input type="text" id="relLpc" placeholder="Rs. 5625 / 01.09.2008 / 01.09.2009"></div><div class="form-group"><label>HOI acceptance letter ref & date</label><input type="text" id="relHoiAccept" placeholder=""></div><div class="form-group"><label>HOI Release Order ref & date</label><input type="text" id="relReleaseOrderRef" placeholder=""></div><div class="form-group"><label>Meeting time (Bengali/English)</label><input type="text" id="relMtgTime" placeholder="2 P.M."></div><div class="form-group"><label>Meeting place</label><input type="text" id="relMtgPlace" placeholder="বিদ্যালয়"></div><div class="form-group"><label>President / Secretary name (Bengali)</label><input type="text" id="relPresBn" placeholder=""></div><div class="form-group"><label>Application 2 date (release)</label><input type="text" id="relApp2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Release date (A.N.)</label><input type="text" id="relRelDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting No. – Release</label><input type="text" id="relM2No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Release</label><input type="text" id="relM2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Release</label><input type="text" id="relRes2No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Release (Admin)</label><input type="text" id="relRep2No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Release</label><input type="text" id="relOrd2No" placeholder=""></div></div><button type="button" class="btn btn-generate" style="background:#b7791f" onclick="relGenerate()">Generate Release Set (Docs 10–13)</button></div>
+        <div id="relSection"><h2>5. Release Workflow — Exam Permission → Release (4 documents: Docs 10–13)</h2><p style="font-size:.85rem;color:#4a5568;margin-top:0"><b>Sequence:</b> (1) Advt published → teacher applies for <i>permission</i> to appear (Doc 10, no roll no.) → MC resolution / HOI report + Administrator order (Doc 11). (2) After permission he applies to the exam and receives a <b>Roll / Exam No.</b> → store it in 3B. (3) If he passes → application for release (Doc 12) → release resolution / order (Doc 13), which quote the Roll No., the permission resolution/order no. and the school he will join. <b>Source school defaults to the latest previous school</b> (1 school → #1, 2 → #2, 3 → #3); change it in 3·0 if different. Uses the previous-school card selected below (post, period, subject, approval, pay scale are fetched). If the old school is under an <b>Administrator</b>, resolutions become HOI Report + Administrator Order in English only; if <b>M.C.</b>, resolutions are in Bengali.</p><button type="button" class="btn btn-add" onclick="loadKabitaSample()">Load Kabita Mondal sample (Manbazar)</button><div id="relDash"></div><div class="grid-3"><div class="form-group"><label>Previous school (source data)</label><select id="relSchool"><option value="">—</option></select></div><div class="form-group"><label>Roll / Exam No. (received AFTER applying — used only in Docs 12–13)</label><input type="text" id="relExamNo" placeholder="leave blank until the roll no. is received"></div><div class="form-group"><label>Exam name</label><input type="text" id="relExamName" placeholder=""></div><div class="form-group"><label>Exam date (optional)</label><input type="text" id="relExamDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Old school controlled by</label><select id="relOldCtl"><option value="MC">Managing Committee (Bengali resolutions)</option><option value="ADMIN">Administrator (HOI Report + Order, English)</option></select></div><div class="form-group"><label>Old school HOI title</label><select id="relOldHoi"><option value="Headmaster">Headmaster</option><option value="Headmistress">Headmistress</option><option value="Teacher-in-Charge">Teacher-in-Charge</option></select></div><div class="form-group"><label>Old school P.O. / District</label><input type="text" id="relOldPlace" placeholder=""></div><div class="form-group"><label>Teacher name in Bengali (optional)</label><input type="text" id="relNameBn" placeholder=""></div><div class="form-group"><label>Post in Bengali (optional)</label><input type="text" id="relPostBn" placeholder=""></div><div class="form-group"><label>Old school name in Bengali (optional)</label><input type="text" id="relOldBn" placeholder=""></div><div class="form-group"><label>Permission resolution: no objection to release after passing?</label><select id="relRetain"><option value="YES">Allow exam + no objection to release if he/she passes</option><option value="NO">Allow exam only</option></select></div><div class="form-group"><label>Reason for appearing (Doc 10)</label><select id="relReason"><option value="CHANCE">Better chance of selection</option><option value="SCALE">Higher scale of pay</option><option value="ELIG">Better use of my eligibility / qualification</option><option value="PLACE">Better placement / posting</option><option value="ALL">All of the above</option><option value="CUSTOM">Other (type below)</option></select></div><div class="form-group"><label>Reason – other (if "Other")</label><input type="text" id="relReasonCustom" placeholder=""></div><div class="form-group"><label>Published advertisement (No. / date / authority)</label><input type="text" id="relAdvt" placeholder="e.g. WBSSC Advt. No. 01/2025 dated 10.07.2025"></div><div class="form-group"><label>Application 1 date (exam permission)</label><input type="text" id="relApp1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting/Report No. – Permission</label><input type="text" id="relM1No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Permission</label><input type="text" id="relM1Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Permission</label><input type="text" id="relRes1No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Permission (Admin)</label><input type="text" id="relRep1No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Permission</label><input type="text" id="relOrd1No" placeholder=""></div><div class="form-group"><label>Exam result / rank (after passing)</label><input type="text" id="relResult" placeholder=""></div><div class="form-group"><label>Joining</label><select id="relNewMode"><option value="NEXT">Next school</option><option value="CURRENT">Current school</option></select></div><div class="form-group"><label>School to join</label><input type="text" id="relNewSchool" placeholder=""></div><div class="form-group"><label>Appointment / recommendation ref.</label><input type="text" id="relNewOffer" placeholder=""></div><div class="form-group"><label>Commission recommendation memo & date</label><input type="text" id="relRecMemo" placeholder="e.g. 328/Recom(AT)/RSSC(WR) dated 29.08.2008"></div><div class="form-group"><label>Joining date at new school</label><input type="text" id="relJoinDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Last pay drawn / last & next increment (LPC)</label><input type="text" id="relLpc" placeholder="Rs. 5625 / 01.09.2008 / 01.09.2009"></div><div class="form-group"><label>HOI acceptance letter ref & date</label><input type="text" id="relHoiAccept" placeholder=""></div><div class="form-group"><label>HOI Release Order ref & date</label><input type="text" id="relReleaseOrderRef" placeholder=""></div><div class="form-group"><label>Meeting time (Bengali/English)</label><input type="text" id="relMtgTime" placeholder="2 P.M."></div><div class="form-group"><label>Meeting place</label><input type="text" id="relMtgPlace" placeholder="বিদ্যালয়"></div><div class="form-group"><label>President / Secretary name (Bengali)</label><input type="text" id="relPresBn" placeholder=""></div><div class="form-group"><label>Application 2 date (release)</label><input type="text" id="relApp2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Release date (A.N.)</label><input type="text" id="relRelDate" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Meeting No. – Release</label><input type="text" id="relM2No" placeholder=""></div><div class="form-group"><label>Meeting / Report date – Release</label><input type="text" id="relM2Date" placeholder="DD.MM.YYYY"></div><div class="form-group"><label>Resolution No. – Release</label><input type="text" id="relRes2No" placeholder=""></div><div class="form-group"><label>HOI Report No. – Release (Admin)</label><input type="text" id="relRep2No" placeholder=""></div><div class="form-group"><label>Admin Order No. – Release</label><input type="text" id="relOrd2No" placeholder=""></div></div><button type="button" class="btn btn-generate" style="background:#b7791f" onclick="relGenerate()">Generate Release Set (Docs 10–13)</button></div>
         <button type="button" class="btn btn-generate" onclick="generateAllDocuments()">Generate All Documents (Cover + Form P + Proposals + Experience Certificate + Single NOC)</button>
     </div>
 </div>
@@ -2310,15 +2318,18 @@ window.stepLH=n=>{const s=$('lhH'); s.value=Math.max(0,Math.min(150,(parseInt(s.
 /* ---------- Release workflow ---------- */
 const SEC=$('relSection');
 function schools(){return [...document.querySelectorAll('[id^="prevName_"]')].map(e=>({n:e.id.split('_')[1],name:e.value}));}
-function fillSel(){const s=$('relSchool'), cur=s.value; s.innerHTML=schools().map(o=>`<option value="${o.n}">${E(o.name||('Previous school '+o.n))}</option>`).join('')||'<option value="">— add a previous school above —</option>'; if(cur&&[...s.options].some(o=>o.value===cur)) s.value=cur;}
+function fillSel(){const s=$('relSchool'), cur=s.value; s.innerHTML=schools().map(o=>`<option value="${o.n}">${E(o.name||('Previous school '+o.n))}</option>`).join('')||'<option value="">— add a previous school above —</option>'; if(s.dataset.manual==='1'&&cur&&[...s.options].some(o=>o.value===cur)) s.value=cur; else if(s.options.length) s.selectedIndex=s.options.length-1;}
 function sd(){const n=V('relSchool'), g=k=>V(k+'_'+n); const per=g('prevPeriod'), pp=per.split(/\s+to\s+/i);
  return {name:g('prevName'),post:g('prevPost'),agency:g('prevAgency'),from:(pp[0]||'').trim(),to:(pp[1]||'').trim(),per,js:g('prevJoinScale'),ls:g('prevLastScale'),appr:g('prevAppr'),noc:g('prevNOC'),rel:g('prevRelease')};}
-function dash(){fillSel(); const s=sd(), box=$('relDash'); const it=(k,v)=>`<div class="rd"><span>${k}</span><b>${v?E(v):'—'}</b></div>`;
+function schoolList(){let dl=$('relSchoolList'); if(!dl){dl=document.createElement('datalist'); dl.id='relSchoolList'; document.body.appendChild(dl); const ni=$('relNewSchool'); if(ni) ni.setAttribute('list','relSchoolList');}
+ const sel=V('relSchool'); const names=[V('presentSchool')]; schools().forEach(o=>{ if(o.n!==sel) names.push(o.name); }); names.push(V('ns_name'));
+ dl.innerHTML=[...new Set(names.map(x=>(x||'').trim()).filter(Boolean))].map(n=>`<option value="${E(n).replace(/"/g,'&quot;')}">`).join('');}
+function dash(){fillSel(); schoolList(); const s=sd(), box=$('relDash'); const it=(k,v)=>`<div class="rd"><span>${k}</span><b>${v?E(v):'—'}</b></div>`;
  box.innerHTML=it('Exam No.',V('relExamNo'))+it('Exam',V('relExamName'))+it('Post served',s.post)+it('Served from',s.from)+it('Served to',s.to||'(continuing)')+it('Subject / Qualification',V('subjectQual'))+it('Approval',s.appr)+it('Pay scale (joining)',s.js)+it('Pay scale (last)',s.ls)+it('Previous school',s.name);}
-SEC.addEventListener('input',dash); SEC.addEventListener('change',dash); document.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(dash,50);});
+SEC.addEventListener('change',e=>{if(e.target&&e.target.id==='relSchool')e.target.dataset.manual='1';}); SEC.addEventListener('input',dash); SEC.addEventListener('change',dash); document.addEventListener('click',e=>{if(e.target.closest('#addSchoolBtn,.btn-remove'))setTimeout(dash,50);});
 window.loadKabitaSample=()=>{
  if(!schools().length || !schools().some(o=>/manbazar/i.test(o.name))) addSchoolField({name:"Manbazar Girls' High School (H.S.), P.O. Manbazar, Dist. Purulia",post:'Assistant Teacher (History)',agency:'Managing Committee',period:'12.12.1994 to 19.09.2007',joinScale:'',lastScale:'',appr:'Memo No. 3391(4)/1 dated 12.12.1994 (D.I. of Schools (S.E.), Purulia)',joinOrder:'',confirm:'',noc:'Res. dated 28.10.2005 / Ref. mghs/nos/01/06 dated 14.07.2006',relMemo:'Ref. mghs/rls/01/07 dated 19.09.2007',acceptResign:'Resignation dated 14.09.2007 accepted by M.C. on 19.09.2007',relDate:'19.09.2007 (A.N.)'});
- fillSel(); const m=[...$('relSchool').options].find(o=>/manbazar/i.test(o.text)); if(m)$('relSchool').value=m.value;
+ fillSel(); const m=[...$('relSchool').options].find(o=>/manbazar/i.test(o.text)); if(m){$('relSchool').value=m.value;$('relSchool').dataset.manual='1';}
  const set=(k,v)=>{$(k).value=v;};
  set('relOldCtl','MC'); set('relOldHoi','Headmistress'); set('relOldPlace','P.O. Manbazar, Dist. Purulia'); set('relNameBn','শ্রীমতী কবিতা মণ্ডল'); set('relPostBn','সহকারী শিক্ষিকা (ইতিহাস)'); set('relOldBn','মানবাজার গার্লস হাই স্কুল (উচ্চমাধ্যমিক)');
  set('relExamName','2nd SLST-2025 (Secondary & Higher Secondary)'); set('relNewMode','NEXT'); set('relNewSchool',"Mission Girls' High School (H.S.), Bankura"); set('relRelDate','19.09.2007'); dash();};
@@ -2344,36 +2355,36 @@ function build(){
  const post=D(s.post), from=D(s.from), appr=D(s.appr), scale=D([s.js,s.ls].filter(Boolean).join(' → ')), nw=D(V('relNewSchool')), nwTxt=V('relNewMode')==='CURRENT'?'my present school':'the next school';
  const a1=D(V('relApp1Date')), a2=D(V('relApp2Date')), rd=D(V('relRelDate')||s.rel), res=D(V('relResult')), offer=D(V('relNewOffer'));
  const advt=D(V('relAdvt')), RS={CHANCE:'a better chance of selection',SCALE:'a higher scale of pay',ELIG:'the better use of my eligibility and qualification',PLACE:'better placement / posting',ALL:'a better chance of selection, a higher scale of pay, better use of my eligibility and better placement'}, reasonTxt=V('relReason')==='CUSTOM'?D(V('relReasonCustom')):RS[V('relReason')||'CHANCE'];
- const pr1=V('relM1Date'), permRef=adm?"Administrator's Order No. "+D(V('relOrd1No'))+' dated '+D(pr1):'Resolution No. '+D(V('relRes1No'))+' (Meeting No. '+D(V('relM1No'))+') dated '+D(pr1), permRefBn='রেজোলিউশন নং '+D(V('relRes1No'))+' (সভা নং '+D(V('relM1No'))+'), তারিখ '+D(pr1);
- const data=[['Name',nm],['Post served',post],['Served from',from+' (continuing)'],['Subject / Qualification',subj],['Approval (D.I. / Competent Authority)',appr],['Pay scale',scale],['Exam / Exam No.',exam+' / '+eno]];
+ const pr1=V('relM1Date'), permRef=adm?"Administrator's Order No. "+D(V('relOrd1No'))+' dated '+D(pr1)+' (on HOI Report No. '+D(V('relRep1No'))+')':'Resolution No. '+D(V('relRes1No'))+' (Meeting No. '+D(V('relM1No'))+') dated '+D(pr1), permRefBn='রেজোলিউশন নং '+D(V('relRes1No'))+' (সভা নং '+D(V('relM1No'))+'), তারিখ '+D(pr1);
+ const data=[['Name',nm],['Post served',post],['Served from',from+' (continuing)'],['Subject / Qualification',subj],['Approval (D.I. / Competent Authority)',appr],['Pay scale',scale],['Examination',exam]];
  const out={};
  out.doc10=`<p>To<br><strong>The ${adm?'Administrator':'President / Secretary, Managing Committee'}</strong>,<br>${old}, ${place}.</p>
 <p><strong>Through:</strong> The ${hoi}, ${old}.</p><p style="text-align:right">Date: ${a1}</p>
-<p><strong>Sub:</strong> Prayer for permission to appear in the <strong>${exam}</strong> (Exam No. ${eno}).</p><p>Respected ${P.S},</p>
+<p><strong>Sub:</strong> Prayer for permission to appear in the <strong>${exam}</strong>.</p><p>Respected ${P.S},</p>
 <p>With due respect I beg to state that I am serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}. My service particulars are as follows:</p>${tbl(data)}
-<p>In response to the advertisement published vide ${advt}, I am willing to appear in the above examination (Exam No. ${eno}${V('relExamDate')?', scheduled on '+edt:''}) for ${reasonTxt}. I therefore request that I may kindly be permitted to appear in the said examination.</p><p>I assure you that the teaching and routine work of the school shall not suffer. I do not seek release from my present post at this stage; if I qualify, I shall apply separately for release, and I shall be bound by the orders of the authority.</p>
-<p>I shall be grateful for your kind permission.</p><p>Yours faithfully,</p>${sig(nm,post+', '+old)}<p><strong>Enclosures:</strong> 1. Copy of exam application / admit card. 2. Copy of approval memo.</p>`;
+<p>In response to the advertisement published vide ${advt}, I am willing to appear in the above examination${V('relExamDate')?' (scheduled on '+edt+')':''} for ${reasonTxt}. I therefore request that I may kindly be permitted to appear in the said examination.</p><p>I assure you that the teaching and routine work of the school shall not suffer. I do not seek release from my present post at this stage; if I qualify, I shall apply separately for release, and I shall be bound by the orders of the authority.</p>
+<p>I shall be grateful for your kind permission.</p><p>Yours faithfully,</p>${sig(nm,post+', '+old)}<p><strong>Enclosures:</strong> 1. Copy of the published advertisement. 2. Copy of approval memo.</p>`;
  out.doc12=`<p>To<br><strong>The ${adm?'Administrator':'President / Secretary, Managing Committee'}</strong>,<br>${old}, ${place}.</p>
 <p><strong>Through:</strong> The ${hoi}, ${old}.</p><p style="text-align:right">Date: ${a2}</p>
-<p><strong>Sub:</strong> Prayer for acceptance of resignation and release from service w.e.f. <strong>${rd}</strong> (A.N.) to join ${nw}, and issue of Release Certificate and service papers.</p><p>Respected ${P.S},</p>
-<p>With due respect I beg to state that I have been serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}, and that I appeared in the <strong>${exam}</strong> (Exam No. ${eno}) with the permission granted vide ${permRef}.</p>
+<p><strong>Sub:</strong> Prayer for acceptance of resignation and release from service w.e.f. <strong>${rd}</strong> (A.N.) to join ${nw}, on selection through ${exam} (Roll No. ${eno}), and issue of Release Certificate and service papers.</p><p>Respected ${P.S},</p>
+<p>With due respect I beg to state that I have been serving in this school as an approved <strong>${post}</strong> (${subj}) since <strong>${from}</strong> vide approval ${appr}, and that, with the permission granted vide ${permRef}, I applied for and appeared in the <strong>${exam}</strong> (Roll / Exam No. <strong>${eno}</strong>).</p>
 <p>I am glad to inform you that I have qualified in the said examination (${res}) and have been recommended${V('relRecMemo')?' by the Commission vide '+D(V('relRecMemo')):''} and offered appointment as ${post} at <strong>${nw}</strong> vide ${offer}${V('relJoinDate')?', and I am to join on '+D(V('relJoinDate')):''}. I have decided to accept the offer and have to join ${nwTxt} within the time allowed.</p>
 <p>I therefore beg to tender my resignation from my post in your school and pray that it may kindly be accepted. ${P.H} release may please be ordered w.e.f. <strong>${rd}</strong> (afternoon), so that I can join the new place of service at an early date.</p>
 <p>I further request that the following papers may kindly be issued to me: <strong>(1)</strong> Release Certificate; <strong>(2)</strong> Last Pay Certificate${V('relLpc')?' (last pay / increments: '+D(V('relLpc'))+')':''}; <strong>(3)</strong> Leave Statement; <strong>(4)</strong> Service Book / attested service particulars; <strong>(5)</strong> G.P.F. / Pension particulars, if any; <strong>(6)</strong> Certificate of approval and period of service (${from} to ${rd}) for continuation of past service and pay protection, as per rules.</p>
 <p>I take this opportunity to express my sincere gratitude to the school authority for giving me the opportunity to serve here and to enrich myself in my subject of teaching.</p>
 <p>Thanking you,<br>Yours faithfully,</p>${sig(nm,post+', '+old)}`;
  const kind=k=>{ // k=1 permission, k=2 release
-  const subjE=k==1?`Permission to ${nm} to appear in ${exam} (Exam No. ${eno}) ${keep?' and no objection to release on passing the examination':''}`:`Release of ${nm} from service w.e.f. ${rd} (A.N.) on selection through ${exam}`;
-  const body=k==1?`${nm}, an approved ${post} (${subj}) of this school since ${from} (approval ${appr}), has applied on ${a1} for permission to appear in the ${exam} (Exam No. ${eno}). ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has assured that school work will not suffer.`:`${nm}, approved ${post} (${subj}) of this school since ${from} (approval ${appr}), appeared in ${exam} (Exam No. ${eno}) with the permission granted vide ${permRef} and has qualified (${res}). ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has been recommended / offered appointment at ${nw} (${offer}) and, by application dated ${a2}, has prayed for release w.e.f. ${rd} (A.N.) so as to join ${nw}.`;
+  const subjE=k==1?`Permission to ${nm} to appear in ${exam}${keep?' and no objection to release on passing the examination':''}`:`Release of ${nm} from service w.e.f. ${rd} (A.N.) on selection through ${exam} (Roll No. ${eno})`;
+  const body=k==1?`${nm}, an approved ${post} (${subj}) of this school since ${from} (approval ${appr}), has applied on ${a1} for permission to appear in the ${exam}. ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has assured that school work will not suffer.`:`${nm}, approved ${post} (${subj}) of this school since ${from} (approval ${appr}), with the permission granted vide ${permRef}, appeared in ${exam} (Roll No. ${eno}) and has qualified (${res}). ${P.e.charAt(0).toUpperCase()+P.e.slice(1)} has been recommended / offered appointment at ${nw} (${offer}) and, by application dated ${a2}, has prayed for release w.e.f. ${rd} (A.N.) so as to join ${nw}.`;
   const rec=k==1?`It is recommended that permission may be granted${keep?', with no objection to '+P.h+' release from service if '+P.e+' appears in the examination and qualifies':''}.`:`It is recommended that the resignation may be accepted and ${P.e} may be released w.e.f. ${rd} (A.N.) so as to join ${nw}, with Release Certificate, Last Pay Certificate, Leave Statement and Service Book issued.`;
   return {subjE,body,rec};};
  const rep=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">REPORT OF THE ${hoi.toUpperCase()}</p><div class="meta-line"><div><strong>Report No.:</strong> ${D(V(k==1?'relRep1No':'relRep2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p>To<br><strong>The Administrator</strong>,<br>${old}, ${place}.</p><p><strong>Sub:</strong> ${x.subjE}.</p><p>Sir/Madam,</p><p>${x.body}</p><p>${x.rec}</p><p>The matter is placed before you for kind consideration and necessary order.</p>${sig('The '+hoi,old)}`;};
- const ord=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">ORDER OF THE ADMINISTRATOR</p><div class="meta-line"><div><strong>Order No.:</strong> ${D(V(k==1?'relOrd1No':'relOrd2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p><strong>Sub:</strong> ${x.subjE}.</p><p>Perused the Report of the ${hoi} (No. ${D(V(k==1?'relRep1No':'relRep2No'))}) and the application of ${nm}. After due consideration, the undersigned is pleased to order as follows:</p><p>${k==1?`1. ${nm} is permitted to appear in the ${exam} (Exam No. ${eno}).${keep?`<br>2. There is no objection to ${P.h} release from service if ${P.e} appears in the examination and qualifies, on ${P.h} separate application.`:''}`:`1. The resignation of ${nm} is accepted and ${P.e} is released from service w.e.f. ${rd} (A.N.), in terms of the permission granted vide ${permRef}, so as to join ${nw}.<br>2. The ${hoi} shall issue Release Certificate, Last Pay Certificate, Leave Statement and Service Book / service particulars.`}</p>${sig('Administrator',old)}`;};
+ const ord=k=>{const x=kind(k); return `<p style="text-align:center;font-weight:bold;text-decoration:underline;font-size:13pt">ORDER OF THE ADMINISTRATOR</p><div class="meta-line"><div><strong>Order No.:</strong> ${D(V(k==1?'relOrd1No':'relOrd2No'))}</div><div><strong>Date:</strong> ${D(V(k==1?'relM1Date':'relM2Date'))}</div></div><p><strong>Sub:</strong> ${x.subjE}.</p><p>Perused the Report of the ${hoi} (No. ${D(V(k==1?'relRep1No':'relRep2No'))}) and the application of ${nm}. After due consideration, the undersigned is pleased to order as follows:</p><p>${k==1?`1. ${nm} is permitted to appear in the ${exam}.${keep?`<br>2. There is no objection to ${P.h} release from service if ${P.e} appears in the examination and qualifies, on ${P.h} separate application.`:''}`:`1. The resignation of ${nm} is accepted and ${P.e} is released from service w.e.f. ${rd} (A.N.), in terms of the permission granted vide ${permRef}, so as to join ${nw}.<br>2. The ${hoi} shall issue Release Certificate, Last Pay Certificate, Leave Statement and Service Book / service particulars.`}</p>${sig('Administrator',old)}`;};
  const mc=k=>{const nb=E(V('relNameBn')||V('teacherName')), pb=E(V('relPostBn')||V('prevPost_'+V('relSchool'))||''), ob=E(V('relOldBn')||s.name), ex=exam, mn=D(V(k==1?'relM1No':'relM2No')), md=D(V(k==1?'relM1Date':'relM2Date')), rn=D(V(k==1?'relRes1No':'relRes2No'));
   const sub=k==1?`${pb} ${nb} মহাশয়/মহাশয়ার ${ex} পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান প্রসঙ্গে।`:`${pb} ${nb} মহাশয়/মহাশয়ার পরীক্ষায় উত্তীর্ণ হওয়ায় বিদ্যালয় হইতে অবমুক্তি (Release) প্রসঙ্গে।`;
-  const dec=k==1?`<p>(ক) ${nb}-কে উক্ত ${ex} (পরীক্ষা নং ${eno}) পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান করা হইল।</p>${keep?`<p>(খ) উক্ত পরীক্ষায় অংশগ্রহণ করিয়া উত্তীর্ণ হইলে তাঁহাকে বিদ্যালয়ের চাকুরী হইতে অবমুক্ত (Release) করিতে কমিটির কোনো আপত্তি নাই; সেক্ষেত্রে তাঁহার পৃথক আবেদনের ভিত্তিতে চূড়ান্ত সিদ্ধান্ত গৃহীত হইবে।</p>`:''}<p>${keep?'(গ)':'(খ)'} প্রধান শিক্ষক/শিক্ষিকাকে প্রয়োজনীয় ব্যবস্থা গ্রহণের অনুরোধ করা হইল।</p>`
+  const dec=k==1?`<p>(ক) ${nb}-কে উক্ত ${ex} পরীক্ষায় অংশগ্রহণের অনুমতি প্রদান করা হইল।</p>${keep?`<p>(খ) উক্ত পরীক্ষায় অংশগ্রহণ করিয়া উত্তীর্ণ হইলে তাঁহাকে বিদ্যালয়ের চাকুরী হইতে অবমুক্ত (Release) করিতে কমিটির কোনো আপত্তি নাই; সেক্ষেত্রে তাঁহার পৃথক আবেদনের ভিত্তিতে চূড়ান্ত সিদ্ধান্ত গৃহীত হইবে।</p>`:''}<p>${keep?'(গ)':'(খ)'} প্রধান শিক্ষক/শিক্ষিকাকে প্রয়োজনীয় ব্যবস্থা গ্রহণের অনুরোধ করা হইল।</p>`
    :`<p>(ক) ${nb}-এর ${D(V('relApp2Date'))} তারিখের ইস্তফা/অবমুক্তির আবেদন সর্বসম্মতিক্রমে গৃহীত হইল।</p><p>(খ) তাঁহাকে ${rd} তারিখ (অপরাহ্ন) হইতে বিদ্যালয়ের চাকুরী হইতে অবমুক্ত (Release) করা হইল, যাহাতে তিনি ${nw} বিদ্যালয়ে যোগদান করিতে পারেন।</p><p>(গ) প্রধান শিক্ষক/শিক্ষিকাকে Release Certificate, Last Pay Certificate, Leave Statement ও Service Book (প্রযোজ্য) যথাসম্ভব শীঘ্র প্রদানের জন্য অনুরোধ করা হইল।</p>`;
-  const body=k==1?`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${from} তারিখ হইতে এই বিদ্যালয়ে কর্মরত আছেন (অনুমোদন: ${appr})। তিনি ${ex} পরীক্ষায় (পরীক্ষা নং ${eno}) অংশগ্রহণের জন্য ${a1} তারিখে অনুমতি প্রার্থনা করিয়া আবেদন করিয়াছেন। বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`:`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${permRefBn} অনুযায়ী ${ex} পরীক্ষায় অংশগ্রহণের অনুমতিপ্রাপ্ত হইয়া উক্ত পরীক্ষায় উত্তীর্ণ হইয়া ${nw} বিদ্যালয়ে যোগদানের জন্য ${D(V('relApp2Date'))} তারিখে অবমুক্তির আবেদন করিয়াছেন।${V('relRecMemo')?' (কমিশনের সুপারিশ: '+E(V('relRecMemo'))+')':''}${V('relHoiAccept')?' প্রধান শিক্ষক/শিক্ষিকা '+E(V('relHoiAccept'))+' স্মারকে অবমুক্তিতে আপত্তি নাই জানাইয়াছেন।':''} বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`;
+  const body=k==1?`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${from} তারিখ হইতে এই বিদ্যালয়ে কর্মরত আছেন (অনুমোদন: ${appr})। তিনি ${ex} পরীক্ষায় অংশগ্রহণের জন্য ${a1} তারিখে অনুমতি প্রার্থনা করিয়া আবেদন করিয়াছেন। বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`:`অদ্যকার সভায় সভাপতি মহাশয়/মহাশয়া জানান যে, বিদ্যালয়ের অনুমোদিত ${pb} ${nb} ${permRefBn} অনুযায়ী ${ex} পরীক্ষায় অংশগ্রহণের অনুমতিপ্রাপ্ত হইয়া (রোল / পরীক্ষা নং ${eno}) উক্ত পরীক্ষায় উত্তীর্ণ হইয়া ${nw} বিদ্যালয়ে যোগদানের জন্য ${D(V('relApp2Date'))} তারিখে অবমুক্তির আবেদন করিয়াছেন।${V('relRecMemo')?' (কমিশনের সুপারিশ: '+E(V('relRecMemo'))+')':''}${V('relHoiAccept')?' প্রধান শিক্ষক/শিক্ষিকা '+E(V('relHoiAccept'))+' স্মারকে অবমুক্তিতে আপত্তি নাই জানাইয়াছেন।':''} বিষয়টি আলোচনার পর সর্বসম্মতিক্রমে নিম্নরূপ সিদ্ধান্ত গৃহীত হইল —`;
   const mem=Array.from({length:7},(_,i)=>`<div style="display:inline-block;width:48%;margin:4px 0">${i+1}. Sd/ ____________________</div>`).join('');
   return `<div class="bengali-text" style="font-family:'Nirmala UI','Kalpurush',sans-serif"><div class="meta-line"><div><strong>সভা নং:</strong> ${mn}</div><div><strong>রেজোলিউশন নং:</strong> ${rn}</div><div><strong>তারিখ:</strong> ${md}</div></div>
 <p style="text-align:center;font-weight:bold;text-decoration:underline">ম্যানেজিং কমিটির সভার রেজোলিউশনের অনুলিপি</p><p style="text-align:center">${ob} &nbsp;|&nbsp; স্থান: ${E(V('relMtgPlace')||'বিদ্যালয়')} &nbsp;|&nbsp; সময়: ${E(V('relMtgTime')||'অপরাহ্ন')}</p>
@@ -2438,7 +2449,7 @@ window.sbLoadTeacher=function(){
  if(pr.length||ps.length){ $('schoolsContainer').innerHTML=''; schoolCount=0; (pr.length?pr:ps).forEach((p,i)=>{ const q=ps[i]||{};
    addSchoolField({name:q.name||p.name||'',post:q.post||'Assistant Teacher',agency:q.agency||'Managing Committee',period:q.period||((p.doj||p.dol)?(dmy(p.doj)+' to '+dmy(p.dol)):''),joinScale:q.joinScale||'',lastScale:q.lastScale||'',appr:q.appr||'',joinOrder:q.joinOrder||'',confirm:q.confirm||'',noc:q.noc||'',relMemo:q.relMemo||'',acceptResign:q.acceptResign||'',relDate:q.relDate||dmy(p.dol)}); }); set.push('previous schools ('+(pr.length||ps.length)+')'); }
  Object.keys(rel.form||{}).forEach(k=>put(k,rel.form[k]));
- setTimeout(()=>{ fillSel(); const o=$('relSchool').options[0]; if(o)$('relSchool').value=o.value; dash(); },60);
+ setTimeout(()=>{ fillSel(); const os=$('relSchool').options; if(os.length)$('relSchool').value=os[os.length-1].value; dash(); },60);
  $('sbStatus').textContent='Filled: '+(set.join(', ')||'nothing matched');};
 setTimeout(refreshStaff,800);
 })();
@@ -2484,7 +2495,7 @@ function applyImport(rec){
   const grp={presidentStatus:'customPresGroup',secyStatus:'customSecyGroup',hoiStatus:'customHoiGroup',gpfStatus:'customGpfGroup'};
   Object.keys(grp).forEach(k=>toggleCustom(k,grp[k]));
   toggleVacancyFields($('vacancyType').value);
-  setTimeout(()=>{ if(window.fillSel){ fillSel(); const s=$('relSchool'); if(s&&s.options.length) s.value=s.options[0].value; } if(window.dash) dash(); },60);
+  setTimeout(()=>{ if(window.fillSel){ fillSel(); const s=$('relSchool'); if(s&&s.options.length) s.value=s.options[s.options.length-1].value; } if(window.dash) dash(); },60);
   msg('Imported ✓ '+(rec.label?('"'+rec.label+'" '):'')+'('+Object.keys(f).length+' fields). Press Generate to build the documents.','#2f855a');
 }
 })();
@@ -2603,9 +2614,9 @@ const rh2=rs.querySelector(':scope > h2'); if(rh2) rh2.textContent='Part 3 · Tr
 const grp=(title,color,ids)=>{const b=mk('wz-box');b.style.borderTopColor=color;b.innerHTML=`<h3 style="color:${color}">${title}</h3>`;const f=mk('wz-fields');ids.forEach(id=>{const el=$(id),g=el&&el.closest('.form-group');if(g)f.appendChild(g);});b.appendChild(f);return b;};
 const cols=mk('wz-cols');
 cols.append(
- grp('3·0 Source school & exam','#2b6cb0',['relSchool','relExamNo','relExamName','relExamDate','relOldCtl','relOldHoi','relOldPlace','relNameBn','relPostBn','relOldBn']),
+ grp('3·0 Source school & exam','#2b6cb0',['relSchool','relExamName','relExamDate','relOldCtl','relOldHoi','relOldPlace','relNameBn','relPostBn','relOldBn']),
  grp('3A · Application → Permission to appear','#805ad5',['relReason','relReasonCustom','relAdvt','relApp1Date','relRetain','relM1No','relM1Date','relRes1No','relRep1No','relOrd1No','relMtgTime','relMtgPlace','relPresBn']),
- grp('3B · Result & appointment at new school','#2f855a',['relResult','relNewMode','relNewSchool','relNewOffer','relRecMemo','relJoinDate','relLpc']),
+ grp('3B · Result & appointment at new school','#2f855a',['relExamNo','relResult','relNewMode','relNewSchool','relNewOffer','relRecMemo','relJoinDate','relLpc']),
  grp('3C · Application → Release','#b7791f',['relApp2Date','relRelDate','relHoiAccept','relReleaseOrderRef','relM2No','relM2Date','relRes2No','relRep2No','relOrd2No'])
 );
 const rgrid=rs.querySelector(':scope > .grid-3');
@@ -2728,8 +2739,8 @@ const SPEC=[
  {t:'School Codes',s:1,c:'#2c7a7b',r:[['Index No.','indexNo',1],['H.S. Code','hsCode',1],['VTC Code','vtcCode',1],['Office phone','phoneNo',1],['HM mobile','mobileNo',1],['E-mail','emailId',1],['DISE','diseCode',1],['IOSMS','iosmsCode',1]]},
  {t:'Transfer',s:2,c:'#b7791f',r:[['Moving to new school?','wzTransfer'],['Transfer applied',()=>v('wzApplied')==='1'?'Yes':'Not yet',1]]},
  {t:'2nd (New) School',s:2,c:'#2f855a',only:'T',r:NSROWS},
- {t:'3A · Permission to appear',s:3,c:'#805ad5',only:'T',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Old school','relSchool'],['Exam','relExamName'],['Exam No.','relExamNo',1],['Advertisement','relAdvt'],['Reason','relReason'],['Application date','relApp1Date'],...(adm?[['HOI report no.','relRep1No'],['Admin order no.','relOrd1No']]:[['Meeting no.','relM1No'],['Resolution no.','relRes1No']]),['Meeting / report date','relM1Date']];}},
- {t:'3B · Result & new school',s:3,c:'#38a169',only:'T',r:[['Result / rank','relResult'],['Joining','relNewMode'],['School to join','relNewSchool'],['Appointment ref.','relNewOffer'],['Commission memo','relRecMemo',1],['Joining date','relJoinDate'],['LPC / last pay','relLpc',1]]},
+ {t:'3A · Permission to appear',s:3,c:'#805ad5',only:'T',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Old school','relSchool'],['Exam','relExamName'],['Advertisement','relAdvt'],['Reason','relReason'],['Application date','relApp1Date'],...(adm?[['HOI report no.','relRep1No'],['Admin order no.','relOrd1No']]:[['Meeting no.','relM1No'],['Resolution no.','relRes1No']]),['Meeting / report date','relM1Date']];}},
+ {t:'3B · Result & new school',s:3,c:'#38a169',only:'T',r:[['Roll / Exam No.','relExamNo'],['Result / rank','relResult'],['Joining','relNewMode'],['School to join','relNewSchool'],['Appointment ref.','relNewOffer'],['Commission memo','relRecMemo',1],['Joining date','relJoinDate'],['LPC / last pay','relLpc',1]]},
  {t:'3C · Release',s:3,c:'#dd6b20',only:'T',r:()=>{const adm=v('relOldCtl')==='ADMIN';return [['Application date','relApp2Date'],['Release date (A.N.)','relRelDate'],['HOI acceptance','relHoiAccept',1],['Release order ref.','relReleaseOrderRef',1],...(adm?[['HOI report no.','relRep2No'],['Admin order no.','relOrd2No']]:[['Meeting no.','relM2No'],['Resolution no.','relRes2No']]),['Meeting / report date','relM2Date']];}},
  {t:'Previous Service',s:4,c:'#1a5693',r:()=>{const out=[];document.querySelectorAll('[id^="prevName_"]').forEach((e,i)=>{const n=e.id.split('_')[1];out.push(['#'+(i+1)+' School','prevName_'+n],['   Period','prevPeriod_'+n],['   Approval','prevAppr_'+n],['   Released','prevRelease_'+n]);});if(!out.length)out.push(['Previous service',()=>'None entered',1]);return out;}},
  {t:'Exam NOC (present school)',s:4,c:'#6b46c1',r:[['Exam / SLST','selfNocExamRef',1],['HOI report no.','selfNocReportNo',1],['Order / resolution no.','selfNocOrderNo',1],['Permission for','selfNocPostCategory',1],['Application date','selfNocAppDate',1]]}
@@ -2775,5 +2786,122 @@ go(1,true);
 })();
 </script>
 
+
+<script>
+/* ===== ADD-ON: simple Save (one record per teacher) + staff data-collection link + admin fetch ===== */
+(function(){
+const $=id=>document.getElementById(id);
+const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SUBS='pSuiteSubmissions', SKIP=['sbTeacher','relSchool','authEmail','authPassword'];
+const COLLECT=new URLSearchParams(location.search).get('collect')==='1';
+const msg=(t,c)=>{const m=$('cloudSaveMsg'); if(m){m.style.color=c||'#718096'; m.textContent=t;}};
+const slug=s=>String(s||'').toLowerCase().replace(/[^a-z0-9ঀ-৿]+/g,'_').replace(/^_+|_+$/g,'').slice(0,80);
+const clean=r=>{SKIP.forEach(k=>delete r.fields[k]); return r;};
+
+function applyRecord(rec){
+  populateFormData(rec); const f=rec.fields||{};
+  ['adminType','presidentStatus','secyStatus','hoiStatus','gpfStatus','vacancyType'].forEach(k=>{const el=$(k); if(el&&f[k]!==undefined&&[...el.options].some(o=>o.value===f[k])){el.value=f[k]; el.dispatchEvent(new Event('change',{bubbles:true}));}});
+  const grp={presidentStatus:'customPresGroup',secyStatus:'customSecyGroup',hoiStatus:'customHoiGroup',gpfStatus:'customGpfGroup'};
+  Object.keys(grp).forEach(k=>toggleCustom(k,grp[k])); toggleVacancyFields($('vacancyType').value);
+  setTimeout(()=>{ if(window.fillSel)fillSel(); if(window.dash)dash(); },60);
+}
+
+/* ---- Save: one record per teacher name (same name = overwritten); no "last saved" ---- */
+window.loadLastSaved=function(){};
+window.saveFormToCloud=function(){
+  const u=fbAuth.currentUser; if(!u){msg('Sign in first (top bar).','#c53030');return;}
+  const name=($('teacherName').value||'').trim(); if(!name){msg('Enter the teacher name first.','#c53030');return;}
+  const r=clean(collectFormData()); msg('Saving…');
+  fbDb.collection(CLOUD_COLLECTION).doc('f_'+slug(name)).set({label:name,fields:r.fields,schoolCount:r.schoolCount,createdBy:u.uid,createdByEmail:u.email||null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(()=>{msg('Saved ✓ '+name,'#2f855a'); listSaved();}).catch(e=>msg('Save failed: '+e.message,'#c53030'));
+};
+
+/* saved records appear in the same dropdown as the SB staff list */
+const sel=$('sbTeacher'); let saved=[], painting=false;
+function paint(force){
+  if(painting)return; const old=sel.querySelector('optgroup[data-p]'); if(old&&!force)return;
+  painting=true; if(old)old.remove();
+  if(saved.length){const g=document.createElement('optgroup'); g.label='Saved Form P records'; g.dataset.p='1';
+    saved.forEach(x=>{const o=document.createElement('option'); o.value='P::'+x.id; o.textContent=x.label; g.appendChild(o);}); sel.appendChild(g);}
+  painting=false;
+}
+new MutationObserver(()=>paint(false)).observe(sel,{childList:true});
+async function listSaved(){
+  const u=fbAuth.currentUser; if(!u){saved=[]; paint(true); return;}
+  try{ const q=await fbDb.collection(CLOUD_COLLECTION).where('createdBy','==',u.uid).get();
+    saved=q.docs.map(d=>({id:d.id,label:d.data().label||d.id})).sort((a,b)=>a.label.localeCompare(b.label)); paint(true);
+  }catch(e){}
+}
+fbAuth.onAuthStateChanged(()=>listSaved());
+const origLoad=window.sbLoadTeacher;
+window.sbLoadTeacher=async function(){
+  const v=sel.value;
+  if(v.startsWith('P::')){
+    try{ const d=await fbDb.collection(CLOUD_COLLECTION).doc(v.slice(3)).get();
+      if(!d.exists){msg('Record not found.','#c53030');return;}
+      applyRecord(d.data()); msg('Loaded '+(d.data().label||''),'#2f855a');
+    }catch(e){msg('Load failed: '+e.message,'#c53030');}
+    return;
+  }
+  return origLoad&&origLoad.apply(this,arguments);
+};
+
+/* ---- share link for staff data collection ---- */
+const link=()=>location.origin+location.pathname+'?collect=1';
+const shareText=()=>'Please fill in your service details in this form and press Submit: '+link();
+window.makeShareLink=function(){
+  $('shareBox').style.display='block'; $('shareUrl').value=link();
+  if(location.protocol==='file:')msg('This file is opened from your computer — host it online (e.g. GitHub Pages) first, otherwise the link will not open for staff.','#c53030');
+};
+window.copyShareLink=function(){ makeShareLink(); const t=shareText();
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>msg('Message + link copied ✓','#2f855a')).catch(()=>{$('shareUrl').select(); msg('Copy the link from the box.','#718096');}); };
+window.waShareLink=function(){ window.open('https://wa.me/?text='+encodeURIComponent(shareText()),'_blank'); };
+
+/* ---- admin: fetch what staff submitted ---- */
+window.fetchSubmissions=async function(){
+  if(!fbAuth.currentUser){alert('Sign in first (top bar).');return;}
+  const box=$('subList'); box.style.display='block'; box.textContent='Loading…';
+  try{
+    const q=await fbDb.collection(SUBS).orderBy('submittedAt','desc').limit(100).get();
+    if(q.empty){box.innerHTML='<p style="color:#718096">No submissions yet.</p>';return;}
+    box.innerHTML='';
+    q.forEach(d=>{ const x=d.data(); const t=x.submittedAt&&x.submittedAt.toDate?x.submittedAt.toDate().toLocaleString():'';
+      const row=document.createElement('div'); row.className='saved-record-row';
+      row.innerHTML='<div><strong>'+E(x.label||'Untitled')+'</strong><br><span style="font-size:.75rem;color:#718096">'+E(t)+' · Ref '+E(d.id.slice(0,8).toUpperCase())+'</span></div><div><button type="button" class="btn" style="background:var(--accent);color:#fff" data-a="l">Load</button> <button type="button" class="btn" style="background:#c53030;color:#fff" data-a="d">Delete</button></div>';
+      row.querySelector('[data-a="l"]').onclick=()=>{applyRecord(x); msg('Loaded submission: '+(x.label||'')+' — press Save to keep it.','#2f855a');};
+      row.querySelector('[data-a="d"]').onclick=()=>{ if(!confirm('Delete this submission?'))return; d.ref.delete().then(()=>row.remove()).catch(e=>alert('Delete failed: '+e.message)); };
+      box.appendChild(row); });
+  }catch(e){ box.innerHTML='<p style="color:#c53030">Failed: '+E(e.message)+'</p>'; }
+};
+
+/* ---- staff view (?collect=1): only teacher, current school and previous service + Submit ---- */
+function collectMode(){
+  document.body.classList.add('collect-mode');
+  $('authBar').style.display='none'; sel.parentElement.style.display='none';
+  const h=document.querySelector('.container.no-print .card h1'); h.textContent='Teacher Service Details Form';
+  if(h.nextElementSibling) h.nextElementSibling.textContent='Fill in your details and press Submit at the bottom. The school office will prepare the documents.';
+  clearFormFields(true);
+  const s1=$('teacherName').closest('.wz-step'), s4=$('schoolsContainer').closest('.wz-step');
+  s1.classList.add('on'); s4.classList.add('on');
+  $('wzStepper').style.display='none'; document.querySelector('.wz-nav').style.display='none';
+  const noc=$('selfNocExamRef'); if(noc&&noc.closest('.wz-box'))noc.closest('.wz-box').style.display='none';
+  document.getElementById('addSchoolBtn').addEventListener('click',()=>setTimeout(()=>{
+    const n=document.querySelectorAll('.school-card').length; ['prevJoinScale_','prevLastScale_','prevAgency_'].forEach(k=>{const e=$(k+n); if(e)e.value='';}); },0));
+  const box=document.createElement('div'); box.className='wz-box'; box.style.borderTopColor='#2f855a';
+  box.innerHTML='<button type="button" class="btn btn-generate" id="subBtn" style="margin-top:0">📤 Submit to School Office</button><div id="subMsg" style="margin-top:10px;font-weight:600"></div>';
+  s4.appendChild(box);
+  $('subBtn').onclick=async()=>{
+    const name=$('teacherName').value.trim(); const sm=$('subMsg');
+    if(!name){alert('Please enter your name.');return;}
+    if(!confirm('Submit these details to the school office?'))return;
+    const r=clean(collectFormData()); sm.style.color='#718096'; sm.textContent='Submitting…';
+    try{ const ref=await fbDb.collection(SUBS).add({label:name,fields:r.fields,schoolCount:r.schoolCount,status:'new',submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      sm.style.color='#2f855a'; sm.innerHTML='✓ Submitted. Reference No.: <b>'+E(ref.id.slice(0,8).toUpperCase())+'</b> — please note it.';
+    }catch(e){ sm.style.color='#c53030'; sm.textContent='Could not submit: '+e.message; }
+  };
+}
+if(COLLECT) window.addEventListener('load',()=>setTimeout(collectMode,500));
+})();
+</script>
 </body>
 </html>
