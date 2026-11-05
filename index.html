@@ -1245,6 +1245,8 @@
         const joinOrder = defaultData ? (defaultData.joinOrder || '') : '';
         const confirm = defaultData ? defaultData.confirm : '';
         const noc = defaultData ? defaultData.noc : '';
+        const nocAdmin = defaultData ? (defaultData.nocAdmin || '') : '';
+        const relAdmin = defaultData ? (defaultData.relAdmin || '') : '';
         const relMemo = defaultData ? defaultData.relMemo : '';
         const acceptResign = defaultData ? (defaultData.acceptResign || '') : '';
         const relDate = defaultData ? defaultData.relDate : '';
@@ -1269,8 +1271,10 @@
             </div>
             <h4 class="pc-h">C. How service there ended</h4>
             <div class="grid-3">
-                <div class="form-group"><label>Prior Permission / NOC No. & Date</label><input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., NOC Memo No. 12/G dated 05.01.2005"></div>
-                <div class="form-group"><label>Release / Resignation Order No. & Date</label><input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
+                <div class="form-group"><label>Permission (NOC / to appear in exam) — MC Resolution No. & Date</label><input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., Res. No. 7 dated 05.01.2005"></div>
+                <div class="form-group"><label>Permission (NOC / to appear in exam) — Administrator Order No. & Date</label><input type="text" id="prevNOCAdmin_${schoolCount}" value="${nocAdmin}" placeholder="e.g., Admin Order No. 3 dated 06.01.2005"></div>
+                <div class="form-group"><label>Release (Transfer) — MC Resolution No. & Date</label><input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
+                <div class="form-group"><label>Release (Transfer) — Administrator Order No. & Date</label><input type="text" id="prevRelAdmin_${schoolCount}" value="${relAdmin}" placeholder="e.g., Admin Order No. 9 dated 13.03.2005"></div>
                 <div class="form-group"><label>Acceptance of Resignation (blank = same as Release Order)</label><input type="text" id="prevAcceptResign_${schoolCount}" value="${acceptResign}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
                 <div class="form-group"><label>Release Date & Time</label><input type="text" id="prevRelease_${schoolCount}" value="${relDate}" placeholder="e.g., 20.04.2005 (A.N.)"></div>
             </div>
@@ -1372,6 +1376,8 @@
         }
         return `${years} years, ${months} months, ${days} days`;
     }
+
+    function cv(card,a,b){const g=k=>{const e=card.querySelector('[id^="'+k+'_"]');return e?e.value.trim():''};const x=g(a),y=g(b);return x&&y?x+' / Admin Order: '+y:(x||(y?'Admin Order: '+y:''));}
 
     function generateAllDocuments() {
         const genderTitle = document.getElementById('genderTitle').value;
@@ -1573,8 +1579,8 @@
             const appr = card.querySelector(`[id^="prevAppr_"]`).value || 'Approval N/A';
             const joinOrder = card.querySelector(`[id^="prevJoinOrder_"]`).value.trim() || appr;
             const confirm = card.querySelector(`[id^="prevConfirm_"]`).value || 'Confirmation N/A';
-            const noc = card.querySelector(`[id^="prevNOC_"]`).value.trim();
-            const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || 'Release Res. N/A';
+            const noc = cv(card,'prevNOC','prevNOCAdmin');
+            const relMemo = cv(card,'prevRelMemo','prevRelAdmin') || 'Release Res. N/A';
             const acceptResign = card.querySelector(`[id^="prevAcceptResign_"]`).value.trim() || relMemo;
             const release = card.querySelector(`[id^="prevRelease_"]`).value || 'Release Date N/A';
 
@@ -1787,8 +1793,8 @@
                 const name = card.querySelector(`[id^="prevName_"]`).value || `Previous School #${idx}`;
                 const post = card.querySelector(`[id^="prevPost_"]`).value || 'Assistant Teacher';
                 const period = card.querySelector(`[id^="prevPeriod_"]`).value || 'Period N/A';
-                const noc = card.querySelector(`[id^="prevNOC_"]`).value.trim();
-                const relMemo = card.querySelector(`[id^="prevRelMemo_"]`).value || '';
+                const noc = cv(card,'prevNOC','prevNOCAdmin');
+                const relMemo = cv(card,'prevRelMemo','prevRelAdmin') || '';
 
                 prevNarrative += `&nbsp;&nbsp;• ${name} — as ${post}, from ${period}`;
                 if (noc) {
@@ -2519,9 +2525,9 @@ if(COLLECT) window.addEventListener('load',()=>setTimeout(collectMode,500));
 (function(){
 const $=id=>document.getElementById(id);
 const COLLECT=new URLSearchParams(location.search).get('collect')==='1';
-const PENDING=['presentAppr','presentConfirm','auditMemo','cpNo'];
+const PENDING=[];
 const PTIP='এই ঘরটি অ্যাডমিন (প্রধান শিক্ষক/প্রশাসক) অনুমোদনের পর পূরণ হবে — আপনাকে কিছু লিখতে হবে না।';
-const TIP={genderTitle:'পুরুষ হলে Sri, বিবাহিতা মহিলা হলে Smt, অবিবাহিতা হলে Kumari বেছে নিন।',
+const TIP={presentAppr:'এই স্কুলে বদলির পর ডি.আই. অনুমোদন মেমো নম্বর ও তারিখ (আপনার হাতে থাকা কাগজ দেখে)।',presentConfirm:'এই স্কুলের স্থায়ীকরণ (Confirmation) মেমো নম্বর ও তারিখ — না থাকলে ফাঁকা রাখুন।',cpNo:'ফাইলের Correspondence পৃষ্ঠা নম্বর (যেমন: C.P. No. 1 to 13) — জানা না থাকলে ফাঁকা রাখুন।',auditMemo:'অডিট/ভেটিং আপত্তির মেমো থাকলে লিখুন, না থাকলে NA লিখুন।',genderTitle:'পুরুষ হলে Sri, বিবাহিতা মহিলা হলে Smt, অবিবাহিতা হলে Kumari বেছে নিন।',
 teacherName:'সার্ভিস বুকে যেভাবে নাম লেখা আছে ঠিক সেভাবে লিখুন (যেমন: Smt. Kabita Mondal)।',
 dob:'জন্ম তারিখ DD.MM.YYYY ফরম্যাটে লিখুন (যেমন: 29.01.1968)।',
 teacherDesg:'বর্তমান পদ ও বিষয় লিখুন (যেমন: Assistant Teacher (History))।',
@@ -2536,8 +2542,8 @@ prevName:'আগের বিদ্যালয়ের পূর্ণ না�
 prevAgency:'আগের বিদ্যালয়ে নিয়োগকারী সংস্থা।',prevPeriod:'কবে থেকে কবে পর্যন্ত চাকরি করেছেন (যেমন: 06.10.1997 to 20.04.2005)।',
 prevJoinScale:'আগের বিদ্যালয়ে যোগদানের সময়ের বেতনক্রম।',prevLastScale:'ছাড়ার সময়ের শেষ বেতনক্রম (LPC অনুযায়ী)।',
 prevAppr:'ডি.আই. অনুমোদন মেমো নম্বর ও তারিখ।',prevJoinOrder:'যোগদান আদেশের নম্বর ও তারিখ — ফাঁকা রাখলে অনুমোদন মেমোই ধরা হবে।',
-prevConfirm:'স্থায়ীকরণ (Confirmation) মেমো নম্বর ও তারিখ।',prevNOC:'নতুন চাকরির আবেদনের জন্য আগের স্কুলের পূর্ব-অনুমতি (NOC) — না থাকলে ফাঁকা রাখুন।',
-prevRelMemo:'আগের স্কুল থেকে ছাড়পত্র (Release/Resignation) আদেশের নম্বর ও তারিখ।',prevAcceptResign:'ইস্তফা গৃহীত হওয়ার আদেশ — ফাঁকা রাখলে ছাড়পত্র আদেশই ধরা হবে।',
+prevConfirm:'স্থায়ীকরণ (Confirmation) মেমো নম্বর ও তারিখ।',prevNOC:'পরীক্ষায় বসা/নতুন চাকরির আবেদনের অনুমতি — ম্যানেজিং কমিটির রেজোলিউশন নম্বর ও তারিখ।',prevNOCAdmin:'ওই অনুমতির প্রশাসকের আদেশ নম্বর ও তারিখ — প্রশাসক থাকলে লিখুন, না থাকলে ফাঁকা রাখুন।',prevRelAdmin:'বদলি/ছাড়পত্রের প্রশাসকের আদেশ নম্বর ও তারিখ (Annexure P-তে রেজোলিউশনের সাথে দুটিই লাগবে)।',
+prevRelMemo:'আগের স্কুল থেকে ছাড়পত্র/বদলির ম্যানেজিং কমিটি রেজোলিউশন নম্বর ও তারিখ।',prevAcceptResign:'ইস্তফা গৃহীত হওয়ার আদেশ — ফাঁকা রাখলে ছাড়পত্র আদেশই ধরা হবে।',
 prevRelease:'ছাড়ার তারিখ ও সময় (যেমন: 20.04.2005 A.N.)।',empComment:'অ্যাডমিনকে কিছু জানানোর বা জিজ্ঞাসা করার থাকলে এখানে লিখুন।'};
 /* admin-visible comment box (inside section 1, goes into the saved/submitted record) */
 const g=$('teacherMobile').closest('.form-group'), cg=document.createElement('div'); cg.className='form-group'; cg.id='empCommentGroup';
@@ -2562,7 +2568,7 @@ function collectUI(){
  $('sec2').textContent='2. বর্তমান বিদ্যালয়';
  $('sec1').textContent='1. আপনার তথ্য'; $('sec3').textContent='3. আগের বিদ্যালয়(সমূহ) — যেখানে এই স্কুলে আসার আগে চাকরি করেছেন';
  const ban=document.createElement('div'); ban.className='bn-banner';
- ban.innerHTML='<b>📋 নির্দেশনা (সংক্ষেপে):</b><br>① প্রতিটি ঘরের পাশে <b>🔔</b> চিহ্নে মাউস রাখুন (মোবাইলে ছুঁয়ে দেখুন) — কী লিখতে হবে বাংলায় দেখা যাবে।<br>② হলুদ-বিন্দুযুক্ত <b>⏳ ঘর</b> অ্যাডমিন অনুমোদনের পর পূরণ হবে — আপনি কিছু লিখবেন না।<br>③ আগের স্কুলের তথ্য একটি কার্ডে একসাথে দিন (সর্বোচ্চ ২টি)।<br>④ <b>“Annexure P দেখুন”</b> বোতামে চাপ দিয়ে নিজের তথ্য অনুযায়ী ফর্ম দেখে নিন; ভুল থাকলে ঠিক করুন।<br>⑤ সবশেষে <b>“অ্যাডমিনের কাছে জমা দিন”</b> চাপুন। কিছু জানানোর থাকলে ১ নং অংশের <b>💬 মন্তব্য</b> ঘরে লিখুন।';
+ ban.innerHTML='<b>📋 নির্দেশনা (সংক্ষেপে):</b><br>① প্রতিটি ঘরের পাশে <b>🔔</b> চিহ্নে মাউস রাখুন (মোবাইলে ছুঁয়ে দেখুন) — কী লিখতে হবে বাংলায় দেখা যাবে।<br>② আপনার হাতে থাকা সব মেমো/রেজোলিউশন/আদেশের নম্বর নিজে লিখুন। আগের স্কুলের <b>ম্যানেজিং কমিটি রেজোলিউশন</b> ও <b>প্রশাসকের আদেশ</b> — দুটিই আলাদা ঘরে দিন।<br>③ আগের স্কুলের তথ্য একটি কার্ডে একসাথে দিন (সর্বোচ্চ ২টি)।<br>④ <b>“Annexure P দেখুন”</b> বোতামে চাপ দিয়ে নিজের তথ্য অনুযায়ী ফর্ম দেখে নিন; ভুল থাকলে ঠিক করুন।<br>⑤ সবশেষে <b>“অ্যাডমিনের কাছে জমা দিন”</b> চাপুন। কিছু জানানোর থাকলে ১ নং অংশের <b>💬 মন্তব্য</b> ঘরে লিখুন।';
  card.insertBefore(ban,card.querySelector('h2'));
  decorate(card);
  new MutationObserver(()=>decorate($('schoolsContainer'))).observe($('schoolsContainer'),{childList:true});
