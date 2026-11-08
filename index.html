@@ -2722,13 +2722,14 @@ setTimeout(()=>{ const s=$('relSchool'); if(s&&s.options.length&&!cur){ cur=s.va
   var R09=[['PB-1','4900-16200',[1700,1800]],['PB-2','5400-25200',[1900,2100,2300,2600,2900]],['PB-3','7100-37600',[3200,3600,3900,4100]],['PB-4','9000-40500',[4400,4600,4700,4800]],['PB-4A','15600-42000',[5400,6600,7000]],['PB-4B','28000-52000',[7600,7740,8000]]];
   var R19=[['1','PB-1',1700],['2','PB-1',1800],['3','PB-2',1900],['4','PB-2',2100],['5','PB-2',2300],['6','PB-2',2600],['7','PB-2',2900],['8','PB-3',3200],['9','PB-3',3600],['10','PB-3',3900],['11','PB-3',4100],['12','PB-4',4400],['13','PB-4',4600],['14','PB-4',4700],['15','PB-4',4800],['16','PB-4A',5400],['17','PB-4A',6600],['18','PB-4A',7000],['19','PB-4B',7600],['19A','PB-4B',7740],['20','PB-4B',8000]];
 
+  var BR={'PB-1':'4900-16200','PB-2':'5400-25200','PB-3':'7100-37600','PB-4':'9000-40500','PB-4A':'15600-42000','PB-4B':'28000-52000'};
   function opt(parent,text){var o=document.createElement('option');o.value=text;o.textContent=text;parent.appendChild(o);return o;}
   function grp(sel,label){var g=document.createElement('optgroup');g.label=label;sel.appendChild(g);return g;}
   function build(){
     var sel=document.createElement('select'); sel.className='ps-pick'; sel.title='Pick a pay scale (ROPA-90 / 98 / 09 / 19) – fills the box above';
     var first=document.createElement('option'); first.value=''; first.textContent='▼ Select pay scale (ROPA-90 to ROPA-19)…'; sel.appendChild(first);
-    var g=grp(sel,'ROPA-2019 (Level)'); R19.slice().reverse().forEach(function(r){opt(g,'LEVEL-'+r[0]+'-'+r[1]+'-'+r[2]+' [ROPA-19]');});
-    g=grp(sel,'ROPA-2009 (Pay Band + Grade Pay)'); R09.slice().reverse().forEach(function(b){b[2].slice().reverse().forEach(function(gp){opt(g,b[1]+' GP '+gp+' ('+b[0]+') [ROPA-09]');});});
+    var g=grp(sel,'ROPA-2019 (Level)'); R19.slice().reverse().forEach(function(r){opt(g,'LEVEL-'+r[0]+'-'+r[1]+'-'+BR[r[1]]+'-GP-RS-'+r[2]+' [ROPA-19]');});
+    g=grp(sel,'ROPA-2009 (Pay Band + Grade Pay)'); R09.slice().reverse().forEach(function(b){b[2].slice().reverse().forEach(function(gp){opt(g,b[0]+'-'+b[1]+'-GP-RS-'+gp+' [ROPA-09]');});});
     g=grp(sel,'ROPA-1998'); R98.forEach(function(x){opt(g,x+' [ROPA-98]');});
     g=grp(sel,'ROPA-1990'); R90.forEach(function(x){opt(g,x+' [ROPA-90]');});
     return sel;
