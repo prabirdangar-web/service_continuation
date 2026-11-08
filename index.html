@@ -393,6 +393,9 @@
 #wbFab{display:none;position:fixed;right:16px;bottom:16px;z-index:70;background:#2b579a;color:#fff;border:0;border-radius:20px;padding:9px 16px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 #relDash{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;background:#fffaf0;border:1px solid #f6ad55;border-radius:6px;padding:12px;margin:10px 0}
 @media print{#wbFab{display:none!important}}
+
+/* ===== Pay-scale dropdown picker (ROPA-90 / 98 / 09 / 19) ===== */
+select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2705,6 +2708,50 @@ const cf=window.collectFormData; window.collectFormData=function(){ save(); retu
 const pf=window.populateFormData; window.populateFormData=function(r){ pf.apply(this,arguments); try{ store=JSON.parse((r.fields||{}).relStoreJson||'{}'); }catch(e){store={};} cur=null; setTimeout(()=>{ if(window.fillSel)fillSel(); const s=$('relSchool'); if(s.options.length){ load(s.value); } },80); };
 const cl=window.clearFormFields; window.clearFormFields=function(){ store={}; cur=null; const r=cl.apply(this,arguments); $('relStoreJson').value=''; return r; };
 setTimeout(()=>{ const s=$('relSchool'); if(s&&s.options.length&&!cur){ cur=s.value; } },400);
+})();
+</script>
+
+<script>
+/* ===== ADD-ON: Pay-scale dropdown (ROPA-90, ROPA-98, ROPA-09, ROPA-19) =====
+   Picking an option fills the text box next to it (box stays editable for anything not listed).
+   To add/correct a scale, just edit the arrays below. */
+(function(){
+  var R90=['800-1265','830-1357','875-1460','920-1617','980-1755','1040-1920','1140-2160','1200-2360','1260-2610','1390-2970','1420-3130','1500-3410','1560-3570','1640-3635','1780-3780','2200-4000','3000-4750','3700-5700','4500-6000','5100-6300','5900-6700','3000-5700 (Spl.)','4500-7300','5900-7300','4500-6000 (Spl.)'];
+  var R98=['2600-4175','2700-4400','2850-4680','3000-5230','3150-5680','3350-6325','3600-7050','3800-7775','4000-8850','4500-9700','4650-10175','4800-10925','5000-11275','5500-11325','6000-12000','8000-13500','10000-15525','12000-18000','14300-18300','16400-20000','18400-22400','10000-18000 (Spl.)','14300-22400','18400-22400 (Spl.)','12500-18500'];
+  /* ROPA-09: [pay band, band range, grade pays] ; ROPA-19: [level, pay band, grade pay] */
+  var R09=[['PB-1','4900-16200',[1700,1800]],['PB-2','5400-25200',[1900,2100,2300,2600,2900]],['PB-3','7100-37600',[3200,3600,3900,4100]],['PB-4','9000-40500',[4400,4600,4700,4800]],['PB-4A','15600-42000',[5400,6600,7000]],['PB-4B','28000-52000',[7600,7740,8000]]];
+  var R19=[['1','PB-1',1700],['2','PB-1',1800],['3','PB-2',1900],['4','PB-2',2100],['5','PB-2',2300],['6','PB-2',2600],['7','PB-2',2900],['8','PB-3',3200],['9','PB-3',3600],['10','PB-3',3900],['11','PB-3',4100],['12','PB-4',4400],['13','PB-4',4600],['14','PB-4',4700],['15','PB-4',4800],['16','PB-4A',5400],['17','PB-4A',6600],['18','PB-4A',7000],['19','PB-4B',7600],['19A','PB-4B',7740],['20','PB-4B',8000]];
+
+  function opt(parent,text){var o=document.createElement('option');o.value=text;o.textContent=text;parent.appendChild(o);return o;}
+  function grp(sel,label){var g=document.createElement('optgroup');g.label=label;sel.appendChild(g);return g;}
+  function build(){
+    var sel=document.createElement('select'); sel.className='ps-pick'; sel.title='Pick a pay scale (ROPA-90 / 98 / 09 / 19) – fills the box above';
+    var first=document.createElement('option'); first.value=''; first.textContent='▼ Select pay scale (ROPA-90 to ROPA-19)…'; sel.appendChild(first);
+    var g=grp(sel,'ROPA-2019 (Level)'); R19.slice().reverse().forEach(function(r){opt(g,'LEVEL-'+r[0]+'-'+r[1]+'-'+r[2]+' [ROPA-19]');});
+    g=grp(sel,'ROPA-2009 (Pay Band + Grade Pay)'); R09.slice().reverse().forEach(function(b){b[2].slice().reverse().forEach(function(gp){opt(g,b[1]+' GP '+gp+' ('+b[0]+') [ROPA-09]');});});
+    g=grp(sel,'ROPA-1998'); R98.forEach(function(x){opt(g,x+' [ROPA-98]');});
+    g=grp(sel,'ROPA-1990'); R90.forEach(function(x){opt(g,x+' [ROPA-90]');});
+    return sel;
+  }
+  function attach(inp){
+    if(!inp||inp.dataset.psPick) return; inp.dataset.psPick='1';
+    var sel=build();
+    sel.addEventListener('change',function(){
+      if(!sel.value) return;
+      inp.value=sel.value;
+      inp.dispatchEvent(new Event('input',{bubbles:true}));
+      inp.dispatchEvent(new Event('change',{bubbles:true}));
+      sel.selectedIndex=0;
+    });
+    inp.insertAdjacentElement('afterend',sel);
+  }
+  function scan(root){
+    (root||document).querySelectorAll('#presentPayScale,[id^="prevJoinScale_"],[id^="prevLastScale_"]').forEach(attach);
+  }
+  scan(document);
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){m.addedNodes.forEach(function(n){ if(n.nodeType===1) scan(n); });});
+  }).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
 </body>
