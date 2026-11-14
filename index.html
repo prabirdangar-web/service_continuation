@@ -555,6 +555,13 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                 <input type="text" id="presentPayScale" value="Rs. 6000-12000/-">
             </div>
             <div class="form-group">
+                <label>Mode of recruitment at present school:</label>
+                <select id="presentRecruit" onchange="presentRecruitChange()">
+                    <option value="COMM" selected>Through Commission / Board (CSSC / SSC / WBRSSC / PSC) — recommended panel</option>
+                    <option value="SELCOM">By MC / Administrator — interview before Selection Committee constituted by it</option>
+                </select>
+            </div>
+            <div class="form-group" id="presentAgencyGroup">
                 <label>Recruitment Agency:</label>
                 <input type="text" id="presentAgency" value="School Managing Committee">
             </div>
@@ -845,7 +852,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
 
         <p>Respected Sir/Madam,</p>
 
-        <p>I have the honour to state that I am currently serving as an approved <strong><span class="lbl-teacherDesg">[Designation]</span></strong> at <strong><span class="lbl-presentSchool">[Present School Name]</span></strong>, having joined this institution on <strong><span class="lbl-presentJoin">[Joining Date]</span></strong> upon recommendation by the <strong><span class="lbl-presentAgency">[Agency]</span></strong> vide Approval Memo No. <strong><span class="lbl-presentAppr">[Approval]</span></strong> issued by the District Inspector of Schools (SE), <span class="lbl-district">[District]</span>.</p>
+        <p>I have the honour to state that I am currently serving as an approved <strong><span class="lbl-teacherDesg">[Designation]</span></strong> at <strong><span class="lbl-presentSchool">[Present School Name]</span></strong>, having joined this institution on <strong><span class="lbl-presentJoin">[Joining Date]</span></strong> upon <strong><span class="lbl-presentRecruitPhrase">recommendation by the [Agency]</span></strong> vide Approval Memo No. <strong><span class="lbl-presentAppr">[Approval]</span></strong> issued by the District Inspector of Schools (SE), <span class="lbl-district">[District]</span>.</p>
 
         <p>Prior to joining my present assignment, I served as an approved teacher in regular sanctioned post(s) as detailed below:</p>
 
@@ -853,7 +860,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
 
         <p>My service across all institutions has been continuous, satisfactory, and completely unblemished. To complete the pay fixation vetting regarding service continuity and pay protection for the period from <strong><span class="lbl-breakPeriod">[Break Period]</span></strong>, a formal administrative order from the <strong>Commissioner of School Education, West Bengal</strong> under <strong>G.O. No. 269-SE(S) dated 16.04.1996</strong> read with Finance Dept No. 249-F(Pen) dated 27.05.2019 is required.</p>
 
-        <p>I have submitted all necessary original/attested papers including Prior Permission / NOC, Release Order, MC Resolutions, Approval of Appointment, Last Pay Certificate (LPC), and filled-in Annexure 'P' Proforma. I humbly request you to kindly consider my case, approve the recommendation, and forward the complete proposal to the competent state authority through the DI/S (SE), <span class="lbl-district">[District]</span>.</p>
+        <p>I have submitted all necessary original/attested papers including Prior Permission / NOC, Release Order, <span class="lbl-prevAuthDocs">Resolutions / Orders of the previous school(s)</span>, Approval of Appointment, Last Pay Certificate (LPC), and filled-in Annexure 'P' Proforma. I humbly request you to kindly consider my case, approve the recommendation, and forward the complete proposal to the competent state authority through the DI/S (SE), <span class="lbl-district">[District]</span>.</p>
 
         <br><br>
         <div style="display:flex; justify-content:space-between; align-items:flex-end;">
@@ -1233,6 +1240,29 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         }
     }
 
+    // Managing authority helper: wording follows who controlled the school (MC / Ad-hoc / Administrator)
+    function ctlInfo(c) {
+        if (c === 'ADMIN') return { auth: 'Administrator', authBn: 'প্রশাসক (Administrator)', doc: 'Order', relDoc: 'Release Order' };
+        if (c === 'ADHOC') return { auth: 'Ad-hoc Committee', authBn: 'অ্যাড-হক কমিটি (Ad-hoc Committee)', doc: 'Resolution', relDoc: 'Release Resolution' };
+        return { auth: 'Managing Committee', authBn: 'ম্যানেজিং কমিটি (Managing Committee)', doc: 'Resolution', relDoc: 'Release Resolution' };
+    }
+    function presentRecruitChange() {
+        const g = id => document.getElementById(id); const sel = g('presentRecruit'); if (!sel) return;
+        const v = sel.value === 'SELCOM';
+        const ag = g('presentAgencyGroup'); if (ag) ag.style.display = v ? 'none' : '';
+        const l1 = g('csscLetter') && g('csscLetter').previousElementSibling, l2 = g('apptLetter') && g('apptLetter').previousElementSibling;
+        if (l1) l1.textContent = v ? 'Selection Committee Recommendation / Interview Proceedings — Ref. No. & Date (Optional):' : 'CSSC Recommendation Letter No. & Date (Optional):';
+        if (l2) l2.textContent = v ? 'Appointment Letter issued by the MC / Administrator — No. & Date (Optional):' : 'WBBSE / WBBPE Appointment Letter No. & Date (Optional):';
+    }
+    function prevCtlChange(n) {
+        const card = document.getElementById('schoolCard_' + n); if (!card) return;
+        const v = card.querySelector('[id^="prevCtl_"]').value;
+        card.querySelectorAll('.ctl-mc').forEach(e => e.style.display = (v === 'ADMIN') ? 'none' : '');
+        card.querySelectorAll('.ctl-adm').forEach(e => e.style.display = (v === 'ADMIN') ? '' : 'none');
+        const rc = card.querySelector('[id^="prevRecruit_"]');
+        card.querySelectorAll('.prev-agency').forEach(e => e.style.display = (rc && rc.value === 'SELCOM') ? 'none' : '');
+    }
+
     function addSchoolField(defaultData = null) {
         if (schoolCount >= maxSchools) return;
 
@@ -1257,6 +1287,8 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         const relMemo = defaultData ? defaultData.relMemo : '';
         const acceptResign = defaultData ? (defaultData.acceptResign || '') : '';
         const relDate = defaultData ? defaultData.relDate : '';
+        const ctl = defaultData ? (defaultData.ctl || 'MC') : 'MC';
+        const recruit = defaultData ? (defaultData.recruit || 'COMM') : 'COMM';
 
         card.innerHTML = `
             <button type="button" class="btn btn-remove" onclick="removeSchoolField(${schoolCount})">Remove</button>
@@ -1264,9 +1296,11 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             <div class="ic-row"><button type="button" class="btn-ic" onclick="relOpen(${schoolCount},'perm')" title="Permission to sit exam → MC Res / Admin Order → NOC">🎓 Exam Permission &amp; NOC</button><button type="button" class="btn-ic rel" onclick="relOpen(${schoolCount},'rel')" title="After passing: application for release → MC Res / Admin Order">🚪 Release (after pass)</button></div>
             <h4 class="pc-h">A. Service there</h4>
             <div class="grid-3">
+                <div class="form-group"><label>Managing authority of this past school (appointing / NOC / release authority)</label><select id="prevCtl_${schoolCount}" onchange="prevCtlChange(${schoolCount})"><option value="MC"${ctl==='MC'?' selected':''}>Managing Committee (MC) — Resolutions</option><option value="ADHOC"${ctl==='ADHOC'?' selected':''}>Ad-hoc Committee — Resolutions</option><option value="ADMIN"${ctl==='ADMIN'?' selected':''}>Administrator — Orders (on HOI Report)</option></select></div>
+                <div class="form-group"><label>Mode of recruitment at this past school</label><select id="prevRecruit_${schoolCount}" onchange="prevCtlChange(${schoolCount})"><option value="COMM"${recruit==='COMM'?' selected':''}>Through Commission / Board (CSSC / SSC / WBRSSC / PSC)</option><option value="SELCOM"${recruit==='SELCOM'?' selected':''}>By that school's MC / Administrator — interview before its Selection Committee</option></select></div>
                 <div class="form-group"><label>School Name</label><input type="text" id="prevName_${schoolCount}" value="${schoolName}" placeholder="e.g., Jhilimili High School"></div>
                 <div class="form-group"><label>Designation & Subject</label><input type="text" id="prevPost_${schoolCount}" value="${post}" placeholder="e.g., Assistant Teacher"></div>
-                <div class="form-group"><label>Recruitment Agency</label><input type="text" id="prevAgency_${schoolCount}" value="${agency}" placeholder="e.g., WBSSC / Managing Committee"></div>
+                <div class="form-group prev-agency"><label>Recruitment Agency</label><input type="text" id="prevAgency_${schoolCount}" value="${agency}" placeholder="e.g., WBSSC / Managing Committee"></div>
                 <div class="form-group"><label>Service Period (From to To)</label><input type="text" id="prevPeriod_${schoolCount}" value="${period}" placeholder="e.g., 06.10.1997 to 20.04.2005"></div>
                 <div class="form-group"><label>Pay Scale at Joining</label><input type="text" id="prevJoinScale_${schoolCount}" value="${joinScale}" placeholder="e.g., Rs. 4650-10175/-"></div>
                 <div class="form-group"><label>Pay Scale Last Held (LPC)</label><input type="text" id="prevLastScale_${schoolCount}" value="${lastScale}" placeholder="e.g., Rs. 7100-37600/- + GP 4100/-"></div>
@@ -1279,15 +1313,16 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             </div>
             <h4 class="pc-h">C. How service there ended</h4>
             <div class="grid-3">
-                <div class="form-group"><label>Permission (NOC / to appear in exam) — MC Resolution No. & Date</label><input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., Res. No. 7 dated 05.01.2005"></div>
-                <div class="form-group"><label>Permission (NOC / to appear in exam) — Administrator Order No. & Date</label><input type="text" id="prevNOCAdmin_${schoolCount}" value="${nocAdmin}" placeholder="e.g., Admin Order No. 3 dated 06.01.2005"></div>
-                <div class="form-group"><label>Release (Transfer) — MC Resolution No. & Date</label><input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
-                <div class="form-group"><label>Release (Transfer) — Administrator Order No. & Date</label><input type="text" id="prevRelAdmin_${schoolCount}" value="${relAdmin}" placeholder="e.g., Admin Order No. 9 dated 13.03.2005"></div>
+                <div class="form-group ctl-mc"><label>Permission (NOC / to appear in exam) — MC / Ad-hoc Committee Resolution No. & Date</label><input type="text" id="prevNOC_${schoolCount}" value="${noc}" placeholder="e.g., Res. No. 7 dated 05.01.2005"></div>
+                <div class="form-group ctl-adm"><label>Permission (NOC / to appear in exam) — Administrator Order No. & Date</label><input type="text" id="prevNOCAdmin_${schoolCount}" value="${nocAdmin}" placeholder="e.g., Admin Order No. 3 dated 06.01.2005"></div>
+                <div class="form-group ctl-mc"><label>Release (Transfer) — MC / Ad-hoc Committee Resolution No. & Date</label><input type="text" id="prevRelMemo_${schoolCount}" value="${relMemo}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
+                <div class="form-group ctl-adm"><label>Release (Transfer) — Administrator Order No. & Date</label><input type="text" id="prevRelAdmin_${schoolCount}" value="${relAdmin}" placeholder="e.g., Admin Order No. 9 dated 13.03.2005"></div>
                 <div class="form-group"><label>Acceptance of Resignation (blank = same as Release Order)</label><input type="text" id="prevAcceptResign_${schoolCount}" value="${acceptResign}" placeholder="e.g., Res. No. 04 dated 12.03.2005"></div>
                 <div class="form-group"><label>Release Date & Time</label><input type="text" id="prevRelease_${schoolCount}" value="${relDate}" placeholder="e.g., 20.04.2005 (A.N.)"></div>
             </div>
         `;
         container.appendChild(card);
+        prevCtlChange(schoolCount);
     }
 
     function removeSchoolField(id) {
@@ -1385,7 +1420,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         return `${years} years, ${months} months, ${days} days`;
     }
 
-    function cv(card,a,b){const g=k=>{const e=card.querySelector('[id^="'+k+'_"]');return e?e.value.trim():''};const x=g(a),y=g(b);return x&&y?x+' / Admin Order: '+y:(x||(y?'Admin Order: '+y:''));}
+    function cv(card,a,b){const g=k=>{const e=card.querySelector('[id^="'+k+'_"]');return e?e.value.trim():''};const c=g('prevCtl')||'MC';const x=g(a),y=g(b);return c==='ADMIN'?(y||x):(x||y);}
 
     function generateAllDocuments() {
         const genderTitle = document.getElementById('genderTitle').value;
@@ -1428,7 +1463,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
 
         const presentJoinDate = document.getElementById('presentJoinDate').value || '[Joining Date]';
         const presentPayScale = document.getElementById('presentPayScale').value || '[Present Scale]';
-        const presentAgency = document.getElementById('presentAgency').value || '[Agency]';
+        let presentAgency = document.getElementById('presentAgency').value || '[Agency]';
         const presentAppr = document.getElementById('presentAppr').value || '[Approval]';
         const presentConfirm = document.getElementById('presentConfirm').value || '____________';
         // Annexure P item vi (Letter of Appointment) is distinct from the DI's Approval Memo above;
@@ -1467,6 +1502,14 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             addressedToBody = "Ad-hoc Committee, " + presentSchool;
             adminAuthText = "Ad-hoc Committee";
         }
+
+        // Mode of recruitment at the present school: Commission panel vs. interview before the MC / Administrator's Selection Committee
+        const presentSel = ((document.getElementById('presentRecruit') || {}).value === 'SELCOM');
+        if (presentSel) presentAgency = `Selection Committee constituted by the ${adminAuthText} (interview)`;
+        const presentRecruitPhrase = presentSel
+            ? `selection through interview by the Selection Committee constituted by the ${adminAuthText} and appointment by the ${adminAuthText}`
+            : `recommendation by the ${presentAgency}`;
+        document.querySelectorAll('.lbl-presentRecruitPhrase').forEach(e => e.innerText = presentRecruitPhrase);
 
         const secyHeaderRouting = secyTitle ? ` &amp; ${secyTitle}` : '';
         const secySignBlock = secyTitle ? ` &amp; ${secyTitle}` : '';
@@ -1568,7 +1611,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         if (!isAuditNA) {
             addEnc('auditMemo', `Copy of Audit Objection / Vetting Query Memo (${rawAuditMemo}).`);
         }
-        addEnc('committeeResolution', `Copy of ${adminAuthText} Resolution / Order of ${presentSchool}.`);
+        addEnc('committeeResolution', `Copy of ${adminAuthText} ${ctlInfo(adminType).doc} of ${presentSchool}.`);
         addEnc('annexureP', `Filled-in Proforma Report (Annexure 'P') in terms of Finance Dept G.O. No. 249-F(Pen) dated 27.05.2019.`);
 
         let firstJoiningDate = '';
@@ -1580,7 +1623,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             const idx = index + 1;
             const name = card.querySelector(`[id^="prevName_"]`).value || `Previous School #${idx}`;
             const post = card.querySelector(`[id^="prevPost_"]`).value || 'Assistant Teacher';
-            const agency = card.querySelector(`[id^="prevAgency_"]`).value || 'Selection Panel / CSC';
+            let agency = card.querySelector(`[id^="prevAgency_"]`).value || 'Selection Panel / CSC';
             const period = card.querySelector(`[id^="prevPeriod_"]`).value || 'Period N/A';
             const jScale = card.querySelector(`[id^="prevJoinScale_"]`).value || 'As per Approval';
             const lScale = card.querySelector(`[id^="prevLastScale_"]`).value || 'As per LPC';
@@ -1591,6 +1634,10 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             const relMemo = cv(card,'prevRelMemo','prevRelAdmin') || 'Release Res. N/A';
             const acceptResign = card.querySelector(`[id^="prevAcceptResign_"]`).value.trim() || relMemo;
             const release = card.querySelector(`[id^="prevRelease_"]`).value || 'Release Date N/A';
+            const ctl = (card.querySelector(`[id^="prevCtl_"]`) || {}).value || 'MC';
+            const ci = ctlInfo(ctl);
+            const sel = ((card.querySelector(`[id^="prevRecruit_"]`) || {}).value === 'SELCOM');
+            if (sel) agency = `Selection Committee constituted by the ${ci.auth} (interview)`;
 
             if (idx === 1 && period.includes('to')) {
                 firstJoiningDate = period.split('to')[0].trim();
@@ -1601,16 +1648,17 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                 nocSummaryLines.push(`Prior Permission / NOC to join from ${name} was granted vide ${noc}.`);
             }
 
-            addEnc(`prevAppr_${idx}`, `Attested copy of Appointment, Joining Order (${joinOrder}), Approval Order (${appr}), and Confirmation Order (${confirm}) of <strong>${name}</strong>.`);
-            if (noc) addEnc(`prevNOC_${idx}`, `Attested copy of Prior Permission / NOC of <strong>${name}</strong> (${noc}).`);
-            addEnc(`prevRelease_${idx}`, `Attested copy of Release Order / Release Resolution and Acceptance of Resignation (${acceptResign}) of <strong>${name}</strong>.`);
+            addEnc(`prevAppr_${idx}`, `Attested copy of Appointment, Joining Order (${joinOrder}), Approval Order (${appr}), and Confirmation Order (${confirm}) of <strong>${name}</strong>${sel ? `, together with the Selection Committee's interview proceedings / recommendation and the ${ci.auth} ${ci.doc} of appointment` : ''}.`);
+            if (noc) addEnc(`prevNOC_${idx}`, `Attested copy of Prior Permission / NOC granted by the ${ci.auth} of <strong>${name}</strong> (${noc}).`);
+            addEnc(`prevRelease_${idx}`, `Attested copy of ${ci.relDoc} of the ${ci.auth} and Acceptance of Resignation (${acceptResign}) of <strong>${name}</strong>.`);
             addEnc(`prevContinuous_${idx}`, `Certificate of Continuous & Satisfactory Service from <strong>${name}</strong>.`);
             addEnc(`prevLPC_${idx}`, `Last Pay Certificate (LPC) / Pay Drawn Certificate issued by <strong>${name}</strong>.`);
 
-            schoolsData.push({ idx, name, post, agency, period, jScale, lScale, appr, joinOrder, confirm, noc, relMemo, acceptResign, release });
+            schoolsData.push({ idx, name, post, agency, period, jScale, lScale, appr, joinOrder, confirm, noc, relMemo, acceptResign, release, ctl, sel });
         });
 
         addEnc('presentAppt', `Attested copy of Appointment Letter & Joining Report in ${presentSchool}.`);
+        if (presentSel) addEnc('presentSelection', `Attested copy of Advertisement, Interview proceedings / recommendation of the Selection Committee constituted by the ${adminAuthText}, and the ${adminAuthText} ${ctlInfo(adminType).doc} approving the selection and appointment in ${presentSchool}.`);
         const presentConfirmFilled = filled(presentConfirm) && presentConfirm !== '____________';
         if (presentConfirmFilled) addEnc('presentConfirm', `Attested copy of Confirmation Order (${presentConfirm}) in ${presentSchool}.`);
         addEnc('presentApproval', `Attested copy of Approval Order issued by DI/S (SE), ${district}.`);
@@ -1626,10 +1674,11 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         // ---- PASS 2: build the narrative / summary table / Annexure 'P' service tables / Part-II rows,
         // now citing the real Sl No of the matching enclosure in each "Documentary Evidence" column. ----
         schoolsData.forEach(s => {
-            const { idx, name, post, agency, period, jScale, lScale, appr, joinOrder, confirm, noc, relMemo, acceptResign, release } = s;
+            const { idx, name, post, agency, period, jScale, lScale, appr, joinOrder, confirm, noc, relMemo, acceptResign, release, ctl, sel } = s;
+            const ci = ctlInfo(ctl);
 
             applicantNarrativeHTML += `
-                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong> (Confirmed vide <strong>${confirm}</strong>). ${noc ? `Prior Permission / NOC was granted vide <strong>${noc}</strong>. ` : ''}Subsequently released vide Release Order / Resolution No. <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
+                <p><strong>${idx}. ${name}:</strong> Served as approved ${post} from <strong>${period}</strong> under DI/S Approval Memo No. <strong>${appr}</strong> (Confirmed vide <strong>${confirm}</strong>), the appointing authority being the ${ci.auth} of the school.${sel ? ` The teacher was selected through interview by the Selection Committee constituted by the ${ci.auth}.` : ''} ${noc ? `Prior Permission / NOC was granted by the ${ci.auth} vide <strong>${noc}</strong>. ` : ''}Subsequently released by the ${ci.auth} vide ${ci.relDoc}: <strong>${relMemo}</strong> on <strong>${release}</strong>.</p>
             `;
 
             tableRowsHTML += `
@@ -1665,7 +1714,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                         </tr>
                     </thead>
                     <tr><td style="width:4%;">i</td><td style="width:61%;">Recruiting procedure- whether through PSC/WBCSSC/CSC or any other organization</td><td style="width:20%;">${agency}</td><td style="width:15%;">${enc(`prevAppr_${idx}`)}</td></tr>
-                    <tr><td>ii</td><td>Appointing Authority/Head of Office</td><td>Managing Committee / HOI, ${name}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
+                    <tr><td>ii</td><td>Appointing Authority/Head of Office</td><td>${ci.auth} / HOI, ${name}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
                     <tr><td>iii</td><td>Joined in the post of (Designation)</td><td>${post}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
                     <tr><td>iv</td><td>Date of Joining</td><td>${joinDatePart}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
                     <tr><td>v</td><td>Pay scale in the post of joining</td><td>${jScale}</td><td>${enc(`prevAppr_${idx}`)}</td></tr>
@@ -1673,12 +1722,12 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                     <tr><td>vii</td><td>Released from the post of (Designation)</td><td>${post}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
                     <tr><td>viii</td><td>Pay scale in the post held last</td><td>${lScale}</td><td>${enc(`prevLPC_${idx}`)}</td></tr>
                     <tr><td>ix</td><td>Date of Resignation</td><td>${release}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
-                    <tr><td>x</td><td>Acceptance of Resignation</td><td>Order No.: ${acceptResign}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
+                    <tr><td>x</td><td>Acceptance of Resignation</td><td>Accepted by the ${ci.auth} vide: ${acceptResign}</td><td>${enc(`prevRelease_${idx}`)}</td></tr>
                     <tr><td>xi</td><td>Whether allowed lien in the post of 1<sup>st</sup> service</td><td>${de(false)}</td><td>—</td></tr>
                     <tr><td>xii</td><td>If the incumbent did not revert to the parent office, then order of termination of lien</td><td>Not Applicable</td><td>—</td></tr>
                     <tr><td>xiii</td><td>If the incumbent reverted to the parent office, whether that reversion took place within lien period</td><td>Not Applicable</td><td>—</td></tr>
                     <tr><td>xiv</td><td>Whether applied through proper channel for 2<sup>nd</sup> service</td><td>${de(channelApplied)}</td><td>${channelApplied ? enc(`prevNOC_${idx}`) : '—'}</td></tr>
-                    <tr><td>xv</td><td>Whether competent authority accorded permission to such application for new post</td><td>${channelApplied ? `Order No.: ${noc}` : de(false)}</td><td>${channelApplied ? enc(`prevNOC_${idx}`) : '—'}</td></tr>
+                    <tr><td>xv</td><td>Whether competent authority accorded permission to such application for new post</td><td>${channelApplied ? `Granted by the ${ci.auth} vide: ${noc}` : de(false)}</td><td>${channelApplied ? enc(`prevNOC_${idx}`) : '—'}</td></tr>
                     <tr><td>xvi</td><td>Whether under C.P.F./G.P.F.</td><td>${gpfStatus}</td><td>${enc('serviceBook')}</td></tr>
                     <tr><td>xvii</td><td>If covered under G.P.F., whether G.P.F. amount had been transferred to the office of the 2<sup>nd</sup> service</td><td>${de(gpfCovered)}</td><td>${gpfCovered ? enc('serviceBook') : '—'}</td></tr>
                     <tr><td>xviii</td><td>If covered under C.P.F., whether C.P.F. (employer's share) along with interest as applicable had been transferred to the office of the 2<sup>nd</sup> service in the Govt. Exchequer</td><td>${de(cpfCovered)}</td><td>${cpfCovered ? enc('serviceBook') : '—'}</td></tr>
@@ -1691,6 +1740,18 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             `;
 
         });
+
+        // Transfer-join paragraph: previous school's authority (appointing / releasing) and present school's authority
+        if (schoolsData.length) {
+            const lp = schoolsData[schoolsData.length - 1], lci = ctlInfo(lp.ctl);
+            applicantNarrativeHTML += `<p><strong>${schoolsData.length + 1}. ${presentSchool} (Present):</strong> Joined on <strong>${presentJoinDate}</strong> as ${teacherDesg}${presentSel ? `, selected through interview by the Selection Committee constituted by the ${adminAuthText},` : ''} on transfer from ${lp.name}, where the ${lci.auth} was the appointing and releasing authority. The present school is managed by the ${adminAuthText}, which is the competent authority at this end to consider and forward this proposal.</p>`;
+        }
+        {
+            const ctlSet = [...new Set(schoolsData.map(x => x.ctl))];
+            const docsTxt = !schoolsData.length ? 'Resolution / Order of the competent authority'
+                : ctlSet.map(c => c === 'ADMIN' ? 'Orders of the Administrator' : (c === 'ADHOC' ? 'Resolutions of the Ad-hoc Committee' : 'Resolutions of the Managing Committee')).join(' and ') + ' of the previous school(s)';
+            document.querySelectorAll('.lbl-prevAuthDocs').forEach(e => e.innerText = docsTxt);
+        }
 
         // PART-II is filled by the Finance Department / Pension Branch after submission, not by
         // this tool — it is reproduced exactly as the blank Annexure 'P' proforma (fixed 1st/2nd/3rd
@@ -1723,7 +1784,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         setDE('de-name', enc('serviceBook'));
         setDE('de-dob', enc('serviceBook'));
         setDE('de-post', enc('presentAppt'));
-        setDE('de-ps1', enc('presentAppt'));
+        setDE('de-ps1', presentSel ? enc('presentSelection') : enc('presentAppt'));
         setDE('de-ps2', enc('presentApproval'));
         setDE('de-ps3', enc('presentAppt'));
         setDE('de-ps4', enc('presentAppt'));
@@ -1789,8 +1850,8 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         }
 
         if (vacancyType !== 'NONE' || csscLetter || apptLetter) {
-            if (csscLetter) expCertHTML += `CSSC Recommendation Letter No. ${csscLetter}${apptLetter ? ', and ' : '.<br><br>'}`;
-            if (apptLetter) expCertHTML += `WBBSE Appointment Letter No. ${apptLetter}.<br><br>`;
+            if (csscLetter) expCertHTML += (presentSel ? `the recommendation of the Selection Committee constituted by the ${adminAuthText} (selection through interview) vide Ref. No. ${csscLetter}` : `CSSC Recommendation Letter No. ${csscLetter}`) + (apptLetter ? ', and ' : '.<br><br>');
+            if (apptLetter) expCertHTML += (presentSel ? `Appointment Letter issued by the ${adminAuthText} vide No. ${apptLetter}` : `WBBSE Appointment Letter No. ${apptLetter}`) + '.<br><br>';
         }
 
         if (hasPrevService) {
@@ -1803,12 +1864,16 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                 const period = card.querySelector(`[id^="prevPeriod_"]`).value || 'Period N/A';
                 const noc = cv(card,'prevNOC','prevNOCAdmin');
                 const relMemo = cv(card,'prevRelMemo','prevRelAdmin') || '';
+                const ci = ctlInfo((card.querySelector('[id^="prevCtl_"]') || {}).value || 'MC');
+                const selP = ((card.querySelector('[id^="prevRecruit_"]') || {}).value === 'SELCOM');
 
-                prevNarrative += `&nbsp;&nbsp;• ${name} — as ${post}, from ${period}`;
+                prevNarrative += `&nbsp;&nbsp;• ${name} — as ${post}, from ${period}${selP ? `, appointed through interview before the Selection Committee constituted by the ${ci.auth}` : ''}`;
                 if (noc) {
-                    prevNarrative += `, released to join the present post vide Prior Permission / NOC No. ${noc}`;
-                    if (relMemo) prevNarrative += ` and Release Order ${relMemo}`;
+                    prevNarrative += `, released by the ${ci.auth} to join the present post vide Prior Permission / NOC (${noc})`;
+                    if (relMemo) prevNarrative += ` and ${ci.relDoc} (${relMemo})`;
                     prevNarrative += `.<br>`;
+                } else if (relMemo) {
+                    prevNarrative += `, released by the ${ci.auth} vide ${ci.relDoc} (${relMemo}).<br>`;
                 } else {
                     prevNarrative += `.<br>`;
                 }
@@ -1824,6 +1889,9 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
         document.getElementById('lbl-expCertBody').innerHTML = expCertHTML;
 
 
+        // Previous-school authority sentences for Doc 2 (both ends: where released from / where joined)
+        const prevAuthEn = schoolsData.length ? ` It is noted that the prior permission / release of the incumbent from the previous school(s) — ${schoolsData.map(x => x.name + ' (' + ctlInfo(x.ctl).auth + (x.sel ? ', which appointed the teacher through a Selection Committee constituted by it' : '') + ')').join('; ')} — was granted by the authority shown in brackets, being the appointing authority there, and that the incumbent joined this school, which is under the ${adminAuthText}, on ${presentJoinDate}${presentSel ? `, having been selected through interview by the Selection Committee constituted by the ${adminAuthText}` : ''}.` : '';
+        const prevAuthBn = schoolsData.length ? ` উল্লেখ্য যে, শিক্ষক/শিক্ষিকা পূর্ববর্তী বিদ্যালয় — ${schoolsData.map(x => x.name + ' (' + ctlInfo(x.ctl).authBn + (x.sel ? ', তৎকর্তৃক গঠিত সিলেকশন কমিটির সাক্ষাৎকারের মাধ্যমে নিযুক্ত' : '') + ')').join('; ')} — এর নিয়োগকর্তা কর্তৃপক্ষের (বন্ধনীতে উল্লিখিত) অনুমতি ও ছাড়পত্র লইয়া অত্র বিদ্যালয়ে ${presentJoinDate} তারিখে যোগদান করিয়াছেন।${presentSel ? ' উক্ত শিক্ষক/শিক্ষিকা অত্র বিদ্যালয়ের ' + ctlInfo(adminType).authBn + ' কর্তৃক গঠিত সিলেকশন কমিটির সাক্ষাৎকারের মাধ্যমে নির্বাচিত হইয়াছেন।' : ''}` : '';
         // BILINGUAL MCR / ADMINISTRATOR ORDER (DOC 2)
         const mcrContainer = document.getElementById('mcrContainer');
         const secySignTitle = secyTitle ? ` &amp; ${secyTitle}` : '';
@@ -1838,12 +1906,12 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                 
                 <div class="lang-block">
                     <p><strong>ENGLISH VERSION:</strong><br>
-                    <strong>Resolution:</strong> Considered the application of <strong>${teacherName}</strong>, ${teacherDesg} submitted through the ${hoiTitle} along with previous approval letters, prior permission / NOC, release orders, Last Pay Certificates (LPC), and Annexure 'P' Proforma. After detailed examination of the service book and documents, it is resolved unanimously that the service of the incumbent from ${breakPeriod} was continuous and unblemished. The proposal for continuation of service and pay protection under G.O. No. 269-SE(S) dated 16.04.1996 is hereby strongly recommended and accepted. The ${hoiTitle}${secySignTitle} is authorized to forward the complete dossier to the Commissioner of School Education, West Bengal through the DI/S (SE), ${district}.</p>
+                    <strong>Resolution:</strong> Considered the application of <strong>${teacherName}</strong>, ${teacherDesg} submitted through the ${hoiTitle} along with previous approval letters, prior permission / NOC, release orders, Last Pay Certificates (LPC), and Annexure 'P' Proforma. After detailed examination of the service book and documents, it is resolved unanimously that the service of the incumbent from ${breakPeriod} was continuous and unblemished.${prevAuthEn} The proposal for continuation of service and pay protection under G.O. No. 269-SE(S) dated 16.04.1996 is hereby strongly recommended and accepted. The ${hoiTitle}${secySignTitle} is authorized to forward the complete dossier to the Commissioner of School Education, West Bengal through the DI/S (SE), ${district}.</p>
                 </div>
 
                 <div class="lang-block bengali-text">
                     <p><strong>বাংলা সংস্করণ (BENGALI VERSION):</strong><br>
-                    অত্র বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর ${hoiTitle}-এর মাধ্যমে পেশকৃত আবেদনপত্র এবং পূর্ববর্তী বিদ্যালয়ের অনুমোদনপত্র, পূর্ব-অনুমতি (Prior Permission / NOC), ছাড়পত্র (Release Order), শেষ বেতন সার্টিফিকেট (LPC) ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') বিশদভাবে বিবেচনা করা হইল। নথি এবং সার্ভিস বুক পর্যালোচনার পর সর্বসম্মতিক্রমে প্রস্তাব গৃহীত হইল যে, উক্ত শিক্ষকের <strong>${breakPeriod}</strong> সময়কালের চাকরি ধারাবাহিক এবং নিষ্কোপ। G.O. No. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের আবেদনটি সর্বসম্মতিক্রমে সুপারিশ করা হইল। ${hoiTitle}${secySignTitle} মহাশয়/মহাশয়াকে জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে কমিশনার অফ স্কুল এডুকেশন, পশ্চিমবঙ্গ-এর নিকট প্রয়োজনীয় প্রশাসনিক অনুমোদনের জন্য নথি প্রেরণের নির্দেশ দেওয়া হইল।</p>
+                    অত্র বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর ${hoiTitle}-এর মাধ্যমে পেশকৃত আবেদনপত্র এবং পূর্ববর্তী বিদ্যালয়ের অনুমোদনপত্র, পূর্ব-অনুমতি (Prior Permission / NOC), ছাড়পত্র (Release Order), শেষ বেতন সার্টিফিকেট (LPC) ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') বিশদভাবে বিবেচনা করা হইল। নথি এবং সার্ভিস বুক পর্যালোচনার পর সর্বসম্মতিক্রমে প্রস্তাব গৃহীত হইল যে, উক্ত শিক্ষকের <strong>${breakPeriod}</strong> সময়কালের চাকরি ধারাবাহিক এবং নিষ্কোপ।${prevAuthBn} G.O. No. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের আবেদনটি সর্বসম্মতিক্রমে সুপারিশ করা হইল। ${hoiTitle}${secySignTitle} মহাশয়/মহাশয়াকে জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে কমিশনার অফ স্কুল এডুকেশন, পশ্চিমবঙ্গ-এর নিকট প্রয়োজনীয় প্রশাসনিক অনুমোদনের জন্য নথি প্রেরণের নির্দেশ দেওয়া হইল।</p>
                 </div>
 
                 <br><br>
@@ -1861,7 +1929,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                 <p><strong>To:</strong> The Administrator, ${presentSchool}.<br>
                 <strong>From:</strong> ${hoiTitle}, ${presentSchool}.</p>
                 <p class="bengali-text"><strong>বিষয়/Subject:</strong> ${teacherName}, ${teacherDesg}-এর চাকরির ধারাবাহিকতা ও পে-প্রটেকশনের (G.O. 269-SE(S)) আবেদন সংক্রান্ত পরিদর্শন রিপোর্ট।</p>
-                <p>I have thoroughly verified the original service records, approval orders, NOC, release orders, LPC, and filled-in Annexure 'P' Proforma of <strong>${teacherName}</strong> for the period <strong>${breakPeriod}</strong>. The candidate joined this school on ${presentJoinDate} through ${presentAgency}. ${pn.Poss} service record is completely clean and continuous. Recommended for your administrative order.</p>
+                <p>I have thoroughly verified the original service records, approval orders, NOC, release orders, LPC, and filled-in Annexure 'P' Proforma of <strong>${teacherName}</strong> for the period <strong>${breakPeriod}</strong>. The candidate joined this school on ${presentJoinDate} through ${presentAgency}. ${pn.Poss} service record is completely clean and continuous.${prevAuthEn} Recommended for your administrative order.</p>
                 <div style="text-align:right;">_______________________<br><strong>${hoiTitle}</strong></div>
 
                 <hr style="margin:15px 0; border-top:1px dashed #000;">
@@ -1873,12 +1941,12 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
                 
                 <div class="lang-block">
                     <p><strong>ENGLISH VERSION:</strong><br>
-                    Upon perusal of the analytical inspection report submitted by the ${hoiTitle} and verification of the underlying service records and Annexure 'P' report, I, the undersigned Administrator of <strong>${presentSchool}</strong>, hereby approve and recommend the proposal for Continuation of Service and Pay Protection in respect of <strong>${teacherName}</strong>, ${teacherDesg} for the period from <strong>${breakPeriod}</strong> under G.O. No. 269-SE(S) dated 16.04.1996. The ${hoiTitle} is directed to submit the complete dossier to Bikash Bhawan through the DI/S (SE), ${district}.</p>
+                    Upon perusal of the analytical inspection report submitted by the ${hoiTitle} and verification of the underlying service records and Annexure 'P' report, I, the undersigned Administrator of <strong>${presentSchool}</strong>, hereby approve and recommend the proposal for Continuation of Service and Pay Protection in respect of <strong>${teacherName}</strong>, ${teacherDesg} for the period from <strong>${breakPeriod}</strong> under G.O. No. 269-SE(S) dated 16.04.1996.${prevAuthEn} The ${hoiTitle} is directed to submit the complete dossier to Bikash Bhawan through the DI/S (SE), ${district}.</p>
                 </div>
 
                 <div class="lang-block bengali-text">
                     <p><strong>বাংলা সংস্করণ (BENGALI VERSION):</strong><br>
-                    ${hoiTitle} মহাশয়ের পরিদর্শন রিপোর্ট এবং সংলগ্ন সার্ভিস রেকর্ডসমূহ ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') পুঙ্খানুপুঙ্খ পর্যালোচনার পর, আমি, <strong>${presentSchool}</strong>-এর নিযুক্ত প্রশাসক (Administrator), উক্ত বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর <strong>${breakPeriod}</strong> সময়কালের চাকরির ধারাবাহিকতা এবং পে-প্রটেকশনের (G.O. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী) প্রস্তাবটি অনুমোদন ও সুপারিশ করিতেছি। ${hoiTitle} মহাশয়/মহাশয়াকে নির্দেশ দেওয়া হইতেছে যে, সমস্ত নথিপত্র জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে বিকাশ ভবনে কমিশনার অফ স্কুল এডুকেশন-এর নিকট প্রেরণের ব্যবস্থা গ্রহণ করুন।</p>
+                    ${hoiTitle} মহাশয়ের পরিদর্শন রিপোর্ট এবং সংলগ্ন সার্ভিস রেকর্ডসমূহ ও অর্থ দপ্তরের প্রফর্ম রিপোর্ট (Annexure 'P') পুঙ্খানুপুঙ্খ পর্যালোচনার পর, আমি, <strong>${presentSchool}</strong>-এর নিযুক্ত প্রশাসক (Administrator), উক্ত বিদ্যালয়ের শিক্ষক/শিক্ষিকা <strong>${teacherName}</strong>, ${teacherDesg}-এর <strong>${breakPeriod}</strong> সময়কালের চাকরির ধারাবাহিকতা এবং পে-প্রটেকশনের (G.O. 269-SE(S) তারিখ 16.04.1996 অনুযায়ী) প্রস্তাবটি অনুমোদন ও সুপারিশ করিতেছি।${prevAuthBn} ${hoiTitle} মহাশয়/মহাশয়াকে নির্দেশ দেওয়া হইতেছে যে, সমস্ত নথিপত্র জেলা বিদ্যালয় পরিদর্শক (মাঃ শিঃ), ${district}-এর মাধ্যমে বিকাশ ভবনে কমিশনার অফ স্কুল এডুকেশন-এর নিকট প্রেরণের ব্যবস্থা গ্রহণ করুন।</p>
                 </div>
 
                 <br><br>
@@ -1981,6 +2049,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             name: "Manbazar Girls' High School [H.S.], Purulia",
             post: 'Assistant Teacher (History)',
             agency: 'School Managing Committee',
+            ctl: 'MC',
             period: '19.07.1994 to 19.09.2007',
             joinScale: 'Rs. 1640-3635/-',
             lastScale: 'Rs. 6000-12000/- (Last basic pay Rs. 8,800/-)',
@@ -1993,6 +2062,7 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
     ];
 
     window.onload = function() {
+        presentRecruitChange();
         // wrap the content of every document page so it can be measured / fitted to one A4 sheet
         document.querySelectorAll('.doc-page').forEach(p => {
             if (p.querySelector(':scope > .page-fit')) return;
@@ -2701,7 +2771,7 @@ function save(){ if(!cur)return; const o={}; ids().forEach(i=>o[i]=$(i).value); 
 function load(n){ cur=n; const o=store[n]||{}; ids().forEach(i=>{const e=$(i); e.value=o[i]!==undefined?o[i]:(e.tagName==='SELECT'?e.options[0].value:''); }); if(window.dash)dash(); }
 sec.addEventListener('input',e=>{ if(e.target.id!=='relSchool') save(); });
 sec.addEventListener('change',e=>{ if(e.target.id==='relSchool'){ load(e.target.value); } else save(); });
-window.relOpen=function(n,stage){ save(); window.__relStage=stage; const s=$('relSchool'); if(window.fillSel)fillSel(); s.dataset.manual='1'; s.value=String(n); load(String(n));
+window.relOpen=function(n,stage){ save(); window.__relStage=stage; const s=$('relSchool'); if(window.fillSel)fillSel(); s.dataset.manual='1'; s.value=String(n); load(String(n)); { const pc=$('prevCtl_'+n); if(pc && !(store[n]&&store[n].relOldCtl)){ $('relOldCtl').value=(pc.value==='ADMIN')?'ADMIN':'MC'; save(); } }
   sec.scrollIntoView({behavior:'smooth'}); const h=$('sec5'); h.textContent='5. Transfer Modules — '+($('prevName_'+n).value||('Past School #'+n))+(stage==='rel'?'  ·  RELEASE (after pass)':'  ·  EXAM PERMISSION & NOC'); };
 const gen=window.relGenerate; window.relGenerate=function(){ save(); return gen.apply(this,arguments); };
 const cf=window.collectFormData; window.collectFormData=function(){ save(); return cf.apply(this,arguments); };
