@@ -2931,7 +2931,7 @@ function load(k){cur=k;const first=!store[k],o=store[k]||{};ids().forEach(i=>{co
  if(first&&[...$('jlHoi').options].some(o=>o.value===s.hoi))$('jlHoi').value=s.hoi; ud();}
 const p2=n=>String(n).padStart(2,'0');
 function due(){if(V('jlConfDue'))return V('jlConfDue');const d=parseDMY(V('jlJoinDate')),y=+V('jlProb');if(!d||!y)return'';d.setFullYear(d.getFullYear()+y);return p2(d.getDate())+'.'+p2(d.getMonth()+1)+'.'+d.getFullYear();}
-function ud(){$('jlDash').innerHTML=`<b>Probation:</b> ${+V('jlProb')?V('jlProb')+' year(s)':'none'} &nbsp;|&nbsp; <b>Confirmation due:</b> ${due()||'—'}`;}
+function ud(){const c0=V('jlCtl'),c1=(!c0||c0==='AUTO')?(src($('jlSchool').value||'P').ctl||'MC'):c0,an={MC:'Managing Committee → MC Resolution',ADHOC:'Ad-hoc Committee → Resolution',ADMIN:'Administrator → Administrator Order'}[c1];$('jlDash').innerHTML=`<b>Authority in use:</b> ${an}${(!c0||c0==='AUTO')?' (auto — change "Managing authority" below to switch)':''} &nbsp;|&nbsp; <b>Probation:</b> ${+V('jlProb')?V('jlProb')+' year(s)':'none'} &nbsp;|&nbsp; <b>Confirmation due:</b> ${due()||'—'}`;}
 sec.addEventListener('input',e=>{if(e.target.closest('#jlForm')){save();ud();}});sec.addEventListener('change',e=>{if(e.target.id==='jlSchool'){save();load(e.target.value);}else if(e.target.closest('#jlForm')){save();ud();}});
 $('jlSchool').addEventListener('focus',fill);
 window.jlOpen=k=>{save();fill();$('jlSchool').value=k;load(k);sec.scrollIntoView({behavior:'smooth'});};
