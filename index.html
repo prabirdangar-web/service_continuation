@@ -571,7 +571,11 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             </div>
             <div class="form-group">
                 <label>Present Confirmation Memo & Date:</label>
-                <input type="text" id="presentConfirm" value="Conf/45 dated 20.09.2009" placeholder="e.g., Conf/12 dated 10.10.2009 (leave blank to print a fill-in line)">
+                <input type="text" id="presentConfirm" value="Conf/45 dated 20.09.2009" placeholder="e.g., Conf/12 dated 10.10.2009 — BLANK = not yet confirmed: confirmation is approved in the same Resolution / Order (Doc 2)">
+            </div>
+            <div class="form-group">
+                <label>Probation period (used only if Confirmation Memo is blank):</label>
+                <select id="presentProb"><option value="1">1 year — normal post</option><option value="2">2 years</option><option value="3">3 years</option></select>
             </div>
             <div class="form-group">
                 <label>CPF / GPF Scheme Coverage:</label>
@@ -1913,12 +1917,14 @@ select.ps-pick{margin-top:6px;width:100%;font-size:.92em;cursor:pointer}
             const endD = parseDMY(endStr), joinD = parseDMY(presentJoinDate);
             if (endD && joinD) { const diff = Math.round((joinD - endD) / 86400000); noBreak = (diff >= 0 && diff <= 1); }
         }
+        const probN = (document.getElementById('presentProb') || {}).value || '1';
+        const confDue = (() => { const d = parseDMY(presentJoinDate); if (!d) return '____/____/______'; d.setFullYear(d.getFullYear() + (+probN)); const q = n => String(n).padStart(2, '0'); return q(d.getDate()) + '.' + q(d.getMonth() + 1) + '.' + d.getFullYear(); })();
         const confClauseEn = confirmedAlready
             ? `The confirmation of service of the incumbent in this school has already been recorded vide ${presentConfirm}; the same is hereby noted and ratified.`
-            : `<strong>Confirmation of Service:</strong> The service of <strong>${teacherName}</strong> (${teacherDesg}) in this school is hereby <strong>confirmed</strong> with effect from the date of joining, i.e. <strong>${presentJoinDate}</strong> [or, as per rules, from the date of completion of one year's probation, as the competent authority may decide].`;
+            : `<strong>Confirmation of Service:</strong> No order of confirmation has been issued so far. The probation of <strong>${probN} year(s)</strong> of <strong>${teacherName}</strong> (${teacherDesg}) in this school, from the date of joining <strong>${presentJoinDate}</strong>, has been completed satisfactorily, and the service is hereby <strong>confirmed</strong> w.e.f. <strong>${confDue}</strong>.`;
         const confClauseBn = confirmedAlready
             ? `অত্র বিদ্যালয়ে উক্ত শিক্ষক/শিক্ষিকার চাকরির স্থায়ীকরণ ইতিপূর্বে ${presentConfirm} অনুযায়ী সম্পন্ন হইয়াছে; বিষয়টি অবগতি ও অনুমোদনের জন্য নথিভুক্ত করা হইল।`
-            : `<strong>চাকরির স্থায়ীকরণ (Confirmation of Service):</strong> ${teacherDesg} <strong>${teacherName}</strong>-এর অত্র বিদ্যালয়ে চাকরির যোগদানের তারিখ অর্থাৎ <strong>${presentJoinDate}</strong> [অথবা নিয়মানুযায়ী এক বছর প্রবেশনকাল সম্পূর্ণ হওয়ার পর] হইতে স্থায়ীকরণ (Confirmed) করা হইল।`;
+            : `<strong>চাকরির স্থায়ীকরণ (Confirmation of Service):</strong> এযাবৎ স্থায়ীকরণের কোনো আদেশ জারি হয় নাই। ${teacherDesg} <strong>${teacherName}</strong>-এর যোগদানের তারিখ <strong>${presentJoinDate}</strong> হইতে <strong>${probN} বৎসরের</strong> প্রবেশনকাল সন্তোষজনকভাবে সম্পূর্ণ হওয়ায় <strong>${confDue}</strong> তারিখ হইতে চাকরি স্থায়ীকরণ (Confirmed) করা হইল।`;
         const factsEn = (lastPrev ? `Perusal of the school records shows that ${teacherName} had earlier served with credit in approved regular post(s) at: ${prevListEn}. ${pn.Subj} was released with the Release Order and Last Pay Certificate (LPC) in due form${noBreak ? ` and joined this school on <strong>${presentJoinDate}</strong>, i.e. <strong>without any break in service</strong>,` : ` and joined this school on <strong>${presentJoinDate}</strong>`} as ${teacherDesg}, ${presentRecruitPhrase}, ${pn.poss} appointment being approved by the District Inspector of Schools (SE), ${district}, vide Memo No. <strong>${presentAppr}</strong>.` : `${teacherName} joined this school on <strong>${presentJoinDate}</strong> as ${teacherDesg}, ${presentRecruitPhrase}, ${pn.poss} appointment being approved by the District Inspector of Schools (SE), ${district}, vide Memo No. <strong>${presentAppr}</strong>.`)
             + (confirmedAlready ? '' : ` Since joining this school, no formal proposal for confirmation of ${pn.poss} service has been adopted so far.`)
             + ` ${pn.Subj} has been teaching continuously with devotion, honesty and efficiency up to date (total teaching experience from the first date of joining, ${overallStartDate}, is <strong>${expTotal || '_ years _ months _ days'}</strong>), and ${pn.poss} work and conduct are fully satisfactory.`;
