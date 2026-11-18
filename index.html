@@ -2995,5 +2995,42 @@ fill();setTimeout(()=>load('P'),500);
 })();
 </script>
 
+<script>
+/* ===== ADD-ON: Annexure P approvals — English and Bengali on SEPARATE pages (Doc 2 → 2 + 2b, Doc 9 → 9 + 9b) ===== */
+(function(){
+const $=id=>document.getElementById(id);
+const NAV=document.querySelector('#outputNavigation .tab-nav'),row=document.querySelectorAll('#wordBar > .wrow')[3];
+const HB={'Headmaster':'প্রধান শিক্ষক','Headmistress':'প্রধান শিক্ষিকা','Teacher-in-Charge':'ভারপ্রাপ্ত শিক্ষক/শিক্ষিকা'};
+const T=[['doc2','mcrContainer','2b. MC Res / Admin Order (বাংলা)'],['doc9','selfNocOrderContainer','9b. NOC — Order/Resolution (বাংলা)']];
+T.forEach(([id,cid,label])=>{const src=$(id),nid=id+'b',p=document.createElement('div');p.className='paper doc-page';p.id=nid;p.dataset.empty='1';p.style.display='none';
+ const sp=document.createElement('div');sp.className='lh-space';sp.contentEditable='false';sp.dataset.label='Blank space for school letter pad (not printed)';sp.style.height=($('lhH').value||59)+'mm';sp.style.display='none';p.appendChild(sp);
+ const f=document.createElement('div');f.className='page-fit';const b=document.createElement('div');b.className='page-body';f.appendChild(b);p.appendChild(f);src.after(p);
+ const ob=NAV.querySelector('[data-tab="'+id+'"]'),nb=document.createElement('button');nb.className='tab-btn';nb.dataset.tab=nid;nb.textContent=label;nb.style.cssText=ob?ob.style.cssText:'';nb.onclick=function(){showTab(nid,this)};if(ob)ob.after(nb);else NAV.appendChild(nb);
+ if(row){const lab=document.createElement('label');lab.innerHTML=`<input type="checkbox" data-lh="${nid}" onchange="toggleLH(this)">${id.replace('doc','')}b`;row.appendChild(lab);}});
+function split(){
+ const adm=$('adminType').value,ab=({MC:'ম্যানেজিং কমিটি',ADHOC:'অ্যাড-হক কমিটি',ADMIN:'প্রশাসক'})[adm]||'ম্যানেজিং কমিটি',hb=HB[$('hoiStatus').value]||'প্রধান শিক্ষক/শিক্ষিকা',school=($('presentSchool').value||'').trim()||'__________';
+ T.forEach(([id,cid])=>{const c=$(cid),np=$(id+'b'),body=np.querySelector('.page-body'),tab=NAV.querySelector('[data-tab="'+id+'b"]');
+  np.dataset.empty='1';body.innerHTML='';body.contentEditable='false';if(tab)tab.style.display='none';
+  if(!c||!c.querySelector('.lang-block.bengali-text'))return;
+  const isAdmin=!!c.querySelector('hr'),mp=[...c.querySelectorAll('p')].find(q=>/(Resolution|Order)[^:]*No\.:/i.test(q.textContent)),m=mp&&/(?:Resolution|Order)[^:]*No\.:\s*([^|]*?)\s*(?:\||Date:|$)/i.exec(mp.textContent),no=(m&&m[1].trim())||'____________';
+  const en=c.cloneNode(true),bn=c.cloneNode(true);
+  en.querySelectorAll('.lang-block.bengali-text,p.bengali-text').forEach(e=>e.remove());
+  bn.querySelectorAll('.lang-block:not(.bengali-text)').forEach(e=>e.remove());
+  [en,bn].forEach(x=>{x.querySelectorAll('.lang-block').forEach(e=>{e.style.cssText='border:none;background:none;padding:0;margin:6px 0';});
+   x.querySelectorAll('strong').forEach(s=>{if(/^\s*(ENGLISH VERSION:|বাংলা সংস্করণ)/.test(s.textContent)){const n=s.nextSibling,q=s.parentElement;if(n&&n.nodeName==='BR')n.remove();s.remove();if(q&&q.tagName==='P'&&!q.textContent.trim())q.remove();}});});
+  const first=bn.querySelector('.lang-block');while(first&&bn.firstChild&&bn.firstChild!==first&&!bn.firstChild.contains(first))bn.removeChild(bn.firstChild);
+  const head=isAdmin?`<div class="bengali-text" style="text-align:center;font-weight:bold;text-decoration:underline;margin-bottom:10px">প্রশাসকের আদেশ</div><p class="bengali-text"><strong>আদেশ নং:</strong> ${no} &nbsp;&nbsp;&nbsp; <strong>তারিখ:</strong> ____/____/2026</p>`
+   :`<div class="bengali-text" style="text-align:center;font-weight:bold;text-decoration:underline;margin-bottom:12px">${ab}র সভার কার্যবিবরণীর অনুলিপি — ${school}</div><p class="bengali-text"><strong>প্রস্তাব / রেজোলিউশন নং:</strong> ${no} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>সভার তারিখ:</strong> ____/____/2026</p>`;
+  bn.insertAdjacentHTML('afterbegin',head);
+  const last=[...bn.children].reverse().find(e=>e.tagName==='DIV'&&!e.classList.contains('lang-block')&&/_{5,}/.test(e.textContent));if(last)last.remove();
+  bn.insertAdjacentHTML('beforeend',isAdmin?`<br><div class="bengali-text" style="text-align:right">___________________________________<br><strong>প্রশাসক</strong><br>${school}</div>`
+   :`<br><div class="bengali-text" style="display:flex;justify-content:space-between"><div style="text-align:center">_______________________<br><strong>সভাপতি</strong><br>${ab}</div><div style="text-align:center">_______________________<br><strong>${hb}</strong><br>${school}</div></div>`);
+  c.innerHTML=en.innerHTML;body.innerHTML=bn.innerHTML;body.contentEditable='true';np.dataset.empty='';if(tab)tab.style.display='';});
+ if(window.fitPages)fitPages();}
+const og=window.generateAllDocuments;
+window.generateAllDocuments=function(){const r=og.apply(this,arguments);try{split();}catch(e){console.error(e);}return r;};
+})();
+</script>
+
 </body>
 </html>
